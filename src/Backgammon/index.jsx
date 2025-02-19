@@ -77,7 +77,6 @@ const Backgammon = () => {
         {state.player && (
           <div aria-label={`Current player ${state.player}`} >
             Current Player <Checker player={state.player} />
-            {state.potentialSpots}
           </div>
         )}
         <div>
