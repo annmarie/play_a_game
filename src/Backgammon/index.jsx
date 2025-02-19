@@ -5,7 +5,7 @@ import {
   ROLL_DICE, UNDO, RESET
 } from './actionTypes';
 import Dice from './Dice';
-import Point from './Point';
+import Board from './Board';
 import Checker from './Checker';
 import './styles.css';
 
@@ -43,21 +43,15 @@ const Backgammon = () => {
 
   return (
     <div className="backgammon-game">
-      <div className="backgammon-board">
-        {state.points.map((point) => (
-          <Point
-            key={point.id}
-            point={point}
-            onClick={handleSpotClick}
-            selected={
-              state.selectedSpot === point.id ||
-              state.potentialSpots.includes(point.id)
-              ? true : false
-            }
-          />
-        ))}
-      </div>
-      <div className="backgammon-actions">
+
+      <Board
+        points={state.points}
+        selectedSpot={state.selectedSpot}
+        potentialSpots={state.potentialSpots}
+        handleSpotClick={handleSpotClick}
+      />
+
+      <div className="backgammon-status">
         <div>
           {state.diceValue ? (
             <Dice diceValue={state.diceValue} />

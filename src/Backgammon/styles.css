@@ -34,7 +34,7 @@
   }
 }
 
-.backgammon-game .backgammon-actions {
+.backgammon-game .backgammon-status {
   display: flex;
   justify-content: space-between;
 }

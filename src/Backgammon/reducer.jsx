@@ -1,3 +1,6 @@
+/**
+ * backgammon reducer
+ */
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 import {
   SELECT_SPOT, MOVE_CHECKER,
@@ -8,6 +11,17 @@ import {
   generatePointIdToIndexMap, initializeBoard, calculateTargetPointId
 } from './utils';
 
+/**
+ * Initial state of the game.
+ * - `points`: Represents the board state with checkers and players.
+ * - `diceValue`: The current dice values rolled.
+ * - `player`: The current player (PLAYER_LEFT or PLAYER_RIGHT).
+ * - `pointsHistory`: History of board states for undo functionality.
+ * - `diceHistory`: History of dice rolls for undo functionality.
+ * - `playerHistory`: History of player turns for undo functionality.
+ * - `selectedSpot`: The currently selected spot on the board.
+ * - `potentialSpots`: The potential spots a checker can move to.
+ */
 export const initialState = {
   points: initializeBoard(),
   diceValue: null,
@@ -19,6 +33,12 @@ export const initialState = {
   potentialSpots: [],
 };
 
+/**
+ * Reducer function to handle game state transitions based on actions.
+ * @param {Object} state - The current state of the game.
+ * @param {Object} action - The action to be performed.
+ * @returns {Object} - The updated state.
+ */
 export const reducer = (state, action) => {
   switch (action.type) {
     case ROLL_DICE:
@@ -41,6 +61,13 @@ export const reducer = (state, action) => {
   }
 };
 
+/**
+ * Handles the SELECT_SPOT action.
+ * Determines potential spots a checker can move to based on dice values.
+ * @param {Object} state - The current state.
+ * @param {Object} action - The action containing the selected spot.
+ * @returns {Object} - The updated state with potential spots.
+ */
 function reduceSelectSpot(state, action) {
   if (state.player === null || state.diceValue.length === 0) return state;
 
@@ -51,10 +78,9 @@ function reduceSelectSpot(state, action) {
     return state;
   }
 
-  const dice = [...new Set(state.diceValue)]
+  const dice = [...new Set(state.diceValue)];
   const potentialSpots = [];
 
-  // check the dice for potential next moves
   for (const die of dice) {
     const targetPointId = calculateTargetPointId(state.player, selectedIndex, die);
     const targetPoint = state.points[targetPointId];
@@ -70,6 +96,13 @@ function reduceSelectSpot(state, action) {
   return { ...state, selectedSpot: pointId, potentialSpots };
 }
 
+/**
+ * Handles the MOVE_CHECKER action.
+ * Moves a checker from one spot to another and updates the game state.
+ * @param {Object} state - The current state.
+ * @param {Object} action - The action containing from and to point IDs.
+ * @returns {Object} - The updated state after moving the checker.
+ */
 function reduceMoveChecker(state, action) {
   if (
     !state.player ||
@@ -79,14 +112,13 @@ function reduceMoveChecker(state, action) {
 
   const { fromPointId, toPointId } = action.payload;
 
-  // deselect spot when selected spot is the requested selected spot
   if (fromPointId === toPointId) {
     return {
       ...state,
       selectedSpot: null,
       potentialSpots: []
-    }
-  };
+    };
+  }
 
   const fromIndex = state.points.findIndex((point) => point.id === fromPointId);
   const toIndex = state.points.findIndex((point) => point.id === toPointId);
@@ -112,7 +144,8 @@ function reduceMoveChecker(state, action) {
   const destinationPoint = state.points[toIndex];
   if (
     destinationPoint.checkers > 0 &&
-    destinationPoint.player !== state.player) {
+    destinationPoint.player !== state.player
+  ) {
     return state;
   }
 
@@ -136,6 +169,12 @@ function reduceMoveChecker(state, action) {
   };
 }
 
+/**
+ * Handles the UNDO action.
+ * Reverts the game state to the previous state.
+ * @param {Object} state - The current state.
+ * @returns {Object} - The updated state after undoing the last action.
+ */
 function reduceUndo(state) {
   const previousPoints = state.pointsHistory.pop() || initialState.points;
   const previousDice = state.diceHistory.pop() || initialState.diceValue;
@@ -154,25 +193,26 @@ function reduceUndo(state) {
   };
 }
 
+/**
+ * Handles the ROLL_DICE action.
+ * Rolls the dice and determines the starting player if it's the first roll.
+ * @param {Object} state - The current state.
+ * @returns {Object} - The updated state with new dice values and player.
+ */
 function reduceRollDice(state) {
   let die1, die2;
 
-  // Ensure the first roll is not doubles
-  // and that we don't loop forever
   let rollCnt = 0;
   const rollMax = 10;
   if (state.player === null) {
-    while (
-      die1 === die2 &&
-      rollCnt < rollMax
-    ) {
+    while (die1 === die2 && rollCnt < rollMax) {
       die1 = rollDie();
       die2 = rollDie();
       rollCnt++;
       if (rollCnt >= rollMax) {
-        console.error('Roll Error: manually setting dice')
-        die1 = 1
-        die2 = 2
+        console.error('Roll Error: manually setting dice');
+        die1 = 1;
+        die2 = 2;
       }
     }
   } else {
