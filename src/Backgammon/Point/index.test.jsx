@@ -20,7 +20,7 @@ describe('Point Component', () => {
 
   it('should render the correct number of checkers', async () => {
     await act(async () => render(<Point point={mockPoint} onClick={mockOnClick} />));
-    const checkers = screen.getAllByTestId('checker');
+    const checkers = screen.getAllByRole('checker');
     expect(checkers).toHaveLength(3);
   });
 

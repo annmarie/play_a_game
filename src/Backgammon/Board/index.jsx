@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import Point from '../Point'
+import './style.css'
 
 const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
   return (

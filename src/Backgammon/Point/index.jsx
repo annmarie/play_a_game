@@ -17,6 +17,7 @@ const Point = ({ point, onClick, selected }) => {
       data-key={point.id}
       className={`point ${getPointClass(point.id)}`}
       onClick={() => onClick(point)}
+      data-testid={`point-${point.id}`}
       aria-label={`Point ${point.id} with ${point.checkers} checkers`}
     >
       {Array.from({ length: point.checkers }).map((_, i) => (

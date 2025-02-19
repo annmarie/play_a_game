@@ -10,7 +10,7 @@ const Checker = ({ player, selected }) => {
         ? 'player_left'
         : ''
     } ${selected ? 'selected' : ''}`
-  return (<div data-testid="checker" className={className}></div>)
+  return (<div role="checker" className={className}></div>)
 };
 
 Checker.propTypes = {
