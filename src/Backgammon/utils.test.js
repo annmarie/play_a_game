@@ -4,7 +4,7 @@ import {
   initializeBoard,
   rollDie,
   togglePlayer,
-  getPointKey,
+  generatePointIdToIndexMap,
   updatePoints
 } from './utils';
 
@@ -52,9 +52,9 @@ describe('Utility Functions', () => {
     });
   });
 
-  describe('getPointKey', () => {
+  describe('generatePointIdToIndexMap', () => {
     it('should return correct point mapping for PLAYER_RIGHT', () => {
-      const pointKey = getPointKey(PLAYER_RIGHT);
+      const pointKey = generatePointIdToIndexMap(PLAYER_RIGHT);
       expect(pointKey[0]).toBe(12);
       expect(pointKey[11]).toBe(23);
       expect(pointKey[12]).toBe(11);
@@ -62,7 +62,7 @@ describe('Utility Functions', () => {
     });
 
     it('should return correct point mapping for PLAYER_LEFT', () => {
-      const pointKey = getPointKey(PLAYER_LEFT);
+      const pointKey = generatePointIdToIndexMap(PLAYER_LEFT);
       expect(pointKey[0]).toBe(11);
       expect(pointKey[11]).toBe(0);
       expect(pointKey[12]).toBe(12);

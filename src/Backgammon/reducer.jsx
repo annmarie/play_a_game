@@ -5,7 +5,7 @@ import {
 } from './actionTypes';
 import {
   togglePlayer, rollDie, updatePoints,
-  getPointKey, initializeBoard, getTargetPointId
+  generatePointIdToIndexMap, initializeBoard, calculateTargetPointId
 } from './utils';
 
 export const initialState = {
@@ -56,7 +56,7 @@ function reduceSelectSpot(state, action) {
 
   // check the dice for potential next moves
   for (const die of dice) {
-    const targetPointId = getTargetPointId(state.player, selectedIndex, die);
+    const targetPointId = calculateTargetPointId(state.player, selectedIndex, die);
     const targetPoint = state.points[targetPointId];
     if (
       targetPoint.checkers === 0 ||
@@ -71,36 +71,54 @@ function reduceSelectSpot(state, action) {
 }
 
 function reduceMoveChecker(state, action) {
-  if (!state.player || !state.diceValue || state.diceValue.length === 0) return state;
+  if (
+    !state.player ||
+    !state.diceValue ||
+    state.diceValue.length === 0
+  ) return state;
 
   const { fromPointId, toPointId } = action.payload;
 
   // deselect spot when selected spot is the requested selected spot
-  if (fromPointId === toPointId) return { ...state, selectedSpot: null, potentialSpots: [] };
+  if (fromPointId === toPointId) {
+    return {
+      ...state,
+      selectedSpot: null,
+      potentialSpots: []
+    }
+  };
 
   const fromIndex = state.points.findIndex((point) => point.id === fromPointId);
   const toIndex = state.points.findIndex((point) => point.id === toPointId);
 
-  if (fromIndex === -1 || toIndex === -1 || state.points[fromIndex].checkers < 1) {
+  if (
+    fromIndex === -1 || toIndex === -1 ||
+    state.points[fromIndex].checkers < 1
+  ) {
     return state;
   }
 
-  const pointKey = getPointKey(state.player);
+  const pointKey = generatePointIdToIndexMap(state.player);
   const moveDistance = Math.abs(pointKey[toIndex] - pointKey[fromIndex]);
   const isValidDiceValue = state.diceValue.includes(moveDistance);
 
-  if (!isValidDiceValue || !(pointKey[toIndex] > pointKey[fromIndex])) {
+  if (
+    !isValidDiceValue ||
+    !(pointKey[toIndex] > pointKey[fromIndex])
+  ) {
     return state;
   }
 
   const destinationPoint = state.points[toIndex];
-  if (destinationPoint.checkers > 0 && destinationPoint.player !== state.player) {
+  if (
+    destinationPoint.checkers > 0 &&
+    destinationPoint.player !== state.player) {
     return state;
   }
 
   const updatedPoints = updatePoints(state.points, fromIndex, toIndex, state.player);
-  const updatedDiceValue = state.diceValue.filter(
-    (die, index) => index !== state.diceValue.findIndex((d) => d === moveDistance)
+  const updatedDiceValue = state.diceValue.filter((die, index) =>
+    index !== state.diceValue.findIndex((d) => d === moveDistance)
   );
 
   const moveInProcess = updatedDiceValue.length > 0;
