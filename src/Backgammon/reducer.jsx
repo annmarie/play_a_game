@@ -34,7 +34,7 @@ export const initialState = {
 };
 
 /**
- * Reducer function to handle game state transitions based on actions.
+ * Reducer function
  * @param {Object} state - The current state of the game.
  * @param {Object} action - The action to be performed.
  * @returns {Object} - The updated state.
@@ -62,7 +62,6 @@ export const reducer = (state, action) => {
 };
 
 /**
- * Handles the SELECT_SPOT action.
  * Determines potential spots a checker can move to based on dice values.
  * @param {Object} state - The current state.
  * @param {Object} action - The action containing the selected spot.
@@ -97,7 +96,6 @@ function reduceSelectSpot(state, action) {
 }
 
 /**
- * Handles the MOVE_CHECKER action.
  * Moves a checker from one spot to another and updates the game state.
  * @param {Object} state - The current state.
  * @param {Object} action - The action containing from and to point IDs.
@@ -170,7 +168,6 @@ function reduceMoveChecker(state, action) {
 }
 
 /**
- * Handles the UNDO action.
  * Reverts the game state to the previous state.
  * @param {Object} state - The current state.
  * @returns {Object} - The updated state after undoing the last action.
@@ -194,7 +191,6 @@ function reduceUndo(state) {
 }
 
 /**
- * Handles the ROLL_DICE action.
  * Rolls the dice and determines the starting player if it's the first roll.
  * @param {Object} state - The current state.
  * @returns {Object} - The updated state with new dice values and player.

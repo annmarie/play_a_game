@@ -10,6 +10,7 @@ import Checker from './Checker';
 import './styles.css';
 
 const Backgammon = () => {
+  // State management using useReducer
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ const Backgammon = () => {
         }
       }
       if (e.key === 'u') {
-        dispatch({ type: UNDO })
+        dispatch({ type: UNDO });
       }
     };
 
@@ -53,6 +54,7 @@ const Backgammon = () => {
 
       <div className="backgammon-status">
         <div>
+
           {state.diceValue ? (
             <Dice diceValue={state.diceValue} />
           ) : (
@@ -68,11 +70,13 @@ const Backgammon = () => {
             </div>
           )}
         </div>
+
         {state.player && (
           <div aria-label={`Current player ${state.player}`} >
             Current Player <Checker player={state.player} />
           </div>
         )}
+
         <div>
           <button
             onClick={() => dispatch({ type: UNDO })}

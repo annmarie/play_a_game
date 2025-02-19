@@ -30,7 +30,6 @@ describe('Checker Component', () => {
   it('should not apply the "selected" class when selected is false', () => {
     render(<Checker player={PLAYER_RIGHT} selected={false} />);
     const checkerElement = screen.getByRole('checker');
-    console.log(checkerElement)
     expect(checkerElement).not.toHaveClass('selected');
   });
 
