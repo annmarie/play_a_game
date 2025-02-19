@@ -1,0 +1,29 @@
+.connect4-board .connect4-cell {
+  width: 50px;
+  height: 50px;
+  background-color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.connect4-board .connect4-cell.winner {
+  cursor: default;
+}
+
+.connect4-board .connect4-cell .checker {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 2px auto;
+}
+
+.connect4-board .connect4-cell .checker.player_one {
+  background-color: red;
+}
+
+.connect4-board .connect4-cell .checker.player_two {
+  background-color: yellow;
+}

@@ -1,0 +1,17 @@
+.backgammon-game {
+  .checker {
+    width: 20px;
+    height: 20px;
+    background-color: #e76f51;
+    border-radius: 50%;
+    margin: 2px auto;
+  }
+
+  .checker.player_left {
+    background-color: #ffebcd;
+  }
+
+  .checker.player_right {
+    background-color: #010101;
+  }
+}
