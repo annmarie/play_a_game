@@ -7,8 +7,8 @@ import {
   ROLL_DICE, UNDO, RESET,
 } from './actionTypes';
 import {
-  togglePlayer, rollDie, updatePoints,
-  generatePointIdToIndexMap, initializeBoard, calculateTargetPointId
+  initializeBoard, togglePlayer, rollDie, updatePoints,
+  generatePointIndexMap, calculatePotentialMoves
 } from './utils';
 
 /**
@@ -31,6 +31,7 @@ export const initialState = {
   playerHistory: [],
   selectedSpot: null,
   potentialSpots: [],
+  potentialMoves: {},
 };
 
 /**
@@ -89,7 +90,7 @@ function reduceSelectSpot(state, action) {
   const potentialSpots = [];
 
   for (const die of dice) {
-    const targetPointId = calculateTargetPointId(state.player, selectedIndex, die);
+    const targetPointId = calculatePotentialMoves(state.player, selectedIndex, die);
     const targetPoint = state.points[targetPointId];
     if (
       targetPoint.checkers === 0 ||
@@ -136,7 +137,7 @@ function reduceMoveChecker(state, action) {
     return state;
   }
 
-  const pointKey = generatePointIdToIndexMap(state.player);
+  const pointKey = generatePointIndexMap(state.player, 'point');
   const moveDistance = Math.abs(pointKey[toIndex] - pointKey[fromIndex]);
   const isValidDiceValue = state.diceValue.includes(moveDistance);
 
@@ -224,13 +225,25 @@ function reduceRollDice(state) {
     die2 = rollDie();
   }
 
-  const newDiceValue = (die1 === die2)
+  const diceValue = (die1 === die2)
     ? [die1, die2, die1, die2]
     : [die1, die2];
 
+  const potentialMoves = {}
+  const dice = new Set(diceValue);
+  for (const die of dice) {
+    for (const point of state.points) {
+      if (point.player === state.player) {
+        const moves = calculatePotentialMoves(state.player, point.id - 1, die);
+        potentialMoves[point.id] = moves;
+      }
+    }
+  }
+
   return {
     ...state,
-    diceValue: newDiceValue,
+    diceValue,
+    potentialMoves,
     player: state.player === null
       ? die2 > die1 ? PLAYER_RIGHT : PLAYER_LEFT
       : state.player,

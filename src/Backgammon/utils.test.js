@@ -4,9 +4,9 @@ import {
   initializeBoard,
   rollDie,
   togglePlayer,
-  generatePointIdToIndexMap,
+  generatePointIndexMap,
   updatePoints,
-  calculateTargetPointId
+  calculatePotentialMoves
 } from './utils';
 
 describe('Utility Functions', () => {
@@ -53,30 +53,46 @@ describe('Utility Functions', () => {
     });
   });
 
-  describe('generatePointIdToIndexMap', () => {
-    it('should return correct point mapping for PLAYER_RIGHT', () => {
-      const pointKey = generatePointIdToIndexMap(PLAYER_RIGHT);
-      expect(pointKey[0]).toBe(12);
-      expect(pointKey[11]).toBe(23);
-      expect(pointKey[12]).toBe(11);
-      expect(pointKey[23]).toBe(0);
+  describe('generatePointIndexMap', () => {
+    it('should return correct index point mapping for PLAYER_RIGHT', () => {
+      const pointIdToIndexMap = generatePointIndexMap(PLAYER_RIGHT, 'index');
+      expect(pointIdToIndexMap[0]).toBe(23);
+      expect(pointIdToIndexMap[11]).toBe(12);
+      expect(pointIdToIndexMap[12]).toBe(0);
+      expect(pointIdToIndexMap[23]).toBe(11);
     });
 
-    it('should return correct point mapping for PLAYER_LEFT', () => {
-      const pointKey = generatePointIdToIndexMap(PLAYER_LEFT);
-      expect(pointKey[0]).toBe(11);
-      expect(pointKey[11]).toBe(0);
-      expect(pointKey[12]).toBe(12);
-      expect(pointKey[23]).toBe(23);
+    it('should return correct index point mapping for PLAYER_LEFT', () => {
+      const pointIdToIndexMap = generatePointIndexMap(PLAYER_LEFT, 'index');
+      expect(pointIdToIndexMap[0]).toBe(11);
+      expect(pointIdToIndexMap[11]).toBe(0);
+      expect(pointIdToIndexMap[12]).toBe(12);
+      expect(pointIdToIndexMap[23]).toBe(23);
     });
 
-    it('should calculate the correct target point ID', () => {
-      const targetPoint = calculateTargetPointId(PLAYER_LEFT, 0, 3);
+    it('should return correct point index mapping for PLAYER_RIGHT', () => {
+      const pointIdToIndexMap = generatePointIndexMap(PLAYER_RIGHT, 'point');
+      expect(pointIdToIndexMap[0]).toBe(12);
+      expect(pointIdToIndexMap[11]).toBe(23);
+      expect(pointIdToIndexMap[12]).toBe(11);
+      expect(pointIdToIndexMap[23]).toBe(0);
+    });
+
+    it('should return correct point index mapping for PLAYER_LEFT', () => {
+      const pointIdToIndexMap = generatePointIndexMap(PLAYER_LEFT, 'point');
+      expect(pointIdToIndexMap[0]).toBe(11);
+      expect(pointIdToIndexMap[11]).toBe(0);
+      expect(pointIdToIndexMap[12]).toBe(12);
+      expect(pointIdToIndexMap[23]).toBe(23);
+    });
+
+    it('should calculate the correct potential moves', () => {
+      const targetPoint = calculatePotentialMoves(PLAYER_LEFT, 0, 3);
       expect(targetPoint).toBe(14);
     });
 
     it('should return 0 for the target point ID if invalid data is passed', () => {
-      const targetPoint = calculateTargetPointId(PLAYER_RIGHT, 'invalid', 'invalid');
+      const targetPoint = calculatePotentialMoves(PLAYER_RIGHT, 'invalid', 'invalid');
       expect(targetPoint).toBe(0);
     });
 
