@@ -4,6 +4,10 @@ import {
   SELECT_SPOT, MOVE_CHECKER,
   ROLL_DICE, UNDO, RESET
 } from './actionTypes';
+import {
+  UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT,
+  ROLL_DICE_BUTTON_TEXT
+} from './globals';
 import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
@@ -64,7 +68,7 @@ const Backgammon = () => {
                 onClick={() => dispatch({ type: ROLL_DICE })}
                 disabled={false}
               >
-                Roll Dice
+                {ROLL_DICE_BUTTON_TEXT}
               </button>
             </div>
           )}
@@ -82,7 +86,7 @@ const Backgammon = () => {
             disabled={state.player === null}
             aria-label="Undo last move"
           >
-            Undo
+            {UNDO_BUTTON_TEXT}
           </button>
           <button
             className="reset-game"
@@ -90,7 +94,7 @@ const Backgammon = () => {
             disabled={state.player === null}
             aria-label="Reset the game"
           >
-            Reset Game
+            {RESET_BUTTON_TEXT}
           </button>
         </div>
       </div>
