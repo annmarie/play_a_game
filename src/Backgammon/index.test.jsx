@@ -45,9 +45,11 @@ describe('Backgammon Component Tests', () => {
     await act(async () => fireEvent.click(rollButton));
     const points = screen.queryAllByRole('point');
     const playerLabel = screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')
-    const cell = (playerLabel === 'Current player left') ? 0 : 4;
-    await act(async () => fireEvent.click(points[cell]));
-    expect(points[cell].className).toContain('selected')
+    const selectCell = 4;
+    await act(async () => fireEvent.click(points[selectCell]));
+    expect(points[selectCell].className).toContain('selected')
+    expect(points[9].className).toContain('potential')
+    expect(points[7].className).toContain('potential')
   });
 
   it('should roll the dice and render the dots for each die', async () => {
