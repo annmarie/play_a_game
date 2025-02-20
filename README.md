@@ -1,12 +1,17 @@
 # Play a Game
 
 * Backgammon
-* Pong
 * Connect Four
-* Tic Tac Toe
+
+## the framework
+node: 20.17
+vite: 6.0
+react: 18.3
+eslint: es2022
 
 ## get started
 ```
+nvm use
 npm i
 npm run dev
 ```
