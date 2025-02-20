@@ -30,7 +30,7 @@ describe('Board Component', () => {
     });
   });
 
-  it('should apply "selected" class to selected and potential spots', () => {
+  it('should apply "selected or potential" class to selected and potential spots', () => {
     render(
       <Board
         points={mockPoints}
@@ -41,8 +41,8 @@ describe('Board Component', () => {
     );
 
     expect(screen.getByTestId('point-1')).toHaveClass('selected');
-    expect(screen.getByTestId('point-2')).toHaveClass('selected');
-    expect(screen.getByTestId('point-3')).toHaveClass('selected');
+    expect(screen.getByTestId('point-2')).toHaveClass('potential');
+    expect(screen.getByTestId('point-3')).toHaveClass('potential');
     const nonSelectedPoints = mockPoints.filter(
       (point) => ![mockSelectedSpot, ...mockPotentialSpots].includes(point.id)
     );

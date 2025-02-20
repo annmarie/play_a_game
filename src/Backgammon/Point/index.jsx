@@ -2,12 +2,14 @@ import PropTypes from 'prop-types'
 import Checker from '../Checker'
 import './styles.css'
 
-const Point = ({ point, onClick, selected }) => {
+const Point = ({ point, onClick, selected, potential }) => {
   const getPointClass = (id) => {
     const colorClass = id % 2 === 0 ? 'light' : 'dark';
     const placeClass = id > 12 ? 'bottom' : 'top';
     const selectedClass = selected ? 'selected' : '';
-    return `${colorClass} ${placeClass} ${selectedClass}`;
+    const potentialClass = potential ? 'potential' : '';
+
+    return `${colorClass} ${placeClass} ${selectedClass} ${potentialClass}`;
   };
 
   return (
@@ -34,7 +36,8 @@ Point.propTypes = {
     player: PropTypes.string
   }).isRequired,
   onClick: PropTypes.func.isRequired,
-  selected: PropTypes.bool
+  selected: PropTypes.bool,
+  potential: PropTypes.bool
 };
 
-export default Point
+export default Point;

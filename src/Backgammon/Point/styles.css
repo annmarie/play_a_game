@@ -33,5 +33,8 @@
   .point.selected {
     border: 4px solid #e2f114
   }
+  .point.potential {
+    border: 4px solid #e7f070
+  }
 }
 
