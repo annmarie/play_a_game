@@ -1,12 +1,12 @@
 
-.dice-container {
+.backgammon-game .dice-container {
   display: flex;
   gap: 10px;
   justify-content: center;
   align-items: center;
 }
 
-.dice-container .die {
+.backgammon-game .dice-container .die {
   width: 60px;
   height: 60px;
   background-color: white;
@@ -21,7 +21,7 @@
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.dice-container .die-dot {
+.backgammon-game .dice-container .die-dot {
   width: 10px;
   height: 10px;
   background-color: black;
@@ -30,11 +30,11 @@
   transition: opacity 0.3s ease;
 }
 
-.dice-container .die-dot.visible {
+.backgammon-game .dice-container .die-dot.visible {
   opacity: 1;
 }
 
-.dice-container .die-dot.animate {
+.backgammon-game .dice-container .die-dot.animate {
   animation: bounce 0.5s ease forwards;
 }
 

@@ -1,5 +1,4 @@
-
-.backgammon-board .checker {
+.backgammon-game .checker {
   width: 20px;
   height: 20px;
   background-color: #e76f51;
@@ -7,10 +6,10 @@
   margin: 2px auto;
 }
 
-.backgammon-board .checker.player_left {
+.backgammon-game .checker.player_left {
   background-color: #ffebcd;
 }
 
-.backgammon-board .checker.player_right {
+.backgammon-game .checker.player_right {
   background-color: #010101;
 }

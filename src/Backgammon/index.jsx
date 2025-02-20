@@ -10,7 +10,6 @@ import Checker from './Checker';
 import './styles.css';
 
 const Backgammon = () => {
-  // State management using useReducer
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
