@@ -45,14 +45,16 @@ describe("Connect4 Component", () => {
   it("should declare a winner", async () => {
     await act(async () => render(<Connect4 />));
     const cells = screen.getAllByRole("cell");
-    await simulatePlayerOneWin(cells);
+    await simulateMoves(cells, [1, 2, 1, 2, 1, 2, 1])
     expect(screen.getByText(WINNER_PLAYER_ONE)).toBeInTheDocument();
   });
 
   it("should declare a draw", async () => {
     await act(async () => render(<Connect4 />));
     const cells = screen.getAllByRole("cell");
-    await setUpBoardWithNoWinners(cells);
+    for (let i = 0; i < 6; i++) {
+      await simulateMoves(cells, [6, 0, 5, 1, 2, 4, 3])
+    }
     expect(screen.getByText(DRAW_MESSAGE)).toBeInTheDocument();
   });
 
@@ -110,14 +112,4 @@ const simulateMoves = async (cells, moves) => {
   await act(async () => {
     moves.forEach((index) => fireEvent.click(cells[index]));
   });
-};
-
-const simulatePlayerOneWin = async (cells) => {
-  await simulateMoves(cells, [1, 2, 1, 2, 1, 2, 1])
-};
-
-const setUpBoardWithNoWinners = async (cells) => {
-  for (let i = 0; i < 6; i++) {
-    await simulateMoves(cells, [6, 0, 5, 1, 2, 4, 3])
-  }
 };

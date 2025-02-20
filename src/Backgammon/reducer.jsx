@@ -68,14 +68,22 @@ export const reducer = (state, action) => {
  * @returns {Object} - The updated state with potential spots.
  */
 function reduceSelectSpot(state, action) {
-  if (state.player === null || state.diceValue.length === 0) return state;
+  if (
+    state.player === null ||
+    state.diceValue.length === 0
+  ) return state;
 
   const pointId = action.payload;
   const selectedIndex = pointId - 1;
 
-  if (selectedIndex === -1 || state.points[selectedIndex].player !== state.player) {
+  if (
+    selectedIndex === -1 ||
+    state.points[selectedIndex].player !== state.player
+  ) {
     return state;
   }
+
+  if (selectedIndex > 23) return { ...state, selectedSpot: pointId }
 
   const dice = [...new Set(state.diceValue)];
   const potentialSpots = [];

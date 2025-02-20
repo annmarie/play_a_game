@@ -69,7 +69,7 @@ const reduceMakeMove = (state, action) => {
     winnerDesc: haveWinner ? desc : '',
     boardFull,
     player: togglePlayer(state.player),
-    history: [...state.history, state.board], // Save the current board state for undo functionality.
+    history: [...state.history, state.board],
   };
 };
 
@@ -80,7 +80,6 @@ const reduceMakeMove = (state, action) => {
  * @returns {Object} - The updated state after undoing the last move.
  */
 const reduceUndoMove = (state) => {
-  // If there's no history or the game has a winner, undo is not allowed.
   if (state.history.length === 0 || state.winner) return state;
 
   const previousBoard = state.history[state.history.length - 1];

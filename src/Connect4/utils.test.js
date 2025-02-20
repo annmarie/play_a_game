@@ -124,6 +124,20 @@ describe('checkWin', () => {
 
     expect(result).toEqual({ haveWinner: false, desc: '' });
   });
+
+  it('should prioritize diagonal win over horizontal or vertical win', () => {
+    const board = [
+      [PLAYER_ONE, null, null, null],
+      [PLAYER_ONE, PLAYER_ONE, PLAYER_TWO, null],
+      [PLAYER_ONE, PLAYER_ONE, PLAYER_ONE, PLAYER_TWO],
+      [PLAYER_ONE, PLAYER_TWO, PLAYER_ONE, PLAYER_ONE],
+    ];
+    const move = { row: 0, col: 0 };
+
+    const result = checkWin(board, move);
+
+    expect(result).toEqual({ haveWinner: true, desc: 'diagonal' });
+  });
 });
 
 describe('togglePlayer', () => {

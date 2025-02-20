@@ -75,6 +75,11 @@ describe('Utility Functions', () => {
       expect(targetPoint).toBe(14);
     });
 
+    it('should return 0 for the target point ID if invalid data is passed', () => {
+      const targetPoint = calculateTargetPointId(PLAYER_RIGHT, 'invalid', 'invalid');
+      expect(targetPoint).toBe(0);
+    });
+
     it('should correctly update the board state', () => {
       const board = initializeBoard();
       const updatedBoard = updatePoints(board, 0, 1, PLAYER_LEFT);

@@ -48,10 +48,10 @@ export const checkWin = (board, move) => {
   const { row, col } = move;
   const player = board[row][col];
   const directions = [
-    { x: 0, y: 1, desc: 'horizontal' }, // Horizontal direction
-    { x: 1, y: 0, desc: 'vertical' },   // Vertical direction
-    { x: 1, y: 1, desc: 'diagonal' },   // Diagonal (top-left to bottom-right)
-    { x: 1, y: -1, desc: 'diagonal' }   // Diagonal (top-right to bottom-left)
+    { x: 1, y: 1,  desc: 'diagonal' },   // Diagonal (top-left to bottom-right)
+    { x: 1, y: -1, desc: 'diagonal' },   // Diagonal (top-right to bottom-left)
+    { x: 0, y: 1,  desc: 'horizontal' }, // Horizontal direction
+    { x: 1, y: 0,  desc: 'vertical' },   // Vertical direction
   ];
 
   /**

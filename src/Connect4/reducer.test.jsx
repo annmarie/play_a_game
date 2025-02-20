@@ -93,10 +93,10 @@ describe('Connect4 Reducer', () => {
 
   it('should undo the last move', () => {
     const state = { ...initialState };
-    const newState = reducer(state,  { type: MAKE_MOVE, payload: { col: 0 } });
+    const newState = reducer(state, { type: MAKE_MOVE, payload: { col: 0 } });
     expect(newState.board[5][0]).toBe(PLAYER_ONE);
     expect(newState.player).toBe(PLAYER_TWO);
-    const finalState = reducer(newState, { type: UNDO_MOVE});
+    const finalState = reducer(newState, { type: UNDO_MOVE });
     expect(finalState).toStrictEqual(initialState);
   });
 
@@ -139,5 +139,21 @@ describe('Connect4 Reducer', () => {
     expect(newState.boardFull).toBe(true)
     expect(newState.winner).toBe(null);
     expect(newState.player).toBe(PLAYER_TWO);
+  });
+
+  it('should prioritize diagonal win over horizontal or vertical win', () => {
+    const state = {
+      board: [
+        [null, null, null, null],
+        [PLAYER_ONE, PLAYER_ONE, PLAYER_TWO, null],
+        [PLAYER_ONE, PLAYER_ONE, PLAYER_ONE, PLAYER_TWO],
+        [PLAYER_ONE, PLAYER_TWO, PLAYER_ONE, PLAYER_ONE],
+      ],
+      player: PLAYER_ONE,
+      history: []
+    }
+    const newState = reducer(state, { type: MAKE_MOVE, payload: { col: 0 } });
+    expect(newState.winner).toBe(PLAYER_ONE);
+    expect(newState.winnerDesc).toBe('diagonal');
   });
 });

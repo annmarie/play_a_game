@@ -110,7 +110,7 @@ export const calculateTargetPointId = (player, selectedIndex, die) => {
   const pointIdToIndexMap = generatePointIdToIndexMap(player);
   const indexToPointIdMap = generateIndexToPointIdMap(player);
   const targetIndex = Math.abs(pointIdToIndexMap[selectedIndex] + die);
-  return indexToPointIdMap[targetIndex];
+  return indexToPointIdMap[targetIndex] || 0;
 };
 
 /**
