@@ -76,7 +76,23 @@ const Backgammon = () => {
 
         {state.player && (
           <div aria-label={`Current player ${state.player}`} >
-            Current Player <Checker player={state.player} />
+            <div>
+              Current Player <Checker player={state.player} />
+            </div>
+            {Object.keys(state.potentialMoves).length < 1 && (
+              <div className="dice-roll">
+                no moves available move to next roll
+                <button
+                  className="dice-button"
+                  aria-label="No moves found roll next move"
+                  onClick={() => dispatch({ type: ROLL_DICE })}
+                  disabled={false}
+                >
+                  {ROLL_DICE_BUTTON_TEXT}
+                </button>
+              </div>
+
+            )}
           </div>
         )}
 

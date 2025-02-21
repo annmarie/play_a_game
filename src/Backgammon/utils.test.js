@@ -145,7 +145,7 @@ describe('Utility Functions', () => {
 });
 
 describe('findPotentialMoves', () => {
-  it('should return potential moves for a player based on dice values', () => {
+  it('should return potential moves PLAYER_LEFT based on dice [3,5]', () => {
     const points = initializeBoard()
     const result = findPotentialMoves(points, PLAYER_LEFT, [3,5]);
     expect(result).toEqual({
@@ -153,6 +153,17 @@ describe('findPotentialMoves', () => {
        '12': [ 9 ],
        '17': [ 20, 22 ],
        '19': [ 22 ]
+    });
+  });
+
+  it('should return potential moves PLAYER_RIGHT based on dice [3,5]', () => {
+    const points = initializeBoard()
+    const result = findPotentialMoves(points, PLAYER_RIGHT, [3,5]);
+    expect(result).toEqual({
+      '5': [ 8, 10 ],
+      '7': [ 10 ],
+      '13': [ 3, 5 ],
+      '24': [ 21 ]
     });
   });
 });
