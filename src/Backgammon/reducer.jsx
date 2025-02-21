@@ -174,18 +174,21 @@ function reduceMoveChecker(state, action) {
  * @returns {Object} - The updated state after undoing the last action.
  */
 function reduceUndo(state) {
-  const previousPoints = state.pointsHistory.pop() || initialState.points;
-  const previousDice = state.diceHistory.pop() || initialState.diceValue;
-  const previousPlayer = state.playerHistory.pop() || initialState.player;
+  const previousPoints = state.pointsHistory[state.pointsHistory.length - 1] || initialState.points;
+  const updatedPointsHistory = state.pointsHistory.slice(0, -1);
+  const previousDice = state.diceHistory[state.diceHistory.length - 1] || initialState.diceValue;
+  const updatedDiceHistory = state.diceHistory.slice(0, -1);
+  const previousPlayer = state.playerHistory[state.playerHistory.length - 1] || initialState.player;
+  const updatedPlayerHistory = state.playerHistory.slice(0, -1);
 
   return {
     ...state,
     points: previousPoints,
     diceValue: previousDice,
     player: previousPlayer,
-    pointsHistory: [...state.pointsHistory],
-    diceHistory: [...state.diceHistory],
-    playerHistory: [...state.playerHistory],
+    pointsHistory: updatedPointsHistory,
+    diceHistory: updatedDiceHistory,
+    playerHistory: updatedPlayerHistory,
     selectedSpot: null,
     potentialMoves: {},
     potentialSpots: [],
@@ -198,7 +201,8 @@ function reduceUndo(state) {
  * @returns {Object} - The updated state with new dice values and player.
  */
 function reduceRollDice(state) {
-  let die1, die2;
+  let die1 = null;
+  let die2 = null;
 
   let rollCnt = 0;
   const rollMax = 10;
