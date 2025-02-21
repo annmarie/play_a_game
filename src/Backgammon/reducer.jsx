@@ -8,7 +8,7 @@ import {
 } from './actionTypes';
 import {
   initializeBoard, togglePlayer, rollDie, updatePoints,
-  generatePointIndexMap, calculatePotentialMoves
+  generatePointIndexMap, findPotentialMoves
 } from './utils';
 
 /**
@@ -20,6 +20,7 @@ import {
  * - `diceHistory`: History of dice rolls for undo functionality.
  * - `playerHistory`: History of player turns for undo functionality.
  * - `selectedSpot`: The currently selected spot on the board.
+ * - `potentialMoves`: The potential moves based on player and dice roll.
  * - `potentialSpots`: The potential spots a checker can move to.
  */
 export const initialState = {
@@ -84,24 +85,7 @@ function reduceSelectSpot(state, action) {
     return state;
   }
 
-  if (selectedIndex > 23) return { ...state, selectedSpot: pointId }
-
-  const dice = [...new Set(state.diceValue)];
-  const potentialSpots = [];
-
-  for (const die of dice) {
-    const targetPointId = calculatePotentialMoves(state.player, selectedIndex, die);
-    const targetPoint = state.points[targetPointId];
-    if (
-      targetPoint.checkers === 0 ||
-      targetPoint.player === state.player ||
-      (targetPoint.checkers === 1 && targetPoint.player !== state.player)
-    ) {
-      potentialSpots.push(targetPoint.id);
-    }
-  }
-
-  return { ...state, selectedSpot: pointId, potentialSpots };
+  return { ...state, selectedSpot: pointId, potentialSpots: state.potentialMoves[pointId] || [] };
 }
 
 /**
@@ -123,7 +107,7 @@ function reduceMoveChecker(state, action) {
     return {
       ...state,
       selectedSpot: null,
-      potentialSpots: []
+      potentialSpots: [],
     };
   }
 
@@ -160,21 +144,29 @@ function reduceMoveChecker(state, action) {
   const updatedDiceValue = state.diceValue.filter((die, index) =>
     index !== state.diceValue.findIndex((d) => d === moveDistance)
   );
-
+  const updatedPotentialMoves = findPotentialMoves(updatedPoints, state.player, updatedDiceValue);
   const moveInProcess = updatedDiceValue.length > 0;
 
   return {
     ...state,
     points: updatedPoints,
-    diceValue: moveInProcess ? updatedDiceValue : initialState.diceValue,
-    player: moveInProcess ? state.player : togglePlayer(state.player),
+    diceValue: moveInProcess
+      ? updatedDiceValue
+      : initialState.diceValue,
+    player: moveInProcess
+      ? state.player
+      : togglePlayer(state.player),
+    potentialMoves: moveInProcess
+      ? updatedPotentialMoves
+      : initialState.potentialMoves,
+    selectedSpot: null,
+    potentialSpots: [],
     pointsHistory: [...state.pointsHistory, state.points],
     diceHistory: [...state.diceHistory, state.diceValue],
     playerHistory: [...state.playerHistory, state.player],
-    selectedSpot: null,
-    potentialSpots: [],
   };
 }
+
 
 /**
  * Reverts the game state to the previous state.
@@ -195,6 +187,7 @@ function reduceUndo(state) {
     diceHistory: [...state.diceHistory],
     playerHistory: [...state.playerHistory],
     selectedSpot: null,
+    potentialMoves: {},
     potentialSpots: [],
   };
 }
@@ -229,23 +222,16 @@ function reduceRollDice(state) {
     ? [die1, die2, die1, die2]
     : [die1, die2];
 
-  const potentialMoves = {}
-  const dice = new Set(diceValue);
-  for (const die of dice) {
-    for (const point of state.points) {
-      if (point.player === state.player) {
-        const moves = calculatePotentialMoves(state.player, point.id - 1, die);
-        potentialMoves[point.id] = moves;
-      }
-    }
-  }
+  const player = state.player === null
+    ? die2 > die1 ? PLAYER_RIGHT : PLAYER_LEFT
+    : state.player;
+
+  const potentialMoves = findPotentialMoves(state.points, player, diceValue);
 
   return {
     ...state,
     diceValue,
     potentialMoves,
-    player: state.player === null
-      ? die2 > die1 ? PLAYER_RIGHT : PLAYER_LEFT
-      : state.player,
+    player,
   };
 }

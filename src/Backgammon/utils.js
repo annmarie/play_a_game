@@ -101,7 +101,7 @@ export const generatePointIndexMap = (player, indexBy = 'point') => {
  * @param {number} die - The die roll.
  * @returns {number} The target point ID, or 0 if the target index is invalid.
  */
-export const calculatePotentialMoves = (player, selectedIndex, die) => {
+export const calculatePotentialMove = (player, selectedIndex, die) => {
   const pointIdToIndexMap = generatePointIndexMap(player, 'point');
   const indexToPointIdMap = generatePointIndexMap(player, 'index');
 
@@ -135,3 +135,35 @@ export const updatePoints = (points, fromIndex, toIndex, player) => {
   return updatedPoints;
 };
 
+/**
+ * Finds all potential moves for a player based on the current game state.
+ *
+ * @param {Array} points - The array of points on the board. Each point should have the following structure:
+ * @param {string} player - The current player for whom potential moves are being calculated.
+ * @param {Array} diceValue - An array of dice values rolled by the player.
+ * @returns {Object} An object mapping point IDs to arrays of target point IDs where moves are possible.
+ *   - Key: The `id` of the starting point.
+ *   - Value: An array of `id`s of target points where the player can move.
+ */
+export function findPotentialMoves(points, player, diceValue) {
+  const dice = new Set(diceValue);
+  const potentialMoves = {};
+
+  for (const point of points.filter(p => p.player === player)) {
+    for (const die of dice) {
+      const movePointId = calculatePotentialMove(player, point.id - 1, die);
+      if (movePointId >= 0) {
+        const targetPoint = points[movePointId];
+        if (
+          targetPoint.checkers === 0 ||
+          targetPoint.player === player ||
+          (targetPoint.checkers === 1 && targetPoint.player !== player)
+        ) {
+          potentialMoves[point.id] = potentialMoves[point.id] || [];
+          potentialMoves[point.id].push(targetPoint.id);
+        }
+      }
+    }
+  }
+  return potentialMoves;
+}

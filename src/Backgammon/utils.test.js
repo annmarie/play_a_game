@@ -6,7 +6,8 @@ import {
   togglePlayer,
   generatePointIndexMap,
   updatePoints,
-  calculatePotentialMoves
+  calculatePotentialMove,
+  findPotentialMoves
 } from './utils';
 
 describe('Utility Functions', () => {
@@ -87,12 +88,12 @@ describe('Utility Functions', () => {
     });
 
     it('should calculate the correct potential moves', () => {
-      const targetPoint = calculatePotentialMoves(PLAYER_LEFT, 0, 3);
+      const targetPoint = calculatePotentialMove(PLAYER_LEFT, 0, 3);
       expect(targetPoint).toBe(14);
     });
 
     it('should return 0 for the target point ID if invalid data is passed', () => {
-      const targetPoint = calculatePotentialMoves(PLAYER_RIGHT, 'invalid', 'invalid');
+      const targetPoint = calculatePotentialMove(PLAYER_RIGHT, 'invalid', 'invalid');
       expect(targetPoint).toBe(0);
     });
 
@@ -139,6 +140,19 @@ describe('Utility Functions', () => {
       const updatedPoints = updatePoints(points, fromIndex, toIndex, PLAYER_LEFT);
       expect(updatedPoints[toIndex].checkers).toBe(1);
       expect(updatedPoints[toIndex].player).toBe(PLAYER_LEFT);
+    });
+  });
+});
+
+describe('findPotentialMoves', () => {
+  it('should return potential moves for a player based on dice values', () => {
+    const points = initializeBoard()
+    const result = findPotentialMoves(points, PLAYER_LEFT, [3,5]);
+    expect(result).toEqual({
+       '1': [ 15, 17 ],
+       '12': [ 9 ],
+       '17': [ 20, 22 ],
+       '19': [ 22 ]
     });
   });
 });
