@@ -7,32 +7,38 @@ import {
   ROLL_DICE, UNDO, RESET,
 } from './actionTypes';
 import {
-  initializeBoard, togglePlayer, rollDie, updatePoints,
-  generatePointIndexMap, findPotentialMoves
+  initializeBoard, togglePlayer, rollDie, moveCheckers,
+  generatePointIndexMap, findPotentialMoves, initializeCheckersOnBar
 } from './utils';
 
 /**
  * Initial state of the game.
  * - `points`: Represents the board state with checkers and players.
+ * = `checkersOnBar`: Number of checkers on the bar for each player.
  * - `diceValue`: The current dice values rolled.
  * - `player`: The current player (PLAYER_LEFT or PLAYER_RIGHT).
+ * - `selectedSpot`: The currently selected spot on the board.
+ * - `potentialSpots`: The potential spots a checker can move to.
+ * - `potentialMoves`: The potential moves based on player and dice roll.
  * - `pointsHistory`: History of board states for undo functionality.
  * - `diceHistory`: History of dice rolls for undo functionality.
  * - `playerHistory`: History of player turns for undo functionality.
- * - `selectedSpot`: The currently selected spot on the board.
- * - `potentialMoves`: The potential moves based on player and dice roll.
- * - `potentialSpots`: The potential spots a checker can move to.
+ * - `potentialMovesHistory`: History of potential moves for undo functionality.
+ * - `checkersOnBarHistory`: History of checkers on bar for undo functionality.
  */
 export const initialState = {
   points: initializeBoard(),
+  checkersOnBar: initializeCheckersOnBar(),
   diceValue: null,
   player: null,
-  pointsHistory: [],
-  diceHistory: [],
-  playerHistory: [],
   selectedSpot: null,
   potentialSpots: [],
   potentialMoves: {},
+  pointsHistory: [],
+  diceHistory: [],
+  playerHistory: [],
+  checkersOnBarHistory: [],
+  potentialMovesHistory: [],
 };
 
 /**
@@ -132,15 +138,14 @@ function reduceMoveChecker(state, action) {
     return state;
   }
 
-  const destinationPoint = state.points[toIndex];
-  if (
-    destinationPoint.checkers > 0 &&
-    destinationPoint.player !== state.player
-  ) {
-    return state;
-  }
+  const { updatedPoints, updatedCheckersOnBar } = moveCheckers(
+    state.points,
+    state.checkersOnBar,
+    toIndex,
+    fromIndex,
+    state.player
+  );
 
-  const updatedPoints = updatePoints(state.points, fromIndex, toIndex, state.player);
   const updatedDiceValue = state.diceValue.filter((die, index) =>
     index !== state.diceValue.findIndex((d) => d === moveDistance)
   );
@@ -150,6 +155,7 @@ function reduceMoveChecker(state, action) {
   return {
     ...state,
     points: updatedPoints,
+    checkersOnBar: updatedCheckersOnBar,
     diceValue: moveInProcess
       ? updatedDiceValue
       : initialState.diceValue,
@@ -164,9 +170,10 @@ function reduceMoveChecker(state, action) {
     pointsHistory: [...state.pointsHistory, state.points],
     diceHistory: [...state.diceHistory, state.diceValue],
     playerHistory: [...state.playerHistory, state.player],
+    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar],
+    potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves],
   };
 }
-
 
 /**
  * Reverts the game state to the previous state.
@@ -176,22 +183,34 @@ function reduceMoveChecker(state, action) {
 function reduceUndo(state) {
   const previousPoints = state.pointsHistory[state.pointsHistory.length - 1] || initialState.points;
   const updatedPointsHistory = state.pointsHistory.slice(0, -1);
+
   const previousDice = state.diceHistory[state.diceHistory.length - 1] || initialState.diceValue;
   const updatedDiceHistory = state.diceHistory.slice(0, -1);
+
   const previousPlayer = state.playerHistory[state.playerHistory.length - 1] || initialState.player;
   const updatedPlayerHistory = state.playerHistory.slice(0, -1);
+
+  const previousPotentialMoves = state.potentialMovesHistory[state.potentialMovesHistory.length - 1] || initialState.potentialMoves;
+  const updatedPotentialMovesHistory = state.potentialMovesHistory.slice(0, -1);
+
+  const previousCheckersOnBar = state.checkersOnBarHistory[state.checkersOnBarHistory.length - 1] || initialState.checkersOnBar;
+  const updatedCheckersOnBarHistory = state.checkersOnBarHistory.slice(0, -1);
 
   return {
     ...state,
     points: previousPoints,
+    checkersOnBar: previousCheckersOnBar,
     diceValue: previousDice,
     player: previousPlayer,
+    potentialMoves: previousPotentialMoves,
+    selectedSpot: null,
+    potentialSpots: [],
+
     pointsHistory: updatedPointsHistory,
+    checkersOnBarHistory: updatedCheckersOnBarHistory,
     diceHistory: updatedDiceHistory,
     playerHistory: updatedPlayerHistory,
-    selectedSpot: null,
-    potentialMoves: {},
-    potentialSpots: [],
+    potentialMovesHistory: updatedPotentialMovesHistory,
   };
 }
 

@@ -5,9 +5,10 @@ import {
   rollDie,
   togglePlayer,
   generatePointIndexMap,
-  updatePoints,
   calculatePotentialMove,
-  findPotentialMoves
+  findPotentialMoves,
+  moveCheckers,
+  initializeCheckersOnBar
 } from './utils';
 
 describe('Utility Functions', () => {
@@ -86,7 +87,9 @@ describe('Utility Functions', () => {
       expect(pointIdToIndexMap[12]).toBe(12);
       expect(pointIdToIndexMap[23]).toBe(23);
     });
+  });
 
+  describe('calculatePotentialMove', () => {
     it('should calculate the correct potential moves', () => {
       const targetPoint = calculatePotentialMove(PLAYER_LEFT, 0, 3);
       expect(targetPoint).toBe(14);
@@ -96,74 +99,87 @@ describe('Utility Functions', () => {
       const targetPoint = calculatePotentialMove(PLAYER_RIGHT, 'invalid', 'invalid');
       expect(targetPoint).toBe(-1);
     });
-
-    it('should correctly update the board state', () => {
-      const board = initializeBoard();
-      const updatedBoard = updatePoints(board, 0, 1, PLAYER_LEFT);
-      expect(updatedBoard[0].checkers).toBe(4);
-      expect(updatedBoard[1].checkers).toBe(1);
-      expect(updatedBoard[1].player).toBe(PLAYER_LEFT);
-    });
   });
 
-  describe('updatePoints', () => {
-    it('should move a checker from one point to another', () => {
-      const points = initializeBoard();
-      const fromIndex = 0;
-      const toIndex = 5;
-      const player = PLAYER_LEFT;
+  describe('findPotentialMoves', () => {
+    it('should return potential moves PLAYER_LEFT based on dice [3,5]', () => {
+      const points = initializeBoard()
+      const result = findPotentialMoves(points, PLAYER_LEFT, [3, 5]);
+      expect(result).toEqual({
+        '1': [15, 17],
+        '12': [9],
+        '17': [20, 22],
+        '19': [22]
+      });
+    });
 
-      const updatedPoints = updatePoints(points, fromIndex, toIndex, player);
+    it('should return potential moves PLAYER_RIGHT based on dice [3,5]', () => {
+      const points = initializeBoard()
+      const result = findPotentialMoves(points, PLAYER_RIGHT, [3, 5]);
+      expect(result).toEqual({
+        '5': [8, 10],
+        '7': [10],
+        '13': [3, 5],
+        '24': [21]
+      });
+    });
+  });
+  describe('moveCheckers', () => {
 
-      expect(updatedPoints[fromIndex].checkers).toBe(4);
-      expect(updatedPoints[fromIndex].player).toBe(PLAYER_LEFT);
-
-      expect(updatedPoints[toIndex].checkers).toBe(1);
-      expect(updatedPoints[toIndex].player).toBe(PLAYER_LEFT);
+    it('should move a checker from one point to an empty spot', () => {
+      const points = [
+        { checkers: 5, player: PLAYER_RIGHT },
+        { checkers: 0, player: null }
+      ];
+      const checkersOnBar = initializeCheckersOnBar();
+      const player = PLAYER_RIGHT;
+      const { updatedPoints, updatedCheckersOnBar } = moveCheckers(points, checkersOnBar, 1, 0, player);
+      expect(updatedPoints[0].checkers).toBe(4);
+      expect(updatedPoints[1].checkers).toBe(1);
+      expect(updatedPoints[1].player).toBe(PLAYER_RIGHT);
+      expect(updatedCheckersOnBar[PLAYER_LEFT]).toBe(0);
+      expect(updatedCheckersOnBar[PLAYER_RIGHT]).toBe(0);
     });
 
     it('should remove player from a point when checkers reach 0', () => {
-      const points = initializeBoard();
-      const fromIndex = 11;
-      const toIndex = 5;
+      const points = [
+        { checkers: 1, player: PLAYER_RIGHT },
+        { checkers: 0, player: null }
+      ];
+      const checkersOnBar = { 0: 0, 1: 0 };
+      const player = PLAYER_RIGHT;
+      const { updatedPoints, updatedCheckersOnBar } = moveCheckers(points, checkersOnBar, 1, 0, player);
+      expect(updatedPoints[0].checkers).toBe(0);
+      expect(updatedPoints[0].player).toBe(null);
+      expect(updatedPoints[1].checkers).toBe(1);
+      expect(updatedPoints[1].player).toBe(PLAYER_RIGHT);
+    });
+
+    it('should update the checkers on the bar when the destination point belongs to the opponent', () => {
+      const points = [
+        { checkers: 1, player: PLAYER_RIGHT },
+        { checkers: 1, player: PLAYER_LEFT }
+      ];
+      const checkersOnBar = initializeCheckersOnBar();
+      const player = PLAYER_RIGHT;
+      const { updatedPoints, updatedCheckersOnBar } = moveCheckers(points, checkersOnBar, 1, 0, player);
+      expect(updatedPoints[0]).toEqual({ checkers: 0, player: null });
+      expect(updatedCheckersOnBar[PLAYER_LEFT]).toBe(1);
+    });
+
+    it('should not update the checkers on the bar when the destination point belongs to the same player', () => {
+      const points = [
+        { checkers: 5, player: PLAYER_LEFT },
+        { checkers: 1, player: PLAYER_LEFT }
+      ];
+      const checkersOnBar = { 0: 0, 1: 0 };
       const player = PLAYER_LEFT;
-      let updatedPoints = updatePoints(points, fromIndex, toIndex, player);
-      updatedPoints = updatePoints(updatedPoints, fromIndex, toIndex, player);
-      expect(updatedPoints[fromIndex].checkers).toBe(0);
-      expect(updatedPoints[fromIndex].player).toBe(null);
-    });
-
-    it('should add a player to a point when checkers reach 1', () => {
-      const points = initializeBoard();
-      const fromIndex = 0;
-      const toIndex = 2;
-      const updatedPoints = updatePoints(points, fromIndex, toIndex, PLAYER_LEFT);
-      expect(updatedPoints[toIndex].checkers).toBe(1);
-      expect(updatedPoints[toIndex].player).toBe(PLAYER_LEFT);
-    });
-  });
-});
-
-describe('findPotentialMoves', () => {
-  it('should return potential moves PLAYER_LEFT based on dice [3,5]', () => {
-    const points = initializeBoard()
-    const result = findPotentialMoves(points, PLAYER_LEFT, [3, 5]);
-    expect(result).toEqual({
-      '1': [15, 17],
-      '12': [9],
-      '17': [20, 22],
-      '19': [22]
-    });
-  });
-
-  it('should return potential moves PLAYER_RIGHT based on dice [3,5]', () => {
-    const points = initializeBoard()
-    const result = findPotentialMoves(points, PLAYER_RIGHT, [3, 5]);
-    expect(result).toEqual({
-      '5': [8, 10],
-      '7': [10],
-      '13': [3, 5],
-      '24': [21]
+      const { updatedPoints, updatedCheckersOnBar } = moveCheckers(points, checkersOnBar, 1, 0, player);
+      expect(updatedPoints[0].checkers).toBe(4);
+      expect(updatedPoints[1].checkers).toBe(2);
+      expect(updatedCheckersOnBar[0]).toEqual(checkersOnBar[0])
+      expect(updatedCheckersOnBar[1]).toEqual(checkersOnBar[0])
+      expect(updatedPoints[1].player).toBe(PLAYER_LEFT);
     });
   });
 });

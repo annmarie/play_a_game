@@ -10,44 +10,28 @@ export const initializeBoard = () => {
     const id = i + 1;
     let checkers = 0;
     let player = null;
-
-    if (id === 1) {
-      checkers = 5;
-      player = PLAYER_LEFT;
-    }
-    if (id === 12) {
-      checkers = 2;
-      player = PLAYER_LEFT;
-    }
-    if (id === 17) {
-      checkers = 3;
-      player = PLAYER_LEFT;
-    }
-    if (id === 19) {
-      checkers = 5;
-      player = PLAYER_LEFT;
-    }
-
-    if (id === 24) {
-      checkers = 2;
-      player = PLAYER_RIGHT;
-    }
-    if (id === 13) {
-      checkers = 5;
-      player = PLAYER_RIGHT;
-    }
-    if (id === 7) {
-      checkers = 5;
-      player = PLAYER_RIGHT;
-    }
-    if (id === 5) {
-      checkers = 3;
-      player = PLAYER_RIGHT;
-    }
-
+    if (id === 1) { checkers = 5; player = PLAYER_LEFT; }
+    if (id === 5) { checkers = 3; player = PLAYER_RIGHT; }
+    if (id === 7) { checkers = 5; player = PLAYER_RIGHT; }
+    if (id === 12) { checkers = 2; player = PLAYER_LEFT; }
+    if (id === 13) { checkers = 5; player = PLAYER_RIGHT; }
+    if (id === 17) { checkers = 3; player = PLAYER_LEFT; }
+    if (id === 19) { checkers = 5; player = PLAYER_LEFT; }
+    if (id === 24) { checkers = 2; player = PLAYER_RIGHT; }
     return { id, checkers, player };
   });
 };
+
+/**
+ * Initializes the checkersOnBar state
+ * @returns {Object} Object to hold checkers that are on the bar.
+ */
+export const initializeCheckersOnBar = () => {
+  const checkersOnBar = {}
+  checkersOnBar[PLAYER_LEFT] = 0;
+  checkersOnBar[PLAYER_RIGHT] = 0;
+  return checkersOnBar;
+}
 
 /**
  * Simulates rolling a six-sided die.
@@ -110,32 +94,6 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
 };
 
 /**
- * Updates the points on the board after a move.
- * @param {Array} points - The current state of the board.
- * @param {number} fromIndex - The index of the point to move from.
- * @param {number} toIndex - The index of the point to move to.
- * @param {string} player - The current player.
- * @returns {Array} The updated state of the board.
- */
-export const updatePoints = (points, fromIndex, toIndex, player) => {
-  const updatedPoints = [...points];
-
-  updatedPoints[fromIndex] = {
-    ...updatedPoints[fromIndex],
-    checkers: updatedPoints[fromIndex].checkers - 1,
-    player: updatedPoints[fromIndex].checkers - 1 === 0 ? null : player,
-  };
-
-  updatedPoints[toIndex] = {
-    ...updatedPoints[toIndex],
-    checkers: updatedPoints[toIndex].checkers + 1,
-    player: updatedPoints[toIndex].checkers + 1 === 1 ? player : updatedPoints[toIndex].player,
-  };
-
-  return updatedPoints;
-};
-
-/**
  * Finds all potential moves for a player based on the current game state.
  *
  * @param {Array} points - The array of points on the board. Each point should have the following structure:
@@ -167,3 +125,46 @@ export function findPotentialMoves(points, player, diceValue) {
   }
   return potentialMoves;
 }
+
+/**
+ * Moves checkers on the board.
+ *
+ * @param {Array} points - The current state of the board.
+ * @param {Object} checkersOnBar - The number of checkers each player has on the bar.
+ * @param {number} toIndex - The index of the destination point.
+ * @param {number} fromIndex - The index of the source point.
+ * @param {string} player - The player making the move.
+ * @returns {Object} An object containing updated points and checkers on the bar.
+ */
+export function moveCheckers(points, checkersOnBar, toIndex, fromIndex, player) {
+  const updatedPoints = [ ...points ];
+  const updatedCheckersOnBar = { ...checkersOnBar };
+  const destinationPoint = points[toIndex] || -1;
+  if (destinationPoint === -1) return { updatedPoints: points, updatedCheckersOnBar }
+  if (destinationPoint.checkers === 1 && destinationPoint.player !== player) {
+    updatedCheckersOnBar[destinationPoint.player] = (updatedCheckersOnBar[destinationPoint.player] || 0) + 1;
+    updatedPoints[toIndex] = { checkers: 0, player: null };
+  }
+  updatedPoints[fromIndex] = {
+    ...updatedPoints[fromIndex],
+    checkers: updatedPoints[fromIndex].checkers - 1,
+    player: updatedPoints[fromIndex].checkers - 1 === 0 ? null : player,
+  };
+
+  updatedPoints[toIndex] = {
+    ...updatedPoints[toIndex],
+    checkers: updatedPoints[toIndex].checkers + 1,
+    player: updatedPoints[toIndex].checkers + 1 === 1 ? player : updatedPoints[toIndex].player,
+  };
+
+  return { updatedPoints, updatedCheckersOnBar };
+}
+
+/**
+ * Updates the points on the board after a move.
+ * @param {Array} points - The current state of the board.
+ */
+export const updatePoints = (points) => {
+  const updatedPoints = [...points];
+  return updatedPoints;
+};

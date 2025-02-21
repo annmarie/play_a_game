@@ -6,7 +6,9 @@ import {
 } from './actionTypes';
 import {
   UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT,
-  ROLL_DICE_BUTTON_TEXT
+  ROLL_DICE_BUTTON_TEXT,
+  PLAYER_LEFT,
+  PLAYER_RIGHT
 } from './globals';
 import Dice from './Dice';
 import Board from './Board';
@@ -80,20 +82,21 @@ const Backgammon = () => {
               Current Player <Checker player={state.player} />
             </div>
             {Object.keys(state.potentialMoves).length < 1 &&
-             state.diceValue !== null  && (
-              <div className="dice-roll">
-                no moves available move to next roll
-                <button
-                  className="dice-button"
-                  aria-label="No moves found roll next move"
-                  onClick={() => dispatch({ type: ROLL_DICE })}
-                  disabled={false}
-                >
-                  {ROLL_DICE_BUTTON_TEXT}
-                </button>
-              </div>
+              state.diceValue !== null &&
+              state.diceValue.length < 0 && (
+                <div className="dice-roll">
+                  no moves available move to next roll
+                  <button
+                    className="dice-button"
+                    aria-label="No moves found roll next move"
+                    onClick={() => dispatch({ type: ROLL_DICE })}
+                    disabled={false}
+                  >
+                    {ROLL_DICE_BUTTON_TEXT}
+                  </button>
+                </div>
 
-            )}
+              )}
           </div>
         )}
 
@@ -113,6 +116,14 @@ const Backgammon = () => {
           >
             {RESET_BUTTON_TEXT}
           </button>
+        </div>
+      </div>
+      <div className="backgammon-bar">
+        <div>
+          {state.leftPlayerBar > 0 && <>{state.leftPlayerBar} <Checker player={PLAYER_LEFT} /></>}
+        </div>
+        <div>
+          {state.rightPlayerBar > 0 && <>{state.rightPlayerBar} <Checker player={PLAYER_RIGHT} /></>}
         </div>
       </div>
     </div>

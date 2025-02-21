@@ -11,8 +11,6 @@ jest.mock('./utils', () => ({
   rollDie: jest.fn(),
 }));
 
-jest.spyOn(console, 'log').mockImplementation();
-jest.spyOn(console, 'error').mockImplementation();
 
 describe('Backgammon Reducer', () => {
 
@@ -155,6 +153,7 @@ describe('Backgammon Reducer', () => {
   });
 
   it('should should set the dice manually on first roll if doubles are rolled 10 times in a row', () => {
+    const diceError = jest.spyOn(console, 'error').mockImplementation();
     utils.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(1)
       .mockReturnValueOnce(1).mockReturnValueOnce(1)
       .mockReturnValueOnce(1).mockReturnValueOnce(1)
@@ -170,17 +169,12 @@ describe('Backgammon Reducer', () => {
 
     expect(utils.rollDie).toHaveBeenCalledTimes(20);
     expect(state.diceValue).toEqual([1, 2]);
+    expect(diceError.mock.calls[0][0]).toContain('Roll Error')
   });
 
   it('should handle undo with no history', () => {
-    const state = {
-      ...initialState,
-      pointsHistory: [],
-      diceHistory: [],
-      playerHistory: [],
-    };
-
+    const state = { ...initialState, };
     const newState = reducer(state, { type: UNDO });
-    expect(newState).toEqual(initialState);
+    expect(newState).toEqual(state);
   });
 });
