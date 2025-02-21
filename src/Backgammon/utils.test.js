@@ -146,13 +146,15 @@ describe('Utility Functions', () => {
         { checkers: 1, player: PLAYER_RIGHT },
         { checkers: 0, player: null }
       ];
-      const checkersOnBar = { 0: 0, 1: 0 };
+      const checkersOnBar = initializeCheckersOnBar();
       const player = PLAYER_RIGHT;
       const { updatedPoints, updatedCheckersOnBar } = moveCheckers(points, checkersOnBar, 1, 0, player);
       expect(updatedPoints[0].checkers).toBe(0);
       expect(updatedPoints[0].player).toBe(null);
       expect(updatedPoints[1].checkers).toBe(1);
       expect(updatedPoints[1].player).toBe(PLAYER_RIGHT);
+      expect(updatedCheckersOnBar[PLAYER_RIGHT]).toBe(0)
+      expect(updatedCheckersOnBar[PLAYER_LEFT]).toBe(0)
     });
 
     it('should update the checkers on the bar when the destination point belongs to the opponent', () => {
