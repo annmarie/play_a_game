@@ -106,7 +106,7 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
   const indexToPointIdMap = generatePointIndexMap(player, 'index');
 
   const targetIndex = Math.abs(pointIdToIndexMap[selectedIndex] + die);
-  return indexToPointIdMap[targetIndex] || 0;
+  return indexToPointIdMap[targetIndex] || -1;
 };
 
 /**

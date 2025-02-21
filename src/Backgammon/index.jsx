@@ -79,7 +79,8 @@ const Backgammon = () => {
             <div>
               Current Player <Checker player={state.player} />
             </div>
-            {Object.keys(state.potentialMoves).length < 1 && (
+            {Object.keys(state.potentialMoves).length < 1 &&
+             state.diceValue !== null  && (
               <div className="dice-roll">
                 no moves available move to next roll
                 <button

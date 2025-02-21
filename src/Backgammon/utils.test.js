@@ -94,7 +94,7 @@ describe('Utility Functions', () => {
 
     it('should return 0 for the target point ID if invalid data is passed', () => {
       const targetPoint = calculatePotentialMove(PLAYER_RIGHT, 'invalid', 'invalid');
-      expect(targetPoint).toBe(0);
+      expect(targetPoint).toBe(-1);
     });
 
     it('should correctly update the board state', () => {
@@ -147,23 +147,23 @@ describe('Utility Functions', () => {
 describe('findPotentialMoves', () => {
   it('should return potential moves PLAYER_LEFT based on dice [3,5]', () => {
     const points = initializeBoard()
-    const result = findPotentialMoves(points, PLAYER_LEFT, [3,5]);
+    const result = findPotentialMoves(points, PLAYER_LEFT, [3, 5]);
     expect(result).toEqual({
-       '1': [ 15, 17 ],
-       '12': [ 9 ],
-       '17': [ 20, 22 ],
-       '19': [ 22 ]
+      '1': [15, 17],
+      '12': [9],
+      '17': [20, 22],
+      '19': [22]
     });
   });
 
   it('should return potential moves PLAYER_RIGHT based on dice [3,5]', () => {
     const points = initializeBoard()
-    const result = findPotentialMoves(points, PLAYER_RIGHT, [3,5]);
+    const result = findPotentialMoves(points, PLAYER_RIGHT, [3, 5]);
     expect(result).toEqual({
-      '5': [ 8, 10 ],
-      '7': [ 10 ],
-      '13': [ 3, 5 ],
-      '24': [ 21 ]
+      '5': [8, 10],
+      '7': [10],
+      '13': [3, 5],
+      '24': [21]
     });
   });
 });
