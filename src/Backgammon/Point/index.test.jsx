@@ -14,7 +14,7 @@ describe('Point Component', () => {
 
   it('should render with the correct class based on point id', async () => {
     await act(async () => render(<Point point={mockPoint} onClick={mockOnClick} />));
-    const point = screen.getByLabelText(/Point 1 with 3 checkers/);
+    const point = screen.getByLabelText(/Point 1 with 3 right checkers/);
     expect(point).toHaveClass('point dark top');
   });
 
@@ -26,7 +26,7 @@ describe('Point Component', () => {
 
   it('should call onClick with the correct point object when clicked', async () => {
     await act(async () => render(<Point point={mockPoint} onClick={mockOnClick} />));
-    const point = screen.getByLabelText(/Point 1 with 3 checkers/);
+    const point = screen.getByLabelText(/Point 1 with 3 right checkers/);
     await act(async () => fireEvent.click(point));
     expect(mockOnClick).toHaveBeenCalledWith(mockPoint);
   });

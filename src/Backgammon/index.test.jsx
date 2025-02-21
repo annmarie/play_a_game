@@ -1,4 +1,5 @@
 import { render, fireEvent, screen, act } from '@testing-library/react';
+import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 import Backgammon from '../Backgammon';
 import * as utils from './utils';
 
@@ -81,19 +82,19 @@ describe('Backgammon Component Tests', () => {
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
     const points = screen.queryAllByRole('point');
-    expect(points[0].getAttribute('aria-label')).toContain('5 checkers')
+    expect(points[0].getAttribute('aria-label')).toContain('5 left checkers')
     expect(points[14].getAttribute('aria-label')).toContain('0 checkers')
     utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
     await act(async () => fireEvent.click(rollButton));
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[14]));
-    expect(points[0].getAttribute('aria-label')).toContain('4 checkers')
-    expect(points[14].getAttribute('aria-label')).toContain('1 checkers')
+    expect(points[0].getAttribute('aria-label')).toContain('4 left checkers')
+    expect(points[14].getAttribute('aria-label')).toContain('1 left checkers')
     expect(points[17].getAttribute('aria-label')).toContain('0 checkers')
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain('left')
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[17]));
-    expect(points[17].getAttribute('aria-label')).toContain('1 checkers')
+    expect(points[17].getAttribute('aria-label')).toContain('1 left checkers')
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(0);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(0);
     expect(screen.queryAllByTestId(DICE_DOT_EXTRA_RIGHT_TEST_ID).length).toBe(0);
@@ -104,6 +105,58 @@ describe('Backgammon Component Tests', () => {
     validateInitialBoardState(points);
   });
 
+  it('should move a right player to the checker bar', async () => {
+    await act(async () => render(<Backgammon />));
+    const points = screen.queryAllByRole('point');
+    utils.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(6);
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
+    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(1);
+    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_RIGHT)
+    await act(async () => fireEvent.click(points[23]));
+    await act(async () => fireEvent.click(points[22]));
+    await act(async () => fireEvent.click(points[23]));
+    await act(async () => fireEvent.click(points[17]));
+    expect(points[17].getAttribute('aria-label')).toContain('1 right checkers')
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_LEFT)
+    utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
+    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
+    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
+    expect(points[0].getAttribute('aria-label')).toContain('5 left checkers')
+    await act(async () => fireEvent.click(points[0]));
+    await act(async () => fireEvent.click(points[14]));
+    await act(async () => fireEvent.click(points[0]));
+    await act(async () => fireEvent.click(points[17]));
+    expect(points[17].getAttribute('aria-label')).toContain('1 left checkers')
+  });
+
+  it('should move a left player to the checker bar', async () => {
+    await act(async () => render(<Backgammon />));
+    const points = screen.queryAllByRole('point');
+    utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
+    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
+    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_LEFT)
+    await act(async () => fireEvent.click(points[0]));
+    await act(async () => fireEvent.click(points[14]));
+    await act(async () => fireEvent.click(points[0]));
+    await act(async () => fireEvent.click(points[17]));
+    expect(points[17].getAttribute('aria-label')).toContain('1 left checkers')
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_RIGHT)
+    utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(1);
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
+    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
+    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(1);
+    expect(points[23].getAttribute('aria-label')).toContain('2 right checkers')
+    await act(async () => fireEvent.click(points[23]));
+    await act(async () => fireEvent.click(points[22]));
+    await act(async () => fireEvent.click(points[23]));
+    await act(async () => fireEvent.click(points[17]));
+    expect(points[17].getAttribute('aria-label')).toContain('1 right checkers')
+  });
+
   it('should be able display four sets of die when doubles are rolled', async () => {
     await act(async () => render(<Backgammon />));
     const points = screen.queryAllByRole('point');
@@ -112,12 +165,12 @@ describe('Backgammon Component Tests', () => {
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain('left')
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_LEFT)
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[14]));
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[17]));
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain('right')
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_RIGHT)
     // second move will be doubles
     utils.rollDie.mockReturnValueOnce(4).mockReturnValueOnce(4);
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
@@ -175,12 +228,18 @@ describe('Backgammon Component Tests', () => {
 function validateInitialBoardState(points) {
   points.forEach((point, index) => {
     const ariaLabel = point.getAttribute('aria-label');
-    if ([0, 6, 12, 18].includes(index)) {
-      expect(ariaLabel).toContain('5 checkers');
-    } else if ([4, 16].includes(index)) {
-      expect(ariaLabel).toContain('3 checkers');
-    } else if ([11, 23].includes(index)) {
-      expect(ariaLabel).toContain('2 checkers');
+    if ([0, 18].includes(index)) {
+      expect(ariaLabel).toContain('5 left checkers');
+    } else if ([6, 12].includes(index)) {
+      expect(ariaLabel).toContain('5 right checkers');
+    } else if ([4].includes(index)) {
+      expect(ariaLabel).toContain('3 right checkers');
+    } else if ([16].includes(index)) {
+      expect(ariaLabel).toContain('3 left checkers');
+    } else if ([11].includes(index)) {
+      expect(ariaLabel).toContain('2 left checkers');
+    } else if ([23].includes(index)) {
+      expect(ariaLabel).toContain('2 right checkers');
     } else {
       expect(ariaLabel).toContain('0 checkers');
     }

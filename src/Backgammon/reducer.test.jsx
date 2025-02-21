@@ -83,17 +83,13 @@ describe('Backgammon Reducer', () => {
     const state = { ...initialState };
     const rollState1 = reducer(state, { type: ROLL_DICE });
     expect(rollState1.player).toBe(PLAYER_RIGHT);
-
     const moveState1 = reducer(rollState1,  { type: MOVE_CHECKER, payload: { fromPointId: 24, toPointId: 23 } });
     const moveState2 = reducer(moveState1, { type: MOVE_CHECKER, payload: { fromPointId: 24, toPointId: 18 } });
-
     utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(2);
     const rollState2 = reducer(moveState2, { type: ROLL_DICE });
     expect(rollState2.player).toBe(PLAYER_LEFT);
-
     const moveState3 = reducer(rollState2,  { type: MOVE_CHECKER, payload: { fromPointId: 1, toPointId: 18 } });
     const moveState4 = reducer(moveState3,  { type: MOVE_CHECKER, payload: { fromPointId: 1, toPointId: 14 } });
-
     expect(moveState4.checkersOnBar[PLAYER_LEFT]).toStrictEqual(0);
     expect(moveState4.checkersOnBar[PLAYER_RIGHT]).toStrictEqual(1);
   });
