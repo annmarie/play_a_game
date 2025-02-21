@@ -62,6 +62,42 @@ describe('Backgammon Reducer', () => {
     expect(moveState6.player).toBe(PLAYER_LEFT);
   });
 
+  it('should move left player checker to bar', () => {
+    utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(2);
+    const state = { ...initialState };
+    const rollState1 = reducer(state, { type: ROLL_DICE });
+    expect(rollState1.player).toBe(PLAYER_LEFT);
+    const moveState1 = reducer(rollState1,  { type: MOVE_CHECKER, payload: { fromPointId: 1, toPointId: 14 } });
+    const moveState2 = reducer(moveState1, { type: MOVE_CHECKER, payload: { fromPointId: 1, toPointId: 18 } });
+    utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(1);
+    const rollState2 = reducer(moveState2, { type: ROLL_DICE });
+    expect(rollState2.player).toBe(PLAYER_RIGHT);
+    const moveState3 = reducer(rollState2,  { type: MOVE_CHECKER, payload: { fromPointId: 24, toPointId: 18 } });
+    const moveState4 = reducer(moveState3,  { type: MOVE_CHECKER, payload: { fromPointId: 24, toPointId: 23 } });
+    expect(moveState4.checkersOnBar[PLAYER_LEFT]).toStrictEqual(1);
+    expect(moveState4.checkersOnBar[PLAYER_RIGHT]).toStrictEqual(0);
+  });
+
+  it('should move right player checker to bar', () => {
+    utils.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(6);
+    const state = { ...initialState };
+    const rollState1 = reducer(state, { type: ROLL_DICE });
+    expect(rollState1.player).toBe(PLAYER_RIGHT);
+
+    const moveState1 = reducer(rollState1,  { type: MOVE_CHECKER, payload: { fromPointId: 24, toPointId: 23 } });
+    const moveState2 = reducer(moveState1, { type: MOVE_CHECKER, payload: { fromPointId: 24, toPointId: 18 } });
+
+    utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(2);
+    const rollState2 = reducer(moveState2, { type: ROLL_DICE });
+    expect(rollState2.player).toBe(PLAYER_LEFT);
+
+    const moveState3 = reducer(rollState2,  { type: MOVE_CHECKER, payload: { fromPointId: 1, toPointId: 18 } });
+    const moveState4 = reducer(moveState3,  { type: MOVE_CHECKER, payload: { fromPointId: 1, toPointId: 14 } });
+
+    expect(moveState4.checkersOnBar[PLAYER_LEFT]).toStrictEqual(0);
+    expect(moveState4.checkersOnBar[PLAYER_RIGHT]).toStrictEqual(1);
+  });
+
   it('should return the initial state when no action is provided', () => {
     const result = reducer(undefined, {});
     expect(result).toEqual(initialState);
@@ -150,6 +186,9 @@ describe('Backgammon Reducer', () => {
     expect(newState.diceHistory[0]).toEqual(state.diceValue);
     expect(newState.playerHistory).toHaveLength(1);
     expect(newState.playerHistory[0]).toEqual(state.player);
+    expect(newState.potentialMovesHistory).toHaveLength(1);
+    expect(newState.potentialMovesHistory[0]).toEqual({1: [18, 15], 12: [6, 9], 17: [23, 20], 19: [22]})
+    expect(newState.checkersOnBarHistory[0]).toStrictEqual(utils.initializeCheckersOnBar());
   });
 
   it('should should set the dice manually on first roll if doubles are rolled 10 times in a row', () => {

@@ -166,6 +166,7 @@ describe('Utility Functions', () => {
       const player = PLAYER_RIGHT;
       const { updatedPoints, updatedCheckersOnBar } = moveCheckers(points, checkersOnBar, 1, 0, player);
       expect(updatedPoints[0]).toEqual({ checkers: 0, player: null });
+      expect(updatedPoints[1]).toEqual({ checkers: 1, player: PLAYER_RIGHT });
       expect(updatedCheckersOnBar[PLAYER_LEFT]).toBe(1);
     });
 

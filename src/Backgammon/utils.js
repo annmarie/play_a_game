@@ -143,7 +143,8 @@ export function moveCheckers(points, checkersOnBar, toIndex, fromIndex, player) 
   if (destinationPoint === -1) return { updatedPoints: points, updatedCheckersOnBar }
   if (destinationPoint.checkers === 1 && destinationPoint.player !== player) {
     updatedCheckersOnBar[destinationPoint.player] = (updatedCheckersOnBar[destinationPoint.player] || 0) + 1;
-    updatedPoints[toIndex] = { checkers: 0, player: null };
+    updatedPoints[toIndex].checkers = 0
+    updatedPoints[toIndex].player = null
   }
   updatedPoints[fromIndex] = {
     ...updatedPoints[fromIndex],
