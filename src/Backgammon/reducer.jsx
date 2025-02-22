@@ -159,7 +159,12 @@ function reduceMoveChecker(state, action) {
     index !== state.diceValue.findIndex((d) => d === moveDistance)
   );
 
-  const updatedPotentialMoves = findPotentialMoves(updatedPoints, state.player, updatedDiceValue);
+  const updatedPotentialMoves = findPotentialMoves(
+    updatedPoints,
+    state.player,
+    updatedDiceValue,
+    updatedCheckersOnBar
+  );
 
   const moveInProcess = updatedDiceValue.length > 0;
 
@@ -261,7 +266,12 @@ function reduceRollDice(state) {
     ? die2 > die1 ? PLAYER_RIGHT : PLAYER_LEFT
     : state.player;
 
-  const potentialMoves = findPotentialMoves(state.points, player, diceValue);
+  const potentialMoves = findPotentialMoves(
+    state.points,
+    player,
+    diceValue,
+    state.checkersOnBar
+  );
 
   return { ...state, diceValue, potentialMoves, player };
 }
