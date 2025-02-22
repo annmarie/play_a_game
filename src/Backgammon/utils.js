@@ -127,11 +127,11 @@ export function findPotentialMoves(points, player, diceValue) {
  */
 export function moveCheckers(points, checkersOnBar, toIndex, fromIndex, player) {
   const updatedPoints = [ ...points ];
-  const updatedCheckersOnBar = { ...checkersOnBar };
+  const newCheckersOnBar = {};
   const destinationPoint = points[toIndex] || -1;
   if (destinationPoint === -1) return { updatedPoints: points, updatedCheckersOnBar }
   if (destinationPoint.checkers === 1 && destinationPoint.player !== player) {
-    updatedCheckersOnBar[destinationPoint.player] = (updatedCheckersOnBar[destinationPoint.player] || 0) + 1;
+    newCheckersOnBar[destinationPoint.player] = (checkersOnBar[destinationPoint.player] || 0) + 1;
     updatedPoints[toIndex].checkers = 0
     updatedPoints[toIndex].player = null
   }
@@ -147,14 +147,10 @@ export function moveCheckers(points, checkersOnBar, toIndex, fromIndex, player) 
     player: updatedPoints[toIndex].checkers + 1 === 1 ? player : updatedPoints[toIndex].player,
   };
 
+  const updatedCheckersOnBar = {
+    ...checkersOnBar,
+    ...newCheckersOnBar
+  }
+
   return { updatedPoints, updatedCheckersOnBar };
 }
-
-/**
- * Updates the points on the board after a move.
- * @param {Array} points - The current state of the board.
- */
-export const updatePoints = (points) => {
-  const updatedPoints = [...points];
-  return updatedPoints;
-};

@@ -28,7 +28,7 @@ import {
  */
 export const initialState = {
   points: initializeBoard(),
-  checkersOnBar: {},
+  checkersOnBar: { left: 0, right: 0 },
   diceValue: null,
   player: null,
   selectedSpot: null,
