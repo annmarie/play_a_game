@@ -2,7 +2,8 @@ import { useReducer, useCallback, useEffect } from 'react';
 import { initialState, reducer } from './reducer';
 import {
   SELECT_SPOT, MOVE_CHECKER,
-  ROLL_DICE, UNDO, RESET
+  ROLL_DICE, UNDO, RESET,
+  TOGGLE_PLAYER
 } from './actionTypes';
 import {
   UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT,
@@ -68,7 +69,6 @@ const Backgammon = () => {
                 className="dice-button"
                 aria-label="Roll Dice"
                 onClick={() => dispatch({ type: ROLL_DICE })}
-                disabled={false}
               >
                 {ROLL_DICE_BUTTON_TEXT}
               </button>
@@ -82,15 +82,14 @@ const Backgammon = () => {
               Current Player <Checker player={state.player} />
             </div>
             {Object.keys(state.potentialMoves).length < 1 && (
-                <div className="dice-roll">
-                  no moves available move to next roll
+                <div className="toggle-player">
+                  no moves available move to next player
                   <button
-                    className="dice-button"
-                    aria-label="No moves found roll next move"
-                    onClick={() => dispatch({ type: ROLL_DICE })}
-                    disabled={false}
+                    className="toggle-button"
+                    aria-label="No moves found release move to next player."
+                    onClick={() => dispatch({ type: TOGGLE_PLAYER })}
                   >
-                    {ROLL_DICE_BUTTON_TEXT}
+                    Release Move To Next Player
                   </button>
                 </div>
               )}
