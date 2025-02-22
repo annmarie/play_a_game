@@ -28,7 +28,7 @@ import {
  */
 export const initialState = {
   points: initializeBoard(),
-  checkersOnBar: { left: 0, right: 0 },
+  checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
   diceValue: null,
   player: null,
   selectedSpot: null,
@@ -138,25 +138,29 @@ function reduceMoveChecker(state, action) {
     return state;
   }
 
-  const { updatedPoints, updatedCheckersOnBar } = moveCheckers(
+  const { updatedPoints, hasBarPlayer } = moveCheckers(
     state.points,
-    state.checkersOnBar,
-    toIndex,
-    fromIndex,
+    toIndex, fromIndex,
     state.player
   );
+
+  const updatedCheckersOnBar = { ...state.checkersOnBar }
+  if (hasBarPlayer) {
+    updatedCheckersOnBar[hasBarPlayer] = state.checkersOnBar[hasBarPlayer] || 0;
+    updatedCheckersOnBar[hasBarPlayer] += 1;
+  }
 
   const updatedDiceValue = state.diceValue.filter((die, index) =>
     index !== state.diceValue.findIndex((d) => d === moveDistance)
   );
+
   const updatedPotentialMoves = findPotentialMoves(updatedPoints, state.player, updatedDiceValue);
+
   const moveInProcess = updatedDiceValue.length > 0;
 
   return {
     ...state,
     points: updatedPoints,
-    helloL: updatedCheckersOnBar['left'],
-    helloR: updatedCheckersOnBar['right'],
     checkersOnBar: updatedCheckersOnBar,
     diceValue: moveInProcess
       ? updatedDiceValue

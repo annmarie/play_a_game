@@ -73,7 +73,7 @@ describe('Backgammon Reducer', () => {
     expect(rollState2.player).toBe(PLAYER_RIGHT);
     const moveState3 = reducer(rollState2,  { type: MOVE_CHECKER, payload: { fromPointId: 24, toPointId: 18 } });
     const moveState4 = reducer(moveState3,  { type: MOVE_CHECKER, payload: { fromPointId: 24, toPointId: 23 } });
-    expect(moveState4.checkersOnBar[PLAYER_LEFT]).toStrictEqual(1);
+    expect(moveState4.checkersOnBar[PLAYER_LEFT]).toEqual(1);
   });
 
   it('should move right player checker to bar', () => {
@@ -88,7 +88,7 @@ describe('Backgammon Reducer', () => {
     expect(rollState2.player).toBe(PLAYER_LEFT);
     const moveState3 = reducer(rollState2,  { type: MOVE_CHECKER, payload: { fromPointId: 1, toPointId: 18 } });
     const moveState4 = reducer(moveState3,  { type: MOVE_CHECKER, payload: { fromPointId: 1, toPointId: 14 } });
-    expect(moveState4.checkersOnBar[PLAYER_RIGHT]).toStrictEqual(1);
+    expect(moveState4.checkersOnBar[PLAYER_RIGHT]).toEqual(1);
   });
 
   it('should return the initial state when no action is provided', () => {

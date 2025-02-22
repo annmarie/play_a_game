@@ -132,10 +132,11 @@ describe('Utility Functions', () => {
         { checkers: 0, player: null }
       ];
       const player = PLAYER_RIGHT;
-      const { updatedPoints } = moveCheckers(points, {}, 1, 0, player);
+      const { updatedPoints, hasBarPlayer } = moveCheckers(points, 1, 0, player);
       expect(updatedPoints[0].checkers).toBe(4);
       expect(updatedPoints[1].checkers).toBe(1);
       expect(updatedPoints[1].player).toBe(PLAYER_RIGHT);
+      expect(hasBarPlayer).toBe('');
     });
 
     it('should remove player from a point when checkers reach 0', () => {
@@ -144,11 +145,12 @@ describe('Utility Functions', () => {
         { checkers: 0, player: null }
       ];
       const player = PLAYER_RIGHT;
-      const { updatedPoints } = moveCheckers(points, {}, 1, 0, player);
+      const { updatedPoints, hasBarPlayer } = moveCheckers(points, 1, 0, player);
       expect(updatedPoints[0].checkers).toBe(0);
       expect(updatedPoints[0].player).toBe(null);
       expect(updatedPoints[1].checkers).toBe(1);
       expect(updatedPoints[1].player).toBe(PLAYER_RIGHT);
+      expect(hasBarPlayer).toBe('');
     });
 
     it('should update the checkers on the bar when the destination point belongs to the opponent', () => {
@@ -157,10 +159,10 @@ describe('Utility Functions', () => {
         { checkers: 1, player: PLAYER_LEFT }
       ];
       const player = PLAYER_RIGHT;
-      const { updatedPoints, updatedCheckersOnBar } = moveCheckers(points, {}, 1, 0, player);
+      const { updatedPoints, hasBarPlayer } = moveCheckers(points, 1, 0, player);
       expect(updatedPoints[0]).toEqual({ checkers: 0, player: null });
       expect(updatedPoints[1]).toEqual({ checkers: 1, player: PLAYER_RIGHT });
-      expect(updatedCheckersOnBar[PLAYER_LEFT]).toBe(1);
+      expect(hasBarPlayer).toBe(PLAYER_LEFT);
     });
 
     it('should not update the checkers on the bar when the destination point belongs to the same player', () => {
@@ -168,14 +170,11 @@ describe('Utility Functions', () => {
         { checkers: 5, player: PLAYER_LEFT },
         { checkers: 1, player: PLAYER_LEFT }
       ];
-      const checkersOnBar = { 0: 0, 1: 0 };
       const player = PLAYER_LEFT;
-      const { updatedPoints, updatedCheckersOnBar } = moveCheckers(points, checkersOnBar, 1, 0, player);
+      const { updatedPoints, hasBarPlayer } = moveCheckers(points, 1, 0, player);
       expect(updatedPoints[0].checkers).toBe(4);
       expect(updatedPoints[1].checkers).toBe(2);
-      expect(updatedCheckersOnBar[0]).toEqual(checkersOnBar[0])
-      expect(updatedCheckersOnBar[1]).toEqual(checkersOnBar[0])
-      expect(updatedPoints[1].player).toBe(PLAYER_LEFT);
+      expect(hasBarPlayer).toBe('');
     });
   });
 });

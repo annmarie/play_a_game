@@ -125,15 +125,18 @@ export function findPotentialMoves(points, player, diceValue) {
  * @param {string} player - The player making the move.
  * @returns {Object} An object containing updated points and checkers on the bar.
  */
-export function moveCheckers(points, checkersOnBar, toIndex, fromIndex, player) {
+export function moveCheckers(points, toIndex, fromIndex, player) {
+  let hasBarPlayer = '';
   const updatedPoints = [ ...points ];
-  const newCheckersOnBar = {};
   const destinationPoint = points[toIndex] || -1;
-  if (destinationPoint === -1) return { updatedPoints: points, updatedCheckersOnBar }
+  if (destinationPoint === -1) return { updatedPoints: points, hasBarPlayer }
   if (destinationPoint.checkers === 1 && destinationPoint.player !== player) {
-    newCheckersOnBar[destinationPoint.player] = (checkersOnBar[destinationPoint.player] || 0) + 1;
-    updatedPoints[toIndex].checkers = 0
-    updatedPoints[toIndex].player = null
+    hasBarPlayer = destinationPoint.player;
+    updatedPoints[toIndex] = {
+      ...updatedPoints[toIndex],
+      checkers: 0,
+      player: null
+    }
   }
   updatedPoints[fromIndex] = {
     ...updatedPoints[fromIndex],
@@ -147,10 +150,5 @@ export function moveCheckers(points, checkersOnBar, toIndex, fromIndex, player) 
     player: updatedPoints[toIndex].checkers + 1 === 1 ? player : updatedPoints[toIndex].player,
   };
 
-  const updatedCheckersOnBar = {
-    ...checkersOnBar,
-    ...newCheckersOnBar
-  }
-
-  return { updatedPoints, updatedCheckersOnBar };
+  return { updatedPoints, hasBarPlayer };
 }
