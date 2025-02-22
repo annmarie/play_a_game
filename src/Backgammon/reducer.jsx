@@ -77,9 +77,10 @@ export const reducer = (state, action) => {
  */
 function reduceSelectSpot(state, action) {
   if (
-    state.player === null ||
-    state.diceValue.length === 0
-  ) return state;
+    state.player === null || state.diceValue.length === 0
+  ) {
+    return state;
+  }
 
   const pointId = action.payload;
   const selectedIndex = pointId - 1;
@@ -106,19 +107,16 @@ function reduceSelectSpot(state, action) {
  */
 function reduceMoveChecker(state, action) {
   if (
-    !state.player ||
-    !state.diceValue ||
+    !state.player || !state.diceValue ||
     state.diceValue.length === 0
-  ) return state;
+  ) {
+    return state;
+  }
 
   const { fromPointId, toPointId } = action.payload;
 
   if (fromPointId === toPointId) {
-    return {
-      ...state,
-      selectedSpot: null,
-      potentialSpots: [],
-    };
+    return { ...state, selectedSpot: null, potentialSpots: [] };
   }
 
   const fromIndex = state.points.findIndex((point) => point.id === fromPointId);
@@ -177,10 +175,11 @@ function reduceMoveChecker(state, action) {
       : initialState.potentialMoves,
     selectedSpot: null,
     potentialSpots: [],
+
     pointsHistory: [...state.pointsHistory, state.points],
+    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar],
     diceHistory: [...state.diceHistory, state.diceValue],
     playerHistory: [...state.playerHistory, state.player],
-    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar],
     potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves],
   };
 }
@@ -215,6 +214,7 @@ function reduceUndo(state) {
     potentialMoves: previousPotentialMoves,
     selectedSpot: null,
     potentialSpots: [],
+
     pointsHistory: updatedPointsHistory,
     checkersOnBarHistory: updatedCheckersOnBarHistory,
     diceHistory: updatedDiceHistory,
