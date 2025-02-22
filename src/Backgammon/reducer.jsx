@@ -91,7 +91,11 @@ function reduceSelectSpot(state, action) {
     return state;
   }
 
-  return { ...state, selectedSpot: pointId, potentialSpots: state.potentialMoves[pointId] || [] };
+  return {
+    ...state,
+    selectedSpot: pointId,
+    potentialSpots: state.potentialMoves[pointId] || []
+  };
 }
 
 /**
@@ -211,7 +215,6 @@ function reduceUndo(state) {
     potentialMoves: previousPotentialMoves,
     selectedSpot: null,
     potentialSpots: [],
-
     pointsHistory: updatedPointsHistory,
     checkersOnBarHistory: updatedCheckersOnBarHistory,
     diceHistory: updatedDiceHistory,
@@ -257,10 +260,5 @@ function reduceRollDice(state) {
 
   const potentialMoves = findPotentialMoves(state.points, player, diceValue);
 
-  return {
-    ...state,
-    diceValue,
-    potentialMoves,
-    player,
-  };
+  return { ...state, diceValue, potentialMoves, player };
 }

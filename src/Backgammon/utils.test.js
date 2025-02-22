@@ -8,7 +8,6 @@ import {
   calculatePotentialMove,
   findPotentialMoves,
   moveCheckers,
-  initializeCheckersOnBar
 } from './utils';
 
 describe('Utility Functions', () => {
