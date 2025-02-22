@@ -4,7 +4,7 @@
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 import {
   SELECT_SPOT, MOVE_CHECKER,
-  ROLL_DICE, UNDO, RESET,
+  ROLL_DICE, UNDO, RESET, TOGGLE_PLAYER
 } from './actionTypes';
 import {
   initializeBoard, togglePlayer, rollDie, moveCheckers,
@@ -57,6 +57,9 @@ export const reducer = (state, action) => {
 
     case MOVE_CHECKER:
       return reduceMoveChecker(state, action);
+
+    case TOGGLE_PLAYER:
+      return { ...state, player: togglePlayer(state.player), diceValue: null }
 
     case UNDO:
       return reduceUndo(state);
