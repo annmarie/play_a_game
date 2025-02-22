@@ -129,6 +129,8 @@ describe('Backgammon Component Tests', () => {
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[17]));
     expect(points[17].getAttribute('aria-label')).toContain('1 left checkers')
+    expect(screen.getByLabelText('Checkers Bar for right')).toBeInTheDocument();
+    expect(screen.queryAllByLabelText('Checkers Bar for left').length).toBe(0);
   });
 
   it('should move a left player to the checker bar', async () => {

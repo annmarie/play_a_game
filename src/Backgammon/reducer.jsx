@@ -8,7 +8,7 @@ import {
 } from './actionTypes';
 import {
   initializeBoard, togglePlayer, rollDie, moveCheckers,
-  generatePointIndexMap, findPotentialMoves, initializeCheckersOnBar
+  generatePointIndexMap, findPotentialMoves
 } from './utils';
 
 /**
@@ -28,7 +28,7 @@ import {
  */
 export const initialState = {
   points: initializeBoard(),
-  checkersOnBar: initializeCheckersOnBar(),
+  checkersOnBar: {},
   diceValue: null,
   player: null,
   selectedSpot: null,
@@ -155,6 +155,8 @@ function reduceMoveChecker(state, action) {
   return {
     ...state,
     points: updatedPoints,
+    helloL: updatedCheckersOnBar['left'],
+    helloR: updatedCheckersOnBar['right'],
     checkersOnBar: updatedCheckersOnBar,
     diceValue: moveInProcess
       ? updatedDiceValue

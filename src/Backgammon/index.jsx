@@ -120,10 +120,18 @@ const Backgammon = () => {
       </div>
       <div className="backgammon-bar">
         <div>
-          {state.checkersOnBar[PLAYER_LEFT] > 0 && <>{state.checkersOnBar[PLAYER_LEFT]} <Checker player={PLAYER_LEFT} /></>}
+          {state.checkersOnBar[PLAYER_LEFT] > 0 && (
+            <div aria-label={`Checkers Bar for ${PLAYER_LEFT}`} >
+              {state.checkersOnBar[PLAYER_LEFT]} <Checker player={PLAYER_LEFT} />
+            </div>
+          )}
         </div>
         <div>
-          {state.checkersOnBar[PLAYER_RIGHT] > 0 && <>{state.checkersOnBar[PLAYER_RIGHT]} <Checker player={PLAYER_RIGHT} /></>}
+          {state.checkersOnBar[PLAYER_RIGHT] > 0 && (
+            <div aria-label={`Checkers Bar for ${PLAYER_RIGHT}`} >
+              {state.checkersOnBar[PLAYER_RIGHT]} <Checker player={PLAYER_RIGHT} />
+            </div>
+          )}
         </div>
       </div>
     </div>

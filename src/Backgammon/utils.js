@@ -23,17 +23,6 @@ export const initializeBoard = () => {
 };
 
 /**
- * Initializes the checkersOnBar state
- * @returns {Object} Object to hold checkers that are on the bar.
- */
-export const initializeCheckersOnBar = () => {
-  const checkersOnBar = {}
-  checkersOnBar[PLAYER_LEFT] = 0;
-  checkersOnBar[PLAYER_RIGHT] = 0;
-  return checkersOnBar;
-}
-
-/**
  * Simulates rolling a six-sided die.
  * @returns {number} A random number between 1 and 6.
  */
