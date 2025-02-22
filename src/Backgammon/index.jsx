@@ -8,8 +8,7 @@ import {
 import {
   UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT,
   ROLL_DICE_BUTTON_TEXT,
-  PLAYER_LEFT,
-  PLAYER_RIGHT
+  PLAYER_LEFT, PLAYER_RIGHT
 } from './globals';
 import Dice from './Dice';
 import Board from './Board';
@@ -81,9 +80,11 @@ const Backgammon = () => {
             <div>
               Current Player <Checker player={state.player} />
             </div>
-            {Object.keys(state.potentialMoves).length < 1 && (
+            {Object.keys(state.potentialMoves).length < 1 &&
+              state.diceValue !== null &&
+              state.diceValue.length > 0 && (
                 <div className="toggle-player">
-                  no moves available move to next player
+                  <p>no moves available move to next player</p>
                   <button
                     className="toggle-button"
                     aria-label="No moves found release move to next player."
