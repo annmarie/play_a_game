@@ -61,7 +61,7 @@ describe('Backgammon Reducer', () => {
     expect(moveState6.player).toBe(PLAYER_LEFT);
   });
 
-  it('should move left player checker to bar', () => {
+  it('should move left player to checker to bar', () => {
     utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(2);
     const state = { ...initialState };
     const rollState1 = reducer(state, { type: ROLL_DICE });
@@ -76,7 +76,7 @@ describe('Backgammon Reducer', () => {
     expect(moveState4.checkersOnBar[PLAYER_LEFT]).toEqual(1);
   });
 
-  it('should move right player checker to bar', () => {
+  it('should move right player to checker to bar', () => {
     utils.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(6);
     const state = { ...initialState };
     const rollState1 = reducer(state, { type: ROLL_DICE });
@@ -91,7 +91,7 @@ describe('Backgammon Reducer', () => {
     expect(moveState4.checkersOnBar[PLAYER_RIGHT]).toEqual(1);
   });
 
-  it('should move right player checker to bar', () => {
+  it('should move right player checker to bar back to board', () => {
     utils.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(6);
     const state = { ...initialState };
     const rollState1 = reducer(state, { type: ROLL_DICE });
@@ -106,7 +106,9 @@ describe('Backgammon Reducer', () => {
     expect(moveState4.checkersOnBar[PLAYER_RIGHT]).toEqual(1);
     utils.rollDie.mockReturnValueOnce(3).mockReturnValueOnce(2);
     const rollState3 = reducer(moveState4, { type: ROLL_DICE });
-    //console.log(rollState3)
+    const moveState5 = reducer(rollState3,  { type: SELECT_SPOT, payload: 10 });
+    expect(moveState5.checkersOnBar[PLAYER_RIGHT]).toEqual(0);
+    expect(moveState5.points[22].player).toEqual(PLAYER_RIGHT);
   });
 
   it('should return the initial state when no action is provided', () => {
