@@ -106,7 +106,7 @@ describe('Backgammon Reducer', () => {
     expect(moveState4.checkersOnBar[PLAYER_RIGHT]).toEqual(1);
     utils.rollDie.mockReturnValueOnce(3).mockReturnValueOnce(2);
     const rollState3 = reducer(moveState4, { type: ROLL_DICE });
-    console.log(rollState3)
+    //console.log(rollState3)
   });
 
   it('should return the initial state when no action is provided', () => {
