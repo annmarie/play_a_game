@@ -99,14 +99,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
 
   for (const point of points.filter(p => p.player === player)) {
     for (const die of dice) {
-      if (hasCheckerOnBar) {
-        if (
-          (player === PLAYER_LEFT && point.id < 19) ||
-          (player === PLAYER_RIGHT && (point.id < 7 || point.id > 12))
-        ) {
-          continue;
-        }
-      }
+      if (hasCheckerOnBar) { return potentialMoves; }
       const movePointId = calculatePotentialMove(player, point.id - 1, die);
       if (movePointId >= 0) {
         const targetPoint = points[movePointId];

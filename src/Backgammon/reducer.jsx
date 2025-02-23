@@ -80,7 +80,9 @@ export const reducer = (state, action) => {
  */
 function reduceSelectSpot(state, action) {
   if (
-    state.player === null || state.diceValue.length === 0
+    state.player === null ||
+    state.diceValue === null ||
+    state.diceValue.length === 0
   ) {
     return state;
   }
@@ -91,9 +93,15 @@ function reduceSelectSpot(state, action) {
   if (state.checkersOnBar[state.player]) {
     const dice = new Set(state.diceValue);
     for (const die of dice) {
-      const pointKey = generatePointIndexMap(state.player, 'index');
-      if (die === pointKey[pointKey[selectedIndex]]) {
-        return updateMoveCheckerState(state, -1, selectedIndex, die)
+      if (
+        (state.player === PLAYER_RIGHT && selectedIndex > 17) ||
+        (state.player === PLAYER_LEFT && (selectedIndex > 5 || selectedIndex < 12))
+      ) {
+        const startKey = generatePointIndexMap(state.player, 'index')[0];
+        if (selectedIndex === (startKey + 1 - die)) {
+          return updateMoveCheckerState(state, -1, selectedIndex + 1, die)
+        }
+
       }
     }
   }
@@ -167,7 +175,6 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
     toIndex, fromIndex,
     state.player
   );
-
   const updatedCheckersOnBar = { ...state.checkersOnBar }
   if (hasBarPlayer) {
     updatedCheckersOnBar[hasBarPlayer] = state.checkersOnBar[hasBarPlayer] || 0;

@@ -106,9 +106,39 @@ describe('Backgammon Reducer', () => {
     expect(moveState4.checkersOnBar[PLAYER_RIGHT]).toEqual(1);
     utils.rollDie.mockReturnValueOnce(3).mockReturnValueOnce(2);
     const rollState3 = reducer(moveState4, { type: ROLL_DICE });
-    const moveState5 = reducer(rollState3,  { type: SELECT_SPOT, payload: 10 });
-    expect(moveState5.checkersOnBar[PLAYER_RIGHT]).toEqual(0);
+    const moveState5 = reducer(rollState3,  { type: SELECT_SPOT, payload: 22 });
     expect(moveState5.points[22].player).toEqual(PLAYER_RIGHT);
+    expect(moveState5.checkersOnBar[PLAYER_RIGHT]).toEqual(0);
+  });
+
+  it('should be able to add a left player bar back on the board.', () => {
+    const points = [
+      { "id": 1, "checkers": 4, "player": "left" },  { "id": 13, "checkers": 3, "player": "right" },
+      { "id": 2, "checkers": 0, "player": null },    { "id": 14, "checkers": 0, "player": null },
+      { "id": 3, "checkers": 0, "player": null },    { "id": 15, "checkers": 0, "player": null },
+      { "id": 4, "checkers": 0, "player": null },    { "id": 16, "checkers": 0, "player": null },
+      { "id": 5, "checkers": 2, "player": "right" }, { "id": 17, "checkers": 4, "player": "left" },
+      { "id": 6, "checkers": 3, "player": "right" }, { "id": 18, "checkers": 0, "player": null },
+      { "id": 7, "checkers": 4, "player": "right" }, { "id": 19, "checkers": 5, "player": "left" },
+      { "id": 8, "checkers": 1, "player": "left" },  { "id": 20, "checkers": 0, "player": null },
+      { "id": 9, "checkers": 0, "player": null },    { "id": 21, "checkers": 0, "player": null },
+      { "id": 10, "checkers": 1, "player": "right" },{ "id": 22, "checkers": 0, "player": null },
+      { "id": 11, "checkers": 0, "player": null },   { "id": 23, "checkers": 0, "player": null },
+      { "id": 12, "checkers": 0, "player": null },   { "id": 24, "checkers": 2, "player": "right" }
+    ]
+    const checkersOnBar = { "left": 1 }
+    const player = PLAYER_LEFT
+    const state = {
+      ...initialState,
+      points,
+      checkersOnBar,
+      player,
+    }
+    utils.rollDie.mockReturnValueOnce(2).mockReturnValueOnce(5);
+    const rollState1 = reducer(state, { type: ROLL_DICE });
+    const selectState1 = reducer(rollState1,  { type: SELECT_SPOT, payload: 11 });
+    expect(selectState1.checkersOnBar[PLAYER_LEFT]).toEqual(0);
+    expect(selectState1.points[11].player).toEqual(PLAYER_LEFT);
   });
 
   it('should return the initial state when no action is provided', () => {
