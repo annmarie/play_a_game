@@ -102,6 +102,20 @@ function reduceSelectSpot(state, action) {
   };
 }
 
+// function xxx() {
+//   const playersCheckersOnBar = state.checkersOnBar[state.player]
+//     ? (state.checkersOnBar[state.player] || 0) > 0 : 0;
+//   if (playersCheckersOnBar) {
+//     const dice = new Set(state.diceValue);
+//     for (const die in dice) {
+//       const pointKey = generatePointIndexMap(state.player, 'point');
+//       if ((die - 1) === pointKey[toIndex]) {
+//       }
+//     }
+//   }
+// }
+
+
 /**
  * Moves a checker from one spot to another and updates the game state.
  * @param {Object} state - The current state.
@@ -143,6 +157,15 @@ function reduceMoveChecker(state, action) {
     return state;
   }
 
+  return finishReduceMoveState(state, fromIndex, toIndex, moveDistance);
+}
+
+/**
+ * Finishes a checker move and updates the game state.
+ * @param {Object} state - The current state.
+ * @returns {Object} - The updated state after moving the checker.
+ */
+function finishReduceMoveState(state, fromIndex, toIndex, moveDistance) {
   const { updatedPoints, hasBarPlayer } = moveCheckers(
     state.points,
     toIndex, fromIndex,
@@ -153,9 +176,12 @@ function reduceMoveChecker(state, action) {
   if (hasBarPlayer) {
     updatedCheckersOnBar[hasBarPlayer] = state.checkersOnBar[hasBarPlayer] || 0;
     updatedCheckersOnBar[hasBarPlayer] += 1;
+    if (fromIndex === -1) {
+      updatedCheckersOnBar[state.player] = state.checkersOnBar[state.player] || 1;
+      updatedCheckersOnBar[hasBarPlayer] -= 1;
+    }
   }
-
-  const updatedDiceValue = state.diceValue.filter((die, index) =>
+  const updatedDiceValue = state.diceValue.filter((dv, index) =>
     index !== state.diceValue.findIndex((d) => d === moveDistance)
   );
 

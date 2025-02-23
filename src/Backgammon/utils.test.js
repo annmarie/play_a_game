@@ -122,6 +122,13 @@ describe('Utility Functions', () => {
         '24': [21]
       });
     });
+
+    it('should return potential moves PLAYER_RIGHT based on dice [3,5] when they are on the bar', () => {
+      const points = initializeBoard()
+      const result = findPotentialMoves(points, PLAYER_RIGHT, [3, 5], { 'right': 2 });
+      expect(result).toEqual({ '7': [10] });
+    });
+
   });
   describe('moveCheckers', () => {
 

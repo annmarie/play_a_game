@@ -136,7 +136,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
  */
 export function moveCheckers(points, toIndex, fromIndex, player) {
   let hasBarPlayer = '';
-  const updatedPoints = [ ...points ];
+  const updatedPoints = [...points];
   const destinationPoint = points[toIndex] || -1;
   if (destinationPoint === -1) return { updatedPoints: points, hasBarPlayer }
   if (destinationPoint.checkers === 1 && destinationPoint.player !== player) {
@@ -147,11 +147,14 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
       player: null
     }
   }
-  updatedPoints[fromIndex] = {
-    ...updatedPoints[fromIndex],
-    checkers: updatedPoints[fromIndex].checkers - 1,
-    player: updatedPoints[fromIndex].checkers - 1 === 0 ? null : player,
-  };
+
+  if (fromIndex >= 0) {
+    updatedPoints[fromIndex] = {
+      ...updatedPoints[fromIndex],
+      checkers: updatedPoints[fromIndex].checkers - 1,
+      player: updatedPoints[fromIndex].checkers - 1 === 0 ? null : player,
+    };
+  }
 
   updatedPoints[toIndex] = {
     ...updatedPoints[toIndex],
