@@ -40,11 +40,10 @@ const Backgammon = () => {
         const fromPointId = state.selectedSpot;
         const toPointId = point.id;
         dispatch({ type: MOVE_CHECKER, payload: { fromPointId, toPointId } });
-      } else if (point.player === state.player) {
-        dispatch({ type: SELECT_SPOT, payload: point.id });
       }
+      dispatch({ type: SELECT_SPOT, payload: point.id });
     },
-    [state.selectedSpot, state.player]
+    [state.selectedSpot]
   );
 
   return (

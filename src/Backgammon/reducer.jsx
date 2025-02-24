@@ -91,14 +91,15 @@ function reduceSelectSpot(state, action) {
   const selectedIndex = pointId - 1;
 
   if (state.checkersOnBar[state.player]) {
-    const startKeyId = generatePointIndexMap(state.player, 'index')[0] + 1;
+    const startKeyId = state.player === PLAYER_LEFT ? 12 : 24;
+
     for (const potentialPointId of Object.keys(state.potentialMoves)) {
-        console.log(startKeyId, potentialPointId, pointId)
       if (pointId == potentialPointId) {
         const moveDistance = startKeyId - potentialPointId;
         return updateMoveCheckerState(state, -1, selectedIndex, moveDistance)
       }
     }
+    return state;
   }
 
   if (
