@@ -111,6 +111,30 @@ describe('Backgammon Reducer', () => {
     expect(moveState5.checkersOnBar[PLAYER_RIGHT]).toEqual(0);
   });
 
+  it('should move a left checker with mock return values', () => {
+    jest.spyOn(utils, 'moveCheckers').mockReturnValue({
+      updatedPoints: [{ id: 1, checkers: 0 }, { id: 2, checkers: 1 }],
+      hasBarPlayer: null,
+    });
+    jest.spyOn(utils, 'findPotentialMoves').mockReturnValue({ 1: [1]});
+
+    const action = { type: MOVE_CHECKER, payload: { fromPointId: 2, toPointId: 1 } };
+    const mockState = {
+      ...initialState,
+      player: PLAYER_LEFT,
+      diceValue: [1],
+      points: [{ id: 1, checkers: 0 }, { id: 2, checkers: 1, player: PLAYER_LEFT }],
+    };
+
+    const state = reducer(mockState, action);
+    expect(state.player).toBe(PLAYER_RIGHT); // Player toggles after move
+    expect(state.points[0].checkers).toEqual(1)
+    expect(state.points[0].player).toEqual(PLAYER_LEFT)
+    expect(state.points[1].checkers).toEqual(0)
+    expect(state.points[1].player).toEqual(null)
+    expect(state.diceValue).toEqual(null);
+  });
+
   it('should be able to add a left player bar back on the board.', () => {
     const state = {
       ...initialState,

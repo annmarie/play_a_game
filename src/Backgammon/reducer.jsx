@@ -135,7 +135,6 @@ function reduceMoveChecker(state, { payload: { fromPointId, toPointId } }) {
 
   const fromIndex = points.findIndex((point) => point.id === fromPointId);
   const toIndex = points.findIndex((point) => point.id === toPointId);
-
   if (
     fromIndex === -1 || toIndex === -1 ||
     points[fromIndex].checkers < 1
