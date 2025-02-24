@@ -91,17 +91,12 @@ function reduceSelectSpot(state, action) {
   const selectedIndex = pointId - 1;
 
   if (state.checkersOnBar[state.player]) {
-    const dice = new Set(state.diceValue);
-    for (const die of dice) {
-      if (
-        (state.player === PLAYER_RIGHT && selectedIndex > 17) ||
-        (state.player === PLAYER_LEFT && (selectedIndex > 5 || selectedIndex < 12))
-      ) {
-        const startKey = generatePointIndexMap(state.player, 'index')[0];
-        if (selectedIndex === (startKey + 1 - die)) {
-          return updateMoveCheckerState(state, -1, selectedIndex + 1, die)
-        }
-
+    const startKeyId = generatePointIndexMap(state.player, 'index')[0] + 1;
+    for (const potentialPointId of Object.keys(state.potentialMoves)) {
+        console.log(startKeyId, potentialPointId, pointId)
+      if (pointId == potentialPointId) {
+        const moveDistance = startKeyId - potentialPointId;
+        return updateMoveCheckerState(state, -1, selectedIndex, moveDistance)
       }
     }
   }

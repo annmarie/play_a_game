@@ -97,9 +97,24 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   const potentialMoves = {};
   const hasCheckerOnBar = checkersOnBar[player] ? (checkersOnBar[player] || 0) > 0 : 0;
 
+  if (hasCheckerOnBar) {
+    const startPointId = generatePointIndexMap(player, 'index')[0] + 1;
+    for (const die of dice) {
+      const targetPointId = startPointId + 1 - die;
+      const targetPoint = points[targetPointId - 1]
+      if (
+        targetPoint.checkers === 0 ||
+        targetPoint.player === player ||
+        (targetPoint.checkers === 1 && targetPoint.player !== player)
+      ) {
+        potentialMoves[targetPointId] = []
+      }
+    }
+    return potentialMoves;
+  }
+
   for (const point of points.filter(p => p.player === player)) {
     for (const die of dice) {
-      if (hasCheckerOnBar) { return potentialMoves; }
       const movePointId = calculatePotentialMove(player, point.id - 1, die);
       if (movePointId >= 0) {
         const targetPoint = points[movePointId];
