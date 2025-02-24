@@ -125,40 +125,30 @@ function reduceSelectSpot(state, action) {
  * @param {Object} action - The action containing from and to point IDs.
  * @returns {Object} - The updated state after moving the checker.
  */
-function reduceMoveChecker(state, action) {
-  if (
-    !state.player || !state.diceValue ||
-    state.diceValue.length === 0
-  ) {
-    return state;
-  }
-
-  const { fromPointId, toPointId } = action.payload;
-
-  if (fromPointId === toPointId) {
-    return { ...state, selectedSpot: null, potentialSpots: [] };
-  }
-
-  const fromIndex = state.points.findIndex((point) => point.id === fromPointId);
-  const toIndex = state.points.findIndex((point) => point.id === toPointId);
+function reduceMoveChecker(state, { payload: { fromPointId, toPointId } }) {
+  const { player, diceValue, points } = state;
 
   if (
-    fromIndex === INVALID_INDEX || toIndex === INVALID_INDEX ||
-    state.points[fromIndex].checkers < 1
-  ) {
-    return state;
-  }
+    !player || !diceValue ||
+    diceValue.length === 0
+  ) return state;
 
-  const pointKey = generatePointIndexMap(state.player, 'point');
+  const fromIndex = points.findIndex((point) => point.id === fromPointId);
+  const toIndex = points.findIndex((point) => point.id === toPointId);
+
+  if (
+    fromIndex === -1 || toIndex === -1 ||
+    points[fromIndex].checkers < 1
+  ) return state;
+
+  const pointKey = generatePointIndexMap(player, 'point');
   const moveDistance = Math.abs(pointKey[toIndex] - pointKey[fromIndex]);
-  const isValidDiceValue = state.diceValue.includes(moveDistance);
+  const isValidDiceValue = diceValue.includes(moveDistance);
 
   if (
     !isValidDiceValue ||
     !(pointKey[toIndex] > pointKey[fromIndex])
-  ) {
-    return state;
-  }
+  ) return state;
 
   return updateMoveCheckerState(state, fromIndex, toIndex, moveDistance);
 }
