@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'
 import Checker from '../Checker'
 import './styles.css'
+import { START_KEY_LEFT } from '../globals';
 
 const Point = ({ point, onClick, selected, potential }) => {
   const getPointClass = (id) => {
     const colorClass = id % 2 === 0 ? 'light' : 'dark';
-    const placeClass = id > 12 ? 'bottom' : 'top';
+    const placeClass = id > START_KEY_LEFT ? 'bottom' : 'top';
     const selectedClass = selected ? 'selected' : '';
     const potentialClass = potential ? 'potential' : '';
 

@@ -1,7 +1,10 @@
 /**
  * backgammon reducer
  */
-import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
+import {
+  PLAYER_LEFT, PLAYER_RIGHT, INVALID_INDEX,
+  START_KEY_LEFT, START_KEY_RIGHT
+} from './globals';
 import {
   SELECT_SPOT, MOVE_CHECKER, ROLL_DICE,
   UNDO, RESET, TOGGLE_PLAYER
@@ -91,19 +94,19 @@ function reduceSelectSpot(state, action) {
   const selectedIndex = pointId - 1;
 
   if (state.checkersOnBar[state.player]) {
-    const startKeyId = state.player === PLAYER_LEFT ? 12 : 24;
+    const startKeyId = state.player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
 
     for (const potentialPointId of Object.keys(state.potentialMoves)) {
       if (pointId == potentialPointId) {
         const moveDistance = startKeyId - potentialPointId;
-        return updateMoveCheckerState(state, -1, selectedIndex, moveDistance)
+        return updateMoveCheckerState(state, INVALID_INDEX, selectedIndex, moveDistance)
       }
     }
     return state;
   }
 
   if (
-    selectedIndex === -1 ||
+    selectedIndex === INVALID_INDEX ||
     state.points[selectedIndex].player !== state.player
   ) {
     return state;
@@ -140,7 +143,7 @@ function reduceMoveChecker(state, action) {
   const toIndex = state.points.findIndex((point) => point.id === toPointId);
 
   if (
-    fromIndex === -1 || toIndex === -1 ||
+    fromIndex === INVALID_INDEX || toIndex === INVALID_INDEX ||
     state.points[fromIndex].checkers < 1
   ) {
     return state;
@@ -176,7 +179,7 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
     updatedCheckersOnBar[hasBarPlayer] = state.checkersOnBar[hasBarPlayer] || 0;
     updatedCheckersOnBar[hasBarPlayer] += 1;
   }
-  if (fromIndex === -1) {
+  if (fromIndex === INVALID_INDEX) {
     updatedCheckersOnBar[state.player] = state.checkersOnBar[state.player] || 1;
     updatedCheckersOnBar[state.player] -= 1;
   }
