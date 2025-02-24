@@ -111,28 +111,19 @@ describe('Backgammon Reducer', () => {
     expect(moveState5.checkersOnBar[PLAYER_RIGHT]).toEqual(0);
   });
 
-  it('should move a left checker with mock return values', () => {
-    jest.spyOn(utils, 'moveCheckers').mockReturnValue({
-      updatedPoints: [{ id: 1, checkers: 0 }, { id: 2, checkers: 1 }],
-      hasBarPlayer: null,
-    });
-    jest.spyOn(utils, 'findPotentialMoves').mockReturnValue({ 1: [1]});
-
-    const action = { type: MOVE_CHECKER, payload: { fromPointId: 2, toPointId: 1 } };
-    const mockState = {
-      ...initialState,
-      player: PLAYER_LEFT,
-      diceValue: [1],
-      points: [{ id: 1, checkers: 0 }, { id: 2, checkers: 1, player: PLAYER_LEFT }],
-    };
-
-    const state = reducer(mockState, action);
-    expect(state.player).toBe(PLAYER_RIGHT); // Player toggles after move
-    expect(state.points[0].checkers).toEqual(1)
-    expect(state.points[0].player).toEqual(PLAYER_LEFT)
-    expect(state.points[1].checkers).toEqual(0)
-    expect(state.points[1].player).toEqual(null)
-    expect(state.diceValue).toEqual(null);
+  it('should move a right checker from 13 to 2', () => {
+    utils.rollDie.mockReturnValueOnce(2).mockReturnValueOnce(4);
+    const rollState1 = reducer(initialState, { type: ROLL_DICE });
+    const selectState1 = reducer(rollState1,  { type: SELECT_SPOT, payload: 13 });
+    const action = { type: MOVE_CHECKER, payload: { fromPointId: 13, toPointId: 2 } };
+    expect(selectState1.player).toBe(PLAYER_RIGHT);
+    const state = reducer(selectState1, action);
+    expect(state.player).toBe(PLAYER_RIGHT);
+    expect(state.points[12].checkers).toEqual(4)
+    expect(state.points[12].player).toEqual(PLAYER_RIGHT)
+    expect(state.points[1].checkers).toEqual(1)
+    expect(state.points[1].player).toEqual(PLAYER_RIGHT)
+    expect(state.diceValue).toEqual([4]);
   });
 
   it('should be able to add a left player bar back on the board.', () => {
