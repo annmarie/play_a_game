@@ -1,4 +1,7 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { reducer } from '../store';
 import { PLAYER_ONE, PLAYER_TWO, DRAW_MESSAGE } from './globals';
 import Connect4 from '../Connect4';
 
@@ -10,9 +13,14 @@ const RESET_GAME = /reset game/i;
 const UNDO_MOVE = /undo move/i;
 
 describe("Connect4 Component", () => {
+  let store;
+
+  beforeEach(() => {
+    store = configureStore({ reducer });
+  });
 
   it("should render the initial board setup", async () => {
-    await act(async () => render(<Connect4 />));
+    await act(async () => render(<Provider store={store}><Connect4 /></Provider>));
     const cells = screen.getAllByRole("cell");
     expect(cells).toHaveLength(BOARD_LENGTH);
     validateInitialBoardState(cells);
@@ -23,7 +31,7 @@ describe("Connect4 Component", () => {
 
   it("should allow players to take turns", async () => {
     let spotRex;
-    await act(async () => render(<Connect4 />));
+    await act(async () => render(<Provider store={store}><Connect4 /></Provider>));
     const cells = screen.getAllByRole("cell");
 
     await act(async () => fireEvent.click(cells[4])); // Player One
@@ -43,14 +51,14 @@ describe("Connect4 Component", () => {
   });
 
   it("should declare a winner", async () => {
-    await act(async () => render(<Connect4 />));
+    await act(async () => render(<Provider store={store}><Connect4 /></Provider>));
     const cells = screen.getAllByRole("cell");
     await simulateMoves(cells, [1, 2, 1, 2, 1, 2, 1])
     expect(screen.getByText(WINNER_PLAYER_ONE)).toBeInTheDocument();
   });
 
   it("should declare a draw", async () => {
-    await act(async () => render(<Connect4 />));
+    await act(async () => render(<Provider store={store}><Connect4 /></Provider>));
     const cells = screen.getAllByRole("cell");
     for (let i = 0; i < 6; i++) {
       await simulateMoves(cells, [6, 0, 5, 1, 2, 4, 3])
@@ -60,7 +68,7 @@ describe("Connect4 Component", () => {
 
   it("should reset the game", async () => {
     let spotRex;
-    await act(async () => render(<Connect4 />));
+    await act(async () => render(<Provider store={store}><Connect4 /></Provider>));
     const cells = screen.getAllByRole("cell");
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
 
@@ -84,7 +92,7 @@ describe("Connect4 Component", () => {
 
   it("should undo last move", async () => {
     let spotRex;
-    await act(async () => render(<Connect4 />));
+    await act(async () => render(<Provider store={store}><Connect4 /></Provider>));
     const cells = screen.getAllByRole("cell");
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
 

@@ -4,6 +4,7 @@
   border: 1px solid black;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  width: 618px;
 }
 
 .backgammon-game .dice-button {

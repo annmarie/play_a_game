@@ -7,3 +7,4 @@ module.exports = {
     return 'module.exports = ' + JSON.stringify(path.basename(filename)) + ';';
   },
 };
+

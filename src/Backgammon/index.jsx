@@ -1,49 +1,47 @@
-import { useReducer, useCallback, useEffect } from 'react';
-import { initialState, reducer } from './reducer';
-import {
-  SELECT_SPOT, MOVE_CHECKER,
-  ROLL_DICE, UNDO, RESET,
-  TOGGLE_PLAYER
-} from './actionTypes';
+import { useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
   UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT,
   ROLL_DICE_BUTTON_TEXT,
   PLAYER_LEFT, PLAYER_RIGHT
 } from './globals';
+import { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot } from './slice';
 import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
 import './styles.css';
+import { useDispatch } from 'react-redux';
 
 const Backgammon = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.backgammon);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === ' ') {
         if (state.diceValue === null) {
-          dispatch({ type: ROLL_DICE });
+          dispatch(rollDice());
         }
       }
       if (e.key === 'u') {
-        dispatch({ type: UNDO });
+        dispatch(undoRoll());
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [state.diceValue]);
+  }, [state.diceValue, dispatch]);
 
   const handleSpotClick = useCallback(
     (point) => {
       if (state.selectedSpot) {
         const fromPointId = state.selectedSpot;
         const toPointId = point.id;
-        dispatch({ type: MOVE_CHECKER, payload: { fromPointId, toPointId } });
+        dispatch(makeMove({ fromPointId, toPointId }));
       }
-      dispatch({ type: SELECT_SPOT, payload: point.id });
+      dispatch(selectSpot(point.id));
     },
-    [state.selectedSpot]
+    [state.selectedSpot, dispatch]
   );
 
   return (
@@ -66,7 +64,7 @@ const Backgammon = () => {
               <button
                 className="dice-button"
                 aria-label="Roll Dice"
-                onClick={() => dispatch({ type: ROLL_DICE })}
+                onClick={() => dispatch(rollDice())}
               >
                 {ROLL_DICE_BUTTON_TEXT}
               </button>
@@ -87,7 +85,7 @@ const Backgammon = () => {
                   <button
                     className="toggle-button"
                     aria-label="No moves found release move to next player."
-                    onClick={() => dispatch({ type: TOGGLE_PLAYER })}
+                    onClick={() => dispatch(togglePlayerRoll())}
                   >
                     Release Move To Next Player
                   </button>
@@ -98,7 +96,7 @@ const Backgammon = () => {
 
         <div>
           <button
-            onClick={() => dispatch({ type: UNDO })}
+            onClick={() => dispatch(undoRoll())}
             disabled={state.player === null}
             aria-label="Undo last move"
           >
@@ -106,7 +104,7 @@ const Backgammon = () => {
           </button>
           <button
             className="reset-game"
-            onClick={() => dispatch({ type: RESET })}
+            onClick={() => dispatch(resetGame())}
             disabled={state.player === null}
             aria-label="Reset the game"
           >

@@ -1,17 +1,14 @@
-import { useReducer } from 'react';
-import { MAKE_MOVE, UNDO_MOVE, RESET_GAME } from './actionTypes';
 import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT } from './globals';
-import { reducer, initialState } from './reducer';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeMove, undoMove, resetGame } from './slice';
 import StatusBox from './StatusBox';
 import Board from './Board';
 import './styles.css';
 
 const Connect4 = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const handleCellClick = (col) => {
-    dispatch({ type: MAKE_MOVE, payload: { col } });
-  };
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.connect4);
+  const handleCellClick = (col) => dispatch(makeMove({ col }));
 
   return (
     <div className="connect4-game">
@@ -32,14 +29,14 @@ const Connect4 = () => {
       <div className="connect4-actions">
         <button
           aria-label="Undo Move"
-          onClick={() => dispatch({ type: UNDO_MOVE })}
+          onClick={() => dispatch(undoMove())}
           disabled={state.history.length === 0 || state.winner}
         >
           {UNDO_BUTTON_TEXT}
         </button>
         <button
           aria-label="Reset Game"
-          onClick={() => dispatch({ type: RESET_GAME })}
+          onClick={() => dispatch(resetGame())}
           disabled={state.history.length === 0}
         >
           {RESET_BUTTON_TEXT}

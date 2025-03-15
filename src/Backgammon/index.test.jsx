@@ -1,5 +1,8 @@
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { reducer } from '../store';
 import Backgammon from '../Backgammon';
 import * as utils from './utils';
 
@@ -18,13 +21,15 @@ const RESET_GAME = /reset the game/i;
 const UNDO_MOVE = /undo last move/i;
 
 describe('Backgammon Component Tests', () => {
+  let store;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    store = configureStore({ reducer });
   });
 
   it('should render the initial board', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     expect(rollButton).toBeInTheDocument();
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
@@ -40,7 +45,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should have class selected on the point if selected for play', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     utils.rollDie.mockReturnValueOnce(3).mockReturnValueOnce(5);
     await act(async () => fireEvent.click(rollButton));
@@ -54,7 +59,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should roll the dice and render the dots for each die', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
@@ -77,7 +82,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should be able roll dice, make a move and reset board', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
@@ -106,7 +111,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should move a right player to the checker bar', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     const points = screen.queryAllByRole('point');
     utils.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(6);
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
@@ -134,7 +139,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should move a left player to the checker bar', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     const points = screen.queryAllByRole('point');
     utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
@@ -160,7 +165,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should be able display four sets of die when doubles are rolled', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     const points = screen.queryAllByRole('point');
     // first roll cannot be doubles
     utils.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
@@ -187,7 +192,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should roll the dice when the spacebar is pressed and diceValue is null', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     expect(rollButton).toBeInTheDocument();
     utils.rollDie.mockReturnValueOnce(4).mockReturnValueOnce(6);
@@ -197,7 +202,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should not roll the dice when the spacebar is pressed and diceValue is not null', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     expect(screen.getByRole('button', { name: ROLL_DICE })).toBeInTheDocument();
     utils.rollDie.mockReturnValueOnce(4).mockReturnValueOnce(6);
     await act(async () => fireEvent.keyDown(window, { key: ' ' }))
@@ -208,7 +213,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should undo the dice roll when the "u" key is pressed', async () => {
-    await act(async () => render(<Backgammon />));
+    await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     expect(screen.getByRole('button', { name: ROLL_DICE })).toBeInTheDocument();
     utils.rollDie.mockReturnValueOnce(4).mockReturnValueOnce(6);
     await act(async () => fireEvent.keyDown(window, { key: ' ' }))
@@ -220,7 +225,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should clean up the event listener on unmount', async () => {
-    const { unmount } = await act(async () => render(<Backgammon />));
+    const { unmount } = await act(async () => render(<Provider store={store}><Backgammon /></Provider>));
     const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
     unmount();
     expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));

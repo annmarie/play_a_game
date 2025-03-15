@@ -1,0 +1,22 @@
+.peg-game {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
+  min-width: 240px;
+  width: 200px;
+}
+
+.peg-game-status {
+  margin: 10px;
+  font-size: 14px;
+}
+
+.peg-board {
+  display: grid;
+  grid-template-columns: repeat(7, 20px);
+  gap: 5px;
+  justify-content: center;
+}
