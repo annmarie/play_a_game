@@ -1,0 +1,38 @@
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20em;
+}
+
+.header {
+  color: cornsilk;
+  background: linear-gradient(to right, green, pink);
+  padding: .5em;
+  margin: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.list {
+  list-style-type: none;
+  padding: 0;
+  text-align: center;
+  width: 20em;
+}
+
+.list-item {
+  margin: .5em 0;
+}
+
+.list-item a {
+  text-decoration: none;
+  color: #007BFF;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.list-item a:hover {
+  color: #0056b3;
+}

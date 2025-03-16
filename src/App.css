@@ -1,5 +1,6 @@
-.main {
-  margin: 10px;
+body {
+  height: 100vh;
+  margin: 0;
 }
 
 .well {
@@ -12,11 +13,3 @@
   margin: 2px;
 }
 
-.list {
-  list-style-type: 'none';
-  padding: 0;
-}
-
-.list-item {
-  margin: 10px 0;
-}
