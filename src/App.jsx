@@ -6,24 +6,14 @@ import Connect4 from './Connect4';
 import PegSolitaire from './PegSolitaire';
 import TicTacToe from './TicTacToe';
 import Backgammon from './Backgammon';
-
-const Hello = () => {
-  return (
-    <ul className="list">
-      <li className="list-item"><Link to="/backgammon">Backgammon</Link></li>
-      <li className="list-item"><Link to="/connect4">Connect4</Link></li>
-      <li className="list-item"><Link to="/slidepuzzle">SlidePuzzle</Link></li>
-      <li className="list-item"><Link to="/pegsolitaire">PegSolitaire</Link></li>
-    </ul>
-  );
-};
+import Home from './Home';
 
 const App = () => {
   return (
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/" element={<Hello />} />
+          <Route path="/" element={<Home />} />
           <Route path="/slidepuzzle" element={<SlidePuzzle />} />
           <Route path="/connect4" element={<Connect4 />} />
           <Route path="/pegsolitaire" element={<PegSolitaire />} />
