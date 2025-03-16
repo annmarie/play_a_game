@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import './styles.css'
 
-const Hello = () => {
+const Home = () => {
   return (<div className="main">
     <h1 className="header">Play A Game</h1>
     <ul className="list">
@@ -13,4 +13,4 @@ const Hello = () => {
   </div>);
 };
 
-export default Hello
+export default Home;
