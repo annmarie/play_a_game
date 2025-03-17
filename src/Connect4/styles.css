@@ -1,10 +1,10 @@
 .connect4-game {
-  background-color: gray;
+  background-color: #989393;
   display: flex;
   flex-direction: column;
   border-radius: 0.75em;
   border: 1px solid black;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25em 0.50em rgba(0, 0, 0, 0.1);
   padding: 1.25em;
   text-align: center;
   align-items: center;
