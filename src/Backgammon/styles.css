@@ -4,13 +4,13 @@
   border: 0.0625em solid black;
   box-shadow: 0 0.25em 0.50em rgba(0, 0, 0, 0.1);
   padding: 1.25em;
-  width: 618px;
+  width: 38.625em;
 }
 
 .backgammon-game .dice-button {
   width: 100%;
   border-radius: 50em;
-  border: 1px solid transparent;
+  border: 0.0625em solid transparent;
   cursor: pointer;
   height: fit-content;
   transition: border-color 0.25s;

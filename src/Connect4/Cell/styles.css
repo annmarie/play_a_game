@@ -17,7 +17,7 @@
   height: 100%;
   border-radius: 50%;
   box-shadow: 0 0.25em 0.50em rgba(0, 0, 0, 0.1);
-  margin: 2px auto;
+  margin: 0.125em auto;
 }
 
 .connect4-board .connect4-cell .checker.player_one {
