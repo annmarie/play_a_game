@@ -4,8 +4,12 @@
   color: cornsilk;
   background: linear-gradient(to right, green, pink);
   text-align: center;
-  padding: 1.25em;
+  padding: 2em;
   background-color: white;
   margin: 0;
   width: 100%;
+}
+
+.header h1 {
+  margin: 0;
 }

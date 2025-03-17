@@ -1,22 +1,23 @@
+
 .peg-game {
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid black;
-  padding: 10px;
+  background-color: #eabbbb;
+  border-radius: 0.625em;
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1);
+  border: 0.0625em solid black;
+  padding: 0.625em;
   text-align: center;
-  min-width: 240px;
-  width: 200px;
+  min-width: 15em;
+  width: 12.5em;
 }
 
 .peg-game-status {
-  margin: 10px;
-  font-size: 14px;
+  margin: 0.625em;
+  font-size: 0.875em;
 }
 
 .peg-board {
   display: grid;
-  grid-template-columns: repeat(7, 20px);
-  gap: 5px;
+  grid-template-columns: repeat(7, 1.25em);
+  gap: 0.3125em;
   justify-content: center;
 }

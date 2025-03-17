@@ -1,7 +1,11 @@
 import './styles.css'
 
 const Header = () => {
-  return (<h1 className="header">Play A Game</h1>);
+  return (
+    <div className="header">
+      <h1 >Play A Game</h1>
+    </div>
+  );
 };
 
 export default Header;
