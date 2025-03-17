@@ -1,20 +1,24 @@
 
 .tic-tac-toe-game {
   background-color: #eabbbb;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  border-radius: 1em;
+  box-shadow: 0 0.25em 0.50em rgba(0, 0, 0, 0.1);
+  padding: 1em;
   text-align: center;
-  width: 222px;
+  width: 14em;
 }
 
 .tic-tac-toe-game button:active {
-  outline: 8px auto #646cff;
+  outline: 0.50em auto #646cff;
 }
 
 .tic-tac-toe-game button:disabled {
   cursor: not-allowed;
   outline: transparent;
+}
+
+.tic-tac-toe-game h3 {
+  margin: 0 0 1em 0;
 }
 
 .tic-tac-toe-board {
@@ -24,23 +28,21 @@
 
 .tic-tac-toe-cells {
   display: grid;
-  grid-template-columns: repeat(3, 40px);
-  grid-template-rows: repeat(3, 40px);
-  gap: 5px;
+  grid-template-columns: repeat(3, 2.5em);
+  grid-template-rows: repeat(3, 2.5em);
+  gap: 0.3125em;
 }
 
 .tic-tac-toe-cell {
-  width: 40px;
-  height: 40px;
-  font-size: 24px;
+  font-size: 1.5em;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 20%;
+  box-shadow: 0 0.25em 0.50em rgba(0, 0, 0, 0.1);
   background-color: cornsilk;
-  border: 1px solid #ccc;
+  border: 0.0625em solid #ccc;
   transition: background-color 0.3s ease;
 }
 
@@ -49,13 +51,12 @@
 }
 
 .tic-tac-toe-status {
-  margin: 10px;
-  font-size: 18px;
+  margin: 1em;
+  font-size: 1.125em;
 }
 
 .tic-tac-toe-actions {
   display: flex;
   justify-content: center;
-  margin: 10px;
+  margin: 1em;
 }
-
