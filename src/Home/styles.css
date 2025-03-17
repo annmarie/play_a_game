@@ -6,12 +6,12 @@
 }
 
 .list-item {
-  margin: 10px 0;
+  margin: 1em 0;
 }
 
 .list-item a {
   text-decoration: none;
-  font-size: 18px;
+  font-size: 1.125em;
 }
 
 .list-item a:hover {

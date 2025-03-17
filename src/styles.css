@@ -18,15 +18,15 @@ a:hover {
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
+  border-radius: 0.50em;
+  border: 0.0625em solid transparent;
   cursor: pointer;
   height: fit-content;
   transition: border-color 0.25s;
 }
 
 button:active {
-  outline: 8px auto #646cff;
+  outline: 0.50em auto #646cff;
 }
 
 button:disabled {

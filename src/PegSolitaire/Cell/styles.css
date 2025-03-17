@@ -1,8 +1,8 @@
 .peg-board .cell {
-  width: 20px;
-  height: 20px;
+  width: 1.25em;
+  height: 1.25em;
   background-color: lightgray;
-  border: 2px solid transparent;
+  border: 0.125em solid transparent;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,13 +12,13 @@
 
 .peg-board .cell.peg {
   background-color: blue;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0.125em 0.125em 0.375em rgba(0, 0, 0, 0.3);
 
 }
 
 .peg-board .cell.empty {
   background-color: white;
-  border: 2px solid black;
+  border: 0.125em solid black;
 }
 
 .peg-board .cell.invalid {
@@ -26,5 +26,5 @@
 }
 
 .peg-board .cell.selected {
-  border: 2px solid red;
+  border: 0.125em solid red;
 }

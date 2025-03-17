@@ -3,12 +3,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 60px;
-    margin: 5px;
+    width: 3.75em;
+    height: 3.75em;
+    margin: 0.3125em;
     background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    font-size: 20px;
+    border: 0.0625em solid #ccc;
+    font-size: 1.25em;
     font-weight: bold;
     cursor: pointer;
     user-select: none;
@@ -21,8 +21,8 @@
   }
 
   .tile.empty {
-    background-color: #ffffff;
-    border: 1px dashed #ccc;
+    background-color: lightgrey;
+    border: 0.0625em dashed #ccc;
     cursor: default;
   }
 }
