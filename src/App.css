@@ -1,15 +1,4 @@
-body {
-  height: 100vh;
-  margin: 0;
-}
 
-.well {
-  display: flex;
-  flex-wrap: wrap;
-}
 
-.well-item {
-  padding: 2px;
-  margin: 2px;
-}
+
 

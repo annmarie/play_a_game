@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
+import Header from '../Header';
 import './styles.css'
 
 const Home = () => {
   return (<div className="main">
-    <h1 className="header">Play A Game</h1>
+    <Header />
     <ul className="list">
       <li className="list-item"><Link to="/backgammon">Backgammon</Link></li>
       <li className="list-item"><Link to="/connect4">Connect4</Link></li>

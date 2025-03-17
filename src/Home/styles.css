@@ -1,20 +1,4 @@
 
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.header {
-  color: cornsilk;
-  background: linear-gradient(to right, green, pink);
-  text-align: center;
-  padding: 1.25em;
-  background-color: white;
-  margin: 0;
-  width: 100%;
-}
-
 .list {
   list-style-type: none;
   padding: 0;
