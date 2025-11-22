@@ -10,8 +10,8 @@ const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
           key={point.id}
           point={point}
           onClick={handleSpotClick}
-          selected={selectedSpot === point.id ? true : false}
-          potential={potentialSpots.includes(point.id) ? true : false}
+          selected={selectedSpot === point.id}
+          potential={potentialSpots.includes(point.id)}
         />
       ))}
     </div>
