@@ -5,15 +5,19 @@ import './styles.css'
 const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
   return (
     <div className="backgammon-board">
-      {points.map((point) => (
-        <Point
-          key={point.id}
-          point={point}
-          onClick={handleSpotClick}
-          selected={selectedSpot === point.id}
-          potential={potentialSpots.includes(point.id)}
-        />
-      ))}
+      {points.map((point) => {
+        const isSelected = selectedSpot === point.id;
+        const isPotential = potentialSpots.includes(point.id);
+        return (
+          <Point
+            key={point.id}
+            point={point}
+            onClick={handleSpotClick}
+            selected={isSelected}
+            potential={isPotential}
+          />
+        );
+      })}
     </div>
   );
 };
