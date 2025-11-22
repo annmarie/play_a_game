@@ -2,10 +2,9 @@
 
 .header {
   color: cornsilk;
-  background: linear-gradient(to right, green, pink);
+  background: radial-gradient(ellipse at center, #eabbbb, #ecabab);
   text-align: center;
   padding: 2em;
-  background-color: white;
   margin: 0;
   width: 100%;
 }
