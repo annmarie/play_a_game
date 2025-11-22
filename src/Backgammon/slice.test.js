@@ -194,27 +194,3 @@ describe('Main Slice', () => {
 
 
 });
-describe('bearing off with higher die value', () => {
-  it('should allow bearing off from point 22 with die value 4 for left player', () => {
-    const testState = {
-      ...initialState,
-      points: initialState.points.map((point) => {
-        if (point.id === 22) return { ...point, checkers: 1, player: PLAYER_LEFT };
-        if (point.id === 20) return { ...point, checkers: 6, player: PLAYER_LEFT };
-        return { ...point, checkers: 0, player: null };
-      }),
-      player: PLAYER_LEFT,
-      diceValue: [4],
-      checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
-      checkersBornOff: { [PLAYER_LEFT]: 8, [PLAYER_RIGHT]: 7 },
-      potentialMoves: { 22: [-1], 20: [-1] }
-    };
-
-    const action = makeMove({ fromPointId: 22, toPointId: -1 });
-    const newState = reducer(testState, action);
-
-    expect(newState.checkersBornOff[PLAYER_LEFT]).toBe(9);
-    expect(newState.points[21].checkers).toBe(0);
-    expect(newState.diceValue).toBe(null);
-  });
-});

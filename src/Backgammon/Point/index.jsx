@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import Checker from '../Checker'
-import './styles.css'
+import './layout.css'
 import { START_KEY_LEFT } from '../globals';
 
 const Point = ({ point, onClick, selected, potential }) => {

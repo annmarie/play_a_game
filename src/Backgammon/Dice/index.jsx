@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import './styles.css';
+import './layout.css';
 import { useEffect, useState } from 'react';
 
 const Dice = ({ diceValue = null }) => {

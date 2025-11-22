@@ -4,7 +4,7 @@ import { moveTile, resetGame } from './slice';
 import StatusBox from './StatusBox';
 import Board from './Board';
 import Header from '../Header';
-import './styles.css';
+import './layout.css';
 
 const SidePuzzle = () => {
   const dispatch = useDispatch();

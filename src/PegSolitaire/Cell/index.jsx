@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import './styles.css'
+import './layout.css'
 
 const Cell = ({ rowIndex, colIndex, cellValue, selectedPeg, onClick }) => {
   const isSelected = selectedPeg?.row === rowIndex && selectedPeg?.col === colIndex;

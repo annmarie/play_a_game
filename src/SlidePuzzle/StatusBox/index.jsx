@@ -1,5 +1,5 @@
 import PropsType from 'prop-types';
-import './styles.css';
+import './layout.css';
 
 const StatusBox = ({ isSolved }) => {
 

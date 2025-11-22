@@ -6,8 +6,6 @@ import {
 
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX } from './globals';
 
-const MAX_HISTORY = 10;
-
 export const initialState = {
   points: initializeBoard(),
   checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
@@ -26,7 +24,7 @@ export const initialState = {
 };
 
 export const slice = createSlice({
-  name: 'backgammon',
+  name: 'counter',
   initialState,
   reducers: {
     selectSpot: (state, action) => reduceSelectSpot(state, action),
@@ -69,19 +67,10 @@ function reduceSelectSpot(state, action) {
     return state;
   }
 
-  const potentialSpots = state.potentialMoves[pointId] || [];
-
-  // Auto-complete move if only one potential spot
-  if (potentialSpots.length === 1) {
-    const toPointId = potentialSpots[0];
-    const moveDistance = Math.abs(pointId - toPointId);
-    return updateMoveCheckerState(state, selectedIndex, toPointId - 1, moveDistance);
-  }
-
   return {
     ...state,
     selectedSpot: pointId,
-    potentialSpots
+    potentialSpots: state.potentialMoves[pointId] || []
   };
 }
 
@@ -98,15 +87,13 @@ function reduceMoveChecker(state, { payload: { fromPointId, toPointId } }) {
     const fromIndex = points.findIndex((point) => point.id === fromPointId);
     if (fromIndex === -1 || points[fromIndex].checkers < 1) return state;
 
-    // Calculate distance from home board edge for bearing off
-    const moveDistance = player === PLAYER_LEFT ? 25 - fromPointId : fromPointId;
-    const diceArray = [...diceValue]; // Convert from Immer proxy to plain array
-    const isValidDiceValue = diceArray.some(die => die >= moveDistance);
+    const pointKey = generatePointIndexMap(player, 'point');
+    const moveDistance = 24 - pointKey[fromIndex];
+    const isValidDiceValue = diceValue.includes(moveDistance);
 
     if (!isValidDiceValue) return state;
 
-    const usedDie = diceArray.find(die => die >= moveDistance);
-    return updateMoveCheckerState(state, fromIndex, -1, usedDie);
+    return updateMoveCheckerState(state, fromIndex, -1, moveDistance);
   }
 
   const fromIndex = points.findIndex((point) => point.id === fromPointId);
@@ -184,11 +171,11 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
     selectedSpot: null,
     potentialSpots: [],
 
-    pointsHistory: [...state.pointsHistory, state.points].slice(-MAX_HISTORY),
-    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar].slice(-MAX_HISTORY),
-    diceHistory: [...state.diceHistory, state.diceValue].slice(-MAX_HISTORY),
-    playerHistory: [...state.playerHistory, state.player].slice(-MAX_HISTORY),
-    potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves].slice(-MAX_HISTORY),
+    pointsHistory: [...state.pointsHistory, state.points],
+    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar],
+    diceHistory: [...state.diceHistory, state.diceValue],
+    playerHistory: [...state.playerHistory, state.player],
+    potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves],
   };
 }
 

@@ -1,12 +1,12 @@
 .backgammon-game .checker {
-  width: 1.375em;
-  height: 1.375em;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  margin: 0.0625em auto;
-  border: 0.125em solid #333;
+  margin: 1px auto;
+  border: 2px solid #333;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 0.125em 0.25em rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .backgammon-game .checker.player_left {
@@ -21,11 +21,11 @@
 
 .backgammon-game .checker:hover {
   transform: scale(1.1);
-  box-shadow: 0 0.1875em 0.375em rgba(0,0,0,0.4);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.4);
 }
 
 .backgammon-game .checker.selected {
   border-color: #ffd700;
-  border-width: 0.1875em;
-  box-shadow: 0 0 0.625em rgba(255,215,0,0.6);
+  border-width: 3px;
+  box-shadow: 0 0 10px rgba(255,215,0,0.6);
 }

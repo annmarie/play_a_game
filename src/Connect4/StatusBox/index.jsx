@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { DRAW_MESSAGE } from '../globals';
-import './styles.css';
+import './layout.css';
 
 const StatusBox = ({ winner, winnerDesc, boardFull, player }) => {
   return (

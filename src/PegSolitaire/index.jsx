@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, resetGame, selectPeg } from './slice';
 import Cell from './Cell';
 import Header from '../Header';
-import './styles.css';
+import './layout.css';
 
 const PegSolitaire = () => {
   const dispatch = useDispatch();

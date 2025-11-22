@@ -6,6 +6,7 @@ import Connect4 from './Connect4';
 import PegSolitaire from './PegSolitaire';
 import Backgammon from './Backgammon';
 import Home from './Home';
+import './layout.css'
 
 const App = () => {
   return (

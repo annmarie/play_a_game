@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import Tile from '../Tile'
-import './styles.css'
+import './layout.css'
 
 const Board = ({ tiles, onTileClick }) => (
   <div

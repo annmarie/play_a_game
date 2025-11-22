@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import Header from '../Header';
-import './styles.css'
+import './layout.css'
 
 const Home = () => {
   return (<div className="main">

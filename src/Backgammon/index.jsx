@@ -9,7 +9,7 @@ import { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot }
 import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
-import './styles.css';
+import './layout.css';
 import { useDispatch } from 'react-redux';
 import Header from '../Header';
 
@@ -35,15 +35,14 @@ const Backgammon = () => {
 
   const handleSpotClick = useCallback(
     (point) => {
-      if (state.selectedSpot && state.potentialSpots.includes(point.id)) {
+      if (state.selectedSpot) {
         const fromPointId = state.selectedSpot;
         const toPointId = point.id;
         dispatch(makeMove({ fromPointId, toPointId }));
-      } else {
-        dispatch(selectSpot(point.id));
       }
+      dispatch(selectSpot(point.id));
     },
-    [state.selectedSpot, state.potentialSpots, dispatch]
+    [state.selectedSpot, dispatch]
   );
 
   return (

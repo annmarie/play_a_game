@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { PLAYER_RIGHT, PLAYER_LEFT } from '../globals';
-import './styles.css'
+import './layout.css'
 
 const Checker = ({ player, selected }) => {
   const className = `checker ${

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import Cell from '../Cell'
-import './styles.css'
+import './layout.css'
 
 const Board = ({ board, handleCellClick }) => (
 
