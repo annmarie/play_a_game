@@ -17,6 +17,11 @@ export const initialState = {
   potentialSpots: [],
   potentialMoves: {},
   history: [],
+  pointsHistory: [],
+  diceHistory: [],
+  playerHistory: [],
+  checkersOnBarHistory: [],
+  potentialMovesHistory: [],
 };
 
 export const slice = createSlice({
@@ -125,7 +130,7 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
   );
 
   const moveInProcess = updatedDiceValue.length > 0;
-  
+
   const gameState = {
     points: state.points,
     checkersOnBar: state.checkersOnBar,
@@ -133,10 +138,24 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
     player: state.player,
     potentialMoves: state.potentialMoves,
   };
-  
+
   const newHistory = [...state.history, gameState];
   if (newHistory.length > MAX_HISTORY) {
     newHistory.shift();
+  }
+
+  const newPointsHistory = [...state.pointsHistory, state.points];
+  const newDiceHistory = [...state.diceHistory, state.diceValue];
+  const newPlayerHistory = [...state.playerHistory, state.player];
+  const newCheckersOnBarHistory = [...state.checkersOnBarHistory, state.checkersOnBar];
+  const newPotentialMovesHistory = [...state.potentialMovesHistory, state.potentialMoves];
+
+  if (newPointsHistory.length > MAX_HISTORY) {
+    newPointsHistory.shift();
+    newDiceHistory.shift();
+    newPlayerHistory.shift();
+    newCheckersOnBarHistory.shift();
+    newPotentialMovesHistory.shift();
   }
 
   return {
@@ -149,22 +168,46 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
     selectedSpot: null,
     potentialSpots: [],
     history: newHistory,
+    pointsHistory: newPointsHistory,
+    diceHistory: newDiceHistory,
+    playerHistory: newPlayerHistory,
+    checkersOnBarHistory: newCheckersOnBarHistory,
+    potentialMovesHistory: newPotentialMovesHistory,
   };
 }
 
 function reduceUndo(state) {
-  if (state.history.length === 0) return state;
-  
-  const previousState = state.history[state.history.length - 1];
-  const newHistory = state.history.slice(0, -1);
+  // If there's move history, undo the last move
+  if (state.history.length > 0) {
+    const previousState = state.history[state.history.length - 1];
+    const newHistory = state.history.slice(0, -1);
 
-  return {
-    ...state,
-    ...previousState,
-    selectedSpot: null,
-    potentialSpots: [],
-    history: newHistory,
-  };
+    return {
+      ...state,
+      ...previousState,
+      selectedSpot: null,
+      potentialSpots: [],
+      history: newHistory,
+      pointsHistory: state.pointsHistory.slice(0, -1),
+      diceHistory: state.diceHistory.slice(0, -1),
+      playerHistory: state.playerHistory.slice(0, -1),
+      checkersOnBarHistory: state.checkersOnBarHistory.slice(0, -1),
+      potentialMovesHistory: state.potentialMovesHistory.slice(0, -1),
+    };
+  }
+
+  // If no move history but dice are rolled, undo the dice roll
+  if (state.diceValue !== null) {
+    return {
+      ...state,
+      diceValue: null,
+      potentialMoves: {},
+      selectedSpot: null,
+      potentialSpots: [],
+    };
+  }
+
+  return state;
 }
 
 function reduceRollDice(state) {
