@@ -12,7 +12,7 @@ export const initialState = {
 };
 
 export const slice = createSlice({
-  name: 'counter',
+  name: 'connect4',
   initialState,
   reducers: {
     makeMove: (state,action) => reduceMakeMove(state, action),

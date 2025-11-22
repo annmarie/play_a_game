@@ -22,7 +22,7 @@ export const initialState = {
 };
 
 export const slice = createSlice({
-  name: 'counter',
+  name: 'backgammon',
   initialState,
   reducers: {
     selectSpot: (state, action) => reduceSelectSpot(state, action),
@@ -30,7 +30,7 @@ export const slice = createSlice({
     rollDice: (state) => reduceRollDice(state),
     undoRoll: (state) => reduceUndo(state),
     togglePlayerRoll: (state) => ({ ...state, player: togglePlayer(state.player), diceValue: null }),
-    resetGame: () => ({ ...initialState, board: initializeBoard() }),
+    resetGame: () => ({ ...initialState, points: initializeBoard() }),
   },
 });
 

@@ -4,7 +4,6 @@ import { store } from './store';
 import SlidePuzzle from './SlidePuzzle';
 import Connect4 from './Connect4';
 import PegSolitaire from './PegSolitaire';
-import TicTacToe from './TicTacToe';
 import Backgammon from './Backgammon';
 import Home from './Home';
 
@@ -17,7 +16,6 @@ const App = () => {
           <Route path="/slidepuzzle" element={<SlidePuzzle />} />
           <Route path="/connect4" element={<Connect4 />} />
           <Route path="/pegsolitaire" element={<PegSolitaire />} />
-          <Route path="/tictactoe" element={<TicTacToe />} />
           <Route path="/backgammon" element={<Backgammon />} />
         </Routes>
       </Router>
