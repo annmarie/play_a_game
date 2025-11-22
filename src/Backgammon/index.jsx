@@ -35,100 +35,116 @@ const Backgammon = () => {
 
   const handleSpotClick = useCallback(
     (point) => {
-      if (state.selectedSpot) {
+      if (state.selectedSpot && state.potentialSpots.includes(point.id)) {
         const fromPointId = state.selectedSpot;
         const toPointId = point.id;
         dispatch(makeMove({ fromPointId, toPointId }));
+      } else {
+        dispatch(selectSpot(point.id));
       }
-      dispatch(selectSpot(point.id));
     },
-    [state.selectedSpot, dispatch]
+    [state.selectedSpot, state.potentialSpots, dispatch]
   );
 
   return (
     <div className="main">
       <Header />
-      <div className="backgammon-game">
+    <div className="backgammon-game">
 
-        <Board
-          points={state.points}
-          selectedSpot={state.selectedSpot}
-          potentialSpots={state.potentialSpots}
-          handleSpotClick={handleSpotClick}
-        />
+      <Board
+        points={state.points}
+        selectedSpot={state.selectedSpot}
+        potentialSpots={state.potentialSpots}
+        handleSpotClick={handleSpotClick}
+      />
 
-        <div className="backgammon-status">
-          <div>
-
-            {state.diceValue ? (
-              <Dice diceValue={state.diceValue} />
-            ) : (
-              <div className="dice-roll">
-                <button
-                  className="dice-button"
-                  aria-label="Roll Dice"
-                  onClick={() => dispatch(rollDice())}
-                >
-                  {ROLL_DICE_BUTTON_TEXT}
-                </button>
-              </div>
-            )}
+      <div className="backgammon-status">
+        {state.winner && (
+          <div className="winner-announcement">
+            🎉 Winner: <Checker player={state.winner} /> {state.winner}!
           </div>
+        )}
 
-          {state.player && (
-            <div aria-label={`Current player ${state.player}`} >
-              <div>
-                Current Player <Checker player={state.player} />
-              </div>
-              {Object.keys(state.potentialMoves).length < 1 &&
-                state.diceValue !== null &&
-                state.diceValue.length > 0 && (
-                  <div className="toggle-player">
-                    <p>no moves available move to next player</p>
-                    <button
-                      className="toggle-button"
-                      aria-label="No moves found release move to next player."
-                      onClick={() => dispatch(togglePlayerRoll())}
-                    >
-                      Release Move To Next Player
-                    </button>
-                  </div>
-                )}
+        <div>
+          {state.diceValue ? (
+            <Dice diceValue={state.diceValue} />
+          ) : (
+            <div className="dice-roll">
+              <button
+                className="dice-button"
+                aria-label="Roll Dice"
+                onClick={() => dispatch(rollDice())}
+                disabled={state.winner}
+              >
+                {ROLL_DICE_BUTTON_TEXT}
+              </button>
             </div>
           )}
-
-          <div>
-            <button
-              onClick={() => dispatch(undoRoll())}
-              disabled={state.player === null}
-              aria-label="Undo last move"
-            >
-              {UNDO_BUTTON_TEXT}
-            </button>
-            <button
-              className="reset-game"
-              onClick={() => dispatch(resetGame())}
-              disabled={state.player === null}
-              aria-label="Reset the game"
-            >
-              {RESET_BUTTON_TEXT}
-            </button>
-          </div>
         </div>
-        <div className="backgammon-bar">
-          <div>
-            {state.checkersOnBar[PLAYER_LEFT] > 0 && (
-              <div aria-label={`Checkers Bar for ${PLAYER_LEFT}`} >
-                {state.checkersOnBar[PLAYER_LEFT]} <Checker player={PLAYER_LEFT} />
-              </div>
-            )}
+
+        {state.player && !state.winner && (
+          <div aria-label={`Current player ${state.player}`} >
+            <div>
+              Current Player <Checker player={state.player} />
+            </div>
+            {Object.keys(state.potentialMoves).length < 1 &&
+              state.diceValue !== null &&
+              state.diceValue.length > 0 && (
+                <div className="toggle-player">
+                  <p>no moves available move to next player</p>
+                  <button
+                    className="toggle-button"
+                    aria-label="No moves found release move to next player."
+                    onClick={() => dispatch(togglePlayerRoll())}
+                  >
+                    Release Move To Next Player
+                  </button>
+                </div>
+              )}
           </div>
-          <div>
-            {state.checkersOnBar[PLAYER_RIGHT] > 0 && (
-              <div aria-label={`Checkers Bar for ${PLAYER_RIGHT}`} >
-                {state.checkersOnBar[PLAYER_RIGHT]} <Checker player={PLAYER_RIGHT} />
-              </div>
-            )}
+        )}
+
+        <div>
+          <button
+            onClick={() => dispatch(undoRoll())}
+            disabled={state.player === null || state.winner}
+            aria-label="Undo last move"
+          >
+            {UNDO_BUTTON_TEXT}
+          </button>
+          <button
+            className="reset-game"
+            onClick={() => dispatch(resetGame())}
+            disabled={state.player === null || state.winner}
+            aria-label="Reset the game"
+          >
+            {RESET_BUTTON_TEXT}
+          </button>
+        </div>
+      </div>
+
+      <div className="backgammon-borne-off">
+        <div>
+          {PLAYER_LEFT} Borne Off: {state.checkersBornOff[PLAYER_LEFT] || 0}
+        </div>
+        <div>
+          {PLAYER_RIGHT} Borne Off: {state.checkersBornOff[PLAYER_RIGHT] || 0}
+        </div>
+      </div>
+      <div className="backgammon-bar">
+        <div>
+          {state.checkersOnBar[PLAYER_LEFT] > 0 && (
+            <div aria-label={`Checkers Bar for ${PLAYER_LEFT}`} >
+              {state.checkersOnBar[PLAYER_LEFT]} <Checker player={PLAYER_LEFT} />
+            </div>
+          )}
+        </div>
+        <div>
+          {state.checkersOnBar[PLAYER_RIGHT] > 0 && (
+            <div aria-label={`Checkers Bar for ${PLAYER_RIGHT}`} >
+              {state.checkersOnBar[PLAYER_RIGHT]} <Checker player={PLAYER_RIGHT} />
+            </div>
+          )}
           </div>
         </div>
       </div>

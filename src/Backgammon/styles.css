@@ -1,15 +1,14 @@
 .backgammon-game {
   background-color: darkgray;
-  border-radius: 1em;
+  border-radius: 0.625em;
   border: 0.0625em solid black;
-  box-shadow: 0 0.25em 0.50em rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1);
   padding: 1.25em;
-  width: 38.625em;
 }
 
 .backgammon-game .dice-button {
   width: 100%;
-  border-radius: 50em;
+  border-radius: 0.5em;
   border: 0.0625em solid transparent;
   cursor: pointer;
   height: fit-content;
@@ -17,7 +16,7 @@
 }
 
 .backgammon-game .dice-button:active {
-  outline: 0.50em auto black;
+  outline: 0.5em auto black;
 }
 
 .backgammon-game .backgammon-status {
@@ -28,11 +27,11 @@
 .backgammon-game .backgammon-bar {
   display: flex;
   justify-content: space-between;
-  padding-top: 1em;
+  padding-top: 0.625em;
 }
 
 .backgammon-game button:active {
-  outline: 0.50em auto #e76f51;
+  outline: 0.5em auto #e76f51;
 }
 
 .backgammon-game button:disabled {

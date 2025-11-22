@@ -72,14 +72,38 @@ export const generatePointIndexMap = (player, indexBy = 'point') => {
  * @param {string} player - The current player ("PLAYER_RIGHT" or "PLAYER_LEFT").
  * @param {number} selectedIndex - The index of the selected point.
  * @param {number} die - The die roll.
- * @returns {number} The target point ID, or 0 if the target index is invalid.
+ * @returns {number} The target point ID, or -2 for bearing off, or -1 if invalid.
  */
 export const calculatePotentialMove = (player, selectedIndex, die) => {
   const pointIdToIndexMap = generatePointIndexMap(player, 'point');
   const indexToPointIdMap = generatePointIndexMap(player, 'index');
 
   const targetIndex = Math.abs(pointIdToIndexMap[selectedIndex] + die);
+
+  // Check for bearing off (moving beyond the board)
+  if (targetIndex >= 24) {
+    return -2; // Special value for bearing off
+  }
+
   return indexToPointIdMap[targetIndex] >= 0 ? indexToPointIdMap[targetIndex] : -1;
+};
+
+/**
+ * Checks if all player's checkers are in home board
+ * @param {Array} points - The board points
+ * @param {string} player - The player to check
+ * @param {Object} checkersOnBar - Checkers on bar
+ * @returns {boolean} True if all checkers are in home board
+ */
+export const canBearOff = (points, player, checkersOnBar) => {
+  if (checkersOnBar[player] > 0) return false;
+
+  const homeRange = player === PLAYER_LEFT ? [18, 23] : [6, 11];
+
+  return points.every((point, index) => {
+    if (point.player !== player) return true;
+    return index >= homeRange[0] && index <= homeRange[1];
+  });
 };
 
 /**
@@ -113,10 +137,17 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
     return potentialMoves;
   }
 
+  const canBearOffNow = canBearOff(points, player, checkersOnBar);
+
   for (const point of points.filter(p => p.player === player)) {
     for (const die of dice) {
       const movePointId = calculatePotentialMove(player, point.id - 1, die);
-      if (movePointId >= 0) {
+
+      if (movePointId === -2 && canBearOffNow) {
+        // Bearing off
+        potentialMoves[point.id] = potentialMoves[point.id] || [];
+        potentialMoves[point.id].push(-1); // Special ID for bearing off
+      } else if (movePointId >= 0) {
         const targetPoint = points[movePointId];
         if (
           targetPoint.checkers === 0 ||
@@ -145,6 +176,19 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
 export function moveCheckers(points, toIndex, fromIndex, player) {
   let hasBarPlayer = '';
   const updatedPoints = [...points];
+
+  // Handle bearing off (toIndex is -1)
+  if (toIndex === -1) {
+    if (fromIndex >= 0) {
+      updatedPoints[fromIndex] = {
+        ...updatedPoints[fromIndex],
+        checkers: updatedPoints[fromIndex].checkers - 1,
+        player: updatedPoints[fromIndex].checkers - 1 === 0 ? null : player,
+      };
+    }
+    return { updatedPoints, hasBarPlayer };
+  }
+
   const destinationPoint = points[toIndex] || -1;
   if (destinationPoint === -1) return { updatedPoints: points, hasBarPlayer }
   if (destinationPoint.checkers === 1 && destinationPoint.player !== player) {

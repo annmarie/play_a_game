@@ -1,23 +1,31 @@
 import PropTypes from 'prop-types';
 import Point from '../Point'
-import './styles.css'
+import './style.css'
 
 const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
+  const handleBearOffClick = () => {
+    handleSpotClick({ id: -1 });
+  };
+
   return (
     <div className="backgammon-board">
-      {points.map((point) => {
-        const isSelected = selectedSpot === point.id;
-        const isPotential = potentialSpots.includes(point.id);
-        return (
-          <Point
-            key={point.id}
-            point={point}
-            onClick={handleSpotClick}
-            selected={isSelected}
-            potential={isPotential}
-          />
-        );
-      })}
+      {points.map((point) => (
+        <Point
+          key={point.id}
+          point={point}
+          onClick={handleSpotClick}
+          selected={selectedSpot === point.id ? true : false}
+          potential={potentialSpots.includes(point.id) ? true : false}
+        />
+      ))}
+      {potentialSpots.includes(-1) && (
+        <div
+          className="bear-off-area"
+          onClick={handleBearOffClick}
+        >
+          Bear Off
+        </div>
+      )}
     </div>
   );
 };

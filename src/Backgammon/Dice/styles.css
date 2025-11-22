@@ -1,6 +1,7 @@
+
 .backgammon-game .dice-container {
   display: flex;
-  gap: 1em;
+  gap: 0.625em;
   justify-content: center;
   align-items: center;
 }
