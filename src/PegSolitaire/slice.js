@@ -4,6 +4,8 @@ import {
   jumpPeg, validateJump
 } from './utils';
 
+const MAX_HISTORY = 10;
+
 export const initialState = {
   board: initializeBoard(),
   selectedPeg: null,
@@ -38,9 +40,13 @@ const reduceMakeMove = (state, action) => {
   if (!validateJump(state.board, startRow, startCol, endRow, endCol)) return state;
 
   const newBoard = jumpPeg(state.board, startRow, startCol, endRow, endCol, state.board);
-
   const winner = hasWinningMove(newBoard);
   const movesLeft = winner ? false : hasMovesLeft(newBoard);
+
+  const newHistory = [...state.history, state.board];
+  if (newHistory.length > MAX_HISTORY) {
+    newHistory.shift();
+  }
 
   return {
     ...state,
@@ -48,7 +54,7 @@ const reduceMakeMove = (state, action) => {
     winner,
     movesLeft,
     selectedPeg: null,
-    history: [...state.history, state.board],
+    history: newHistory,
   };
 };
 
@@ -56,6 +62,7 @@ const reduceUndoMove = (state) => {
   if (state.history.length === 0 || state.winner) return state;
 
   const previousBoard = state.history[state.history.length - 1];
+  const newHistory = state.history.slice(0, -1);
 
   return {
     ...state,
@@ -63,7 +70,7 @@ const reduceUndoMove = (state) => {
     winner: hasWinningMove(previousBoard),
     movesLeft: hasMovesLeft(previousBoard),
     selectedPeg: null,
-    history: state.history.slice(0, -1),
+    history: newHistory,
   };
 };
 

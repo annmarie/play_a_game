@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard, dropChecker, checkWin, isBoardFull, togglePlayer } from './utils';
 import { PLAYER_ONE } from './globals';
 
+const MAX_HISTORY = 10;
+
 export const initialState = {
   board: initializeBoard(),
   player: PLAYER_ONE,
@@ -35,14 +37,19 @@ const reduceMakeMove = (state, action) => {
   const { haveWinner, desc } = checkWin(newBoard, currentMove);
   const boardFull = isBoardFull(newBoard);
 
+  const newHistory = [...state.history, state.board];
+  if (newHistory.length > MAX_HISTORY) {
+    newHistory.shift();
+  }
+
   return {
     ...state,
     board: newBoard,
-    winner: haveWinner ? state.player : null,
+    winner: haveWinner ? player : null,
     winnerDesc: haveWinner ? desc : '',
     boardFull,
-    player: togglePlayer(state.player),
-    history: [...state.history, state.board], // Save the current board state for undo functionality.
+    player: togglePlayer(player),
+    history: newHistory,
   };
 };
 

@@ -6,6 +6,8 @@ import {
 
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX } from './globals';
 
+const MAX_HISTORY = 10;
+
 export const initialState = {
   points: initializeBoard(),
   checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
@@ -14,11 +16,7 @@ export const initialState = {
   selectedSpot: null,
   potentialSpots: [],
   potentialMoves: {},
-  pointsHistory: [],
-  diceHistory: [],
-  playerHistory: [],
-  checkersOnBarHistory: [],
-  potentialMovesHistory: [],
+  history: [],
 };
 
 export const slice = createSlice({
@@ -127,61 +125,45 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
   );
 
   const moveInProcess = updatedDiceValue.length > 0;
+  
+  const gameState = {
+    points: state.points,
+    checkersOnBar: state.checkersOnBar,
+    diceValue: state.diceValue,
+    player: state.player,
+    potentialMoves: state.potentialMoves,
+  };
+  
+  const newHistory = [...state.history, gameState];
+  if (newHistory.length > MAX_HISTORY) {
+    newHistory.shift();
+  }
 
   return {
     ...state,
     points: updatedPoints,
     checkersOnBar: updatedCheckersOnBar,
-    diceValue: moveInProcess
-      ? updatedDiceValue
-      : initialState.diceValue,
-    player: moveInProcess
-      ? state.player
-      : togglePlayer(state.player),
-    potentialMoves: moveInProcess
-      ? updatedPotentialMoves
-      : initialState.potentialMoves,
+    diceValue: moveInProcess ? updatedDiceValue : null,
+    player: moveInProcess ? state.player : togglePlayer(state.player),
+    potentialMoves: moveInProcess ? updatedPotentialMoves : {},
     selectedSpot: null,
     potentialSpots: [],
-
-    pointsHistory: [...state.pointsHistory, state.points],
-    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar],
-    diceHistory: [...state.diceHistory, state.diceValue],
-    playerHistory: [...state.playerHistory, state.player],
-    potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves],
+    history: newHistory,
   };
 }
 
 function reduceUndo(state) {
-  const previousActionState = getPreviousActionState(state);
-  const updatedHistoryState = updateHistoryState(state);
+  if (state.history.length === 0) return state;
+  
+  const previousState = state.history[state.history.length - 1];
+  const newHistory = state.history.slice(0, -1);
 
   return {
     ...state,
-    ...previousActionState,
-    ...updatedHistoryState,
+    ...previousState,
     selectedSpot: null,
     potentialSpots: [],
-  };
-}
-
-function getPreviousActionState(state) {
-  return {
-    points: state.pointsHistory[state.pointsHistory.length - 1] || initialState.points,
-    diceValue: state.diceHistory[state.diceHistory.length - 1] || initialState.diceValue,
-    player: state.playerHistory[state.playerHistory.length - 1] || initialState.player,
-    potentialMoves: state.potentialMovesHistory[state.potentialMovesHistory.length - 1] || initialState.potentialMoves,
-    checkersOnBar: state.checkersOnBarHistory[state.checkersOnBarHistory.length - 1] || initialState.checkersOnBar,
-  };
-}
-
-function updateHistoryState(state) {
-  return {
-    pointsHistory: state.pointsHistory.slice(0, -1),
-    diceHistory: state.diceHistory.slice(0, -1),
-    playerHistory: state.playerHistory.slice(0, -1),
-    potentialMovesHistory: state.potentialMovesHistory.slice(0, -1),
-    checkersOnBarHistory: state.checkersOnBarHistory.slice(0, -1),
+    history: newHistory,
   };
 }
 
