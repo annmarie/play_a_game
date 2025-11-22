@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import SlidePuzzle from './SlidePuzzle';
 import Connect4 from './Connect4';
-import PegSolitaire from './PegSolitaire';
 import Backgammon from './Backgammon';
 import Home from './Home';
 import './layout.css'
@@ -16,7 +15,6 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/slidepuzzle" element={<SlidePuzzle />} />
           <Route path="/connect4" element={<Connect4 />} />
-          <Route path="/pegsolitaire" element={<PegSolitaire />} />
           <Route path="/backgammon" element={<Backgammon />} />
         </Routes>
       </Router>
