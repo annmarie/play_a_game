@@ -165,6 +165,40 @@ describe('Utility Functions', () => {
       expect(result[17][0]).toEqual(22);
       expect(result[19][0]).toEqual(24);
     })
+
+    it('should return potential moves for PLAYER_RIGHT with dice [4,4,4] in mid-game', () => {
+      const points = [
+        { id: 1, checkers: 4, player: PLAYER_LEFT },
+        { id: 2, checkers: 0, player: null },
+        { id: 3, checkers: 0, player: null },
+        { id: 4, checkers: 0, player: null },
+        { id: 5, checkers: 0, player: null },
+        { id: 6, checkers: 0, player: null },
+        { id: 7, checkers: 2, player: PLAYER_RIGHT },
+        { id: 8, checkers: 3, player: PLAYER_RIGHT },
+        { id: 9, checkers: 0, player: null },
+        { id: 10, checkers: 1, player: PLAYER_RIGHT },
+        { id: 11, checkers: 2, player: PLAYER_RIGHT },
+        { id: 12, checkers: 1, player: PLAYER_LEFT },
+        { id: 13, checkers: 0, player: null },
+        { id: 14, checkers: 0, player: null },
+        { id: 15, checkers: 0, player: null },
+        { id: 16, checkers: 0, player: null },
+        { id: 17, checkers: 2, player: PLAYER_LEFT },
+        { id: 18, checkers: 0, player: null },
+        { id: 19, checkers: 3, player: PLAYER_LEFT },
+        { id: 20, checkers: 0, player: null },
+        { id: 21, checkers: 0, player: null },
+        { id: 22, checkers: 0, player: null },
+        { id: 23, checkers: 0, player: null },
+        { id: 24, checkers: 1, player: PLAYER_RIGHT }
+      ];
+      const result = findPotentialMoves(points, PLAYER_RIGHT, [4, 4, 4], { left: 0, right: 0 });
+      //  { '7': [ 11 ], '8': [ 12 ], '24': [ 20 ] }
+      expect(result).toHaveProperty('7');
+      expect(result).toHaveProperty('8');
+      expect(result).toHaveProperty('24');
+    });
   });
 
   describe('moveCheckers', () => {

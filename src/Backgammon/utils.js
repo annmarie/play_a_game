@@ -1,4 +1,4 @@
-import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
+import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
 
 /**
  * Initializes the game board.
@@ -78,7 +78,8 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
   const pointIdToIndexMap = generatePointIndexMap(player, 'point');
   const indexToPointIdMap = generatePointIndexMap(player, 'index');
 
-  const targetIndex = Math.abs(pointIdToIndexMap[selectedIndex] + die);
+  const currentPosition = pointIdToIndexMap[selectedIndex];
+  const targetIndex = currentPosition + die;
 
   // Check for bearing off (moving beyond the board)
   if (targetIndex >= 24) {
@@ -98,13 +99,14 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
 export const canBearOff = (points, player, checkersOnBar) => {
   if (checkersOnBar[player] > 0) return false;
 
-  // For custom setup: left player (starts at 12) bears off from points 19-24 (indices 18-23)
-  // right player (starts at 24) bears off from points 1-6 (indices 0-5)
-  const homeRange = player === PLAYER_LEFT ? [18, 23] : [0, 5];
+  // Home board is last 6 points in movement direction from start key
+  const homeRange = player === PLAYER_LEFT ?
+    [START_KEY_LEFT + 7, START_KEY_LEFT + 12] :
+    [START_KEY_RIGHT - 17, START_KEY_RIGHT - 12];
 
-  return points.every((point, index) => {
+  return points.every((point) => {
     if (point.player !== player) return true;
-    return index >= homeRange[0] && index <= homeRange[1];
+    return point.id >= homeRange[0] && point.id <= homeRange[1];
   });
 };
 
@@ -124,8 +126,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   const hasCheckerOnBar = checkersOnBar[player] ? (checkersOnBar[player] || 0) > 0 : 0;
 
   if (hasCheckerOnBar) {
-    // Use the custom starting points from globals
-    const startPointId = player === PLAYER_LEFT ? 12 : 24;
+    const startPointId = player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
     for (const die of dice) {
       const targetPointId = player === PLAYER_LEFT ? startPointId + die : startPointId - die;
       if (targetPointId >= 1 && targetPointId <= 24) {
@@ -148,10 +149,30 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
     for (const die of dice) {
       const movePointId = calculatePotentialMove(player, point.id - 1, die);
 
+      if (canBearOffNow) {
+        const pointId = point.id;
+        let canBearOffFromThisPoint = false;
+
+        const leftHomeStart = START_KEY_LEFT + 7;
+        const leftHomeEnd = START_KEY_LEFT + 12;
+        const rightHomeStart = START_KEY_RIGHT - 17;
+        const rightHomeEnd = START_KEY_RIGHT - 12;
+
+        if (player === PLAYER_LEFT && pointId >= leftHomeStart && pointId <= leftHomeEnd) {
+          canBearOffFromThisPoint = die >= (leftHomeEnd + 1 - pointId);
+        } else if (player === PLAYER_RIGHT && pointId >= rightHomeStart && pointId <= rightHomeEnd) {
+          canBearOffFromThisPoint = die >= (rightHomeEnd + 1 - pointId);
+        }
+
+        if (canBearOffFromThisPoint) {
+          potentialMoves[point.id] = potentialMoves[point.id] || [];
+          potentialMoves[point.id].push(-1); // bearing off position
+        }
+      }
+
       if (movePointId === -2 && canBearOffNow) {
-        // Bearing off
         potentialMoves[point.id] = potentialMoves[point.id] || [];
-        potentialMoves[point.id].push(-1); // Special ID for bearing off
+        potentialMoves[point.id].push(-1); // bearing off position
       } else if (movePointId >= 0) {
         const targetPoint = points[movePointId];
         if (
@@ -181,9 +202,9 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
 export function moveCheckers(points, toIndex, fromIndex, player) {
   let hasBarPlayer = '';
   const updatedPoints = [...points];
+  const isBearingOff = toIndex === -1;
 
-  // Handle bearing off (toIndex is -1)
-  if (toIndex === -1) {
+  if (isBearingOff) {
     if (fromIndex >= 0) {
       updatedPoints[fromIndex] = {
         ...updatedPoints[fromIndex],

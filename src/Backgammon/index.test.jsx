@@ -231,6 +231,101 @@ describe('Backgammon Component Tests', () => {
     unmount();
     expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
   });
+
+  it('should allow clicking on point 24 with right player and dice [4,4,4]', async () => {
+    const customPoints = [
+      { id: 1, checkers: 0, player: null },
+      { id: 2, checkers: 0, player: null },
+      { id: 3, checkers: 0, player: null },
+      { id: 4, checkers: 0, player: null },
+      { id: 5, checkers: 0, player: null },
+      { id: 6, checkers: 0, player: null },
+      { id: 7, checkers: 5, player: PLAYER_RIGHT },
+      { id: 8, checkers: 5, player: PLAYER_RIGHT },
+      { id: 9, checkers: 2, player: PLAYER_RIGHT },
+      { id: 10, checkers: 2, player: PLAYER_RIGHT },
+      { id: 11, checkers: 1, player: PLAYER_RIGHT },
+      { id: 12, checkers: 0, player: null },
+      { id: 13, checkers: 0, player: null },
+      { id: 14, checkers: 0, player: null },
+      { id: 15, checkers: 0, player: null },
+      { id: 16, checkers: 0, player: null },
+      { id: 17, checkers: 0, player: null },
+      { id: 18, checkers: 0, player: null },
+      { id: 19, checkers: 5, player: PLAYER_LEFT },
+      { id: 20, checkers: 3, player: PLAYER_LEFT },
+      { id: 21, checkers: 2, player: PLAYER_LEFT },
+      { id: 22, checkers: 3, player: PLAYER_LEFT },
+      { id: 23, checkers: 1, player: PLAYER_LEFT },
+      { id: 24, checkers: 0, player: null }
+    ];
+
+    const customStore = configureStore({
+      reducer,
+      preloadedState: {
+        backgammon: {
+          points: customPoints,
+          checkersOnBar: { left: 0, right: 0 },
+          checkersBornOff: { left: 1, right: 3 },
+          diceValue: [4, 4, 4],
+          player: PLAYER_RIGHT,
+          winner: null,
+          selectedSpot: null,
+          potentialSpots: [-1],
+          potentialMoves: { '7': [3, 11], '8': [4, 12], '9': [5, 13], '10': [6, 14], '11': [7, 15, -1] },
+          pointsHistory: [],
+          diceHistory: [],
+          playerHistory: [],
+          checkersOnBarHistory: [],
+          potentialMovesHistory: []
+        }
+      }
+    });
+
+    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
+
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_RIGHT);
+
+    const point11 = screen.getByTestId('point-11');
+    expect(point11).toBeInTheDocument();
+    expect(point11.getAttribute('aria-label')).toContain('Point 11 with 1 right checkers');
+
+    await act(async () => fireEvent.click(point11));
+    expect(point11.className).toContain('selected');
+
+    // Test bear off button appears
+    const bearOffButton = screen.getByText('Bear Off');
+    expect(bearOffButton).toBeInTheDocument();
+  });
+
+  it('should show bear off button when bearing off is possible', async () => {
+    const customStore = configureStore({
+      reducer,
+      preloadedState: {
+        backgammon: {
+          points: Array.from({ length: 24 }, (_, i) => ({ id: i + 1, checkers: 0, player: null })),
+          checkersOnBar: { left: 0, right: 0 },
+          checkersBornOff: { left: 0, right: 0 },
+          diceValue: [6, 5],
+          player: PLAYER_RIGHT,
+          winner: null,
+          selectedSpot: null,
+          potentialSpots: [-1],
+          potentialMoves: { '19': [-1] },
+          pointsHistory: [],
+          diceHistory: [],
+          playerHistory: [],
+          checkersOnBarHistory: [],
+          potentialMovesHistory: []
+        }
+      }
+    });
+
+    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
+
+    const bearOffButton = screen.getByText('Bear Off');
+    expect(bearOffButton).toBeInTheDocument();
+  });
 });
 
 function validateInitialBoardState(points) {

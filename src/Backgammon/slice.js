@@ -78,18 +78,16 @@ function reduceSelectSpot(state, action) {
 function reduceMoveChecker(state, { payload: { fromPointId, toPointId } }) {
   const { player, diceValue, points } = state;
 
-  if (
-    !player || !diceValue ||
-    diceValue.length === 0
-  ) return state;
+  if (!player || !diceValue || diceValue.length === 0) return state;
 
-  // Handle bearing off
+  // Bearing off move
   if (toPointId === -1) {
     const fromIndex = points.findIndex((point) => point.id === fromPointId);
     if (fromIndex === -1 || points[fromIndex].checkers < 1) return state;
 
-    const pointKey = generatePointIndexMap(player, 'point');
-    const moveDistance = 24 - pointKey[fromIndex];
+    const moveDistance = player === PLAYER_LEFT ?
+      (START_KEY_LEFT + 12) + 1 - fromPointId :
+      (START_KEY_RIGHT - 12) + 1 - fromPointId;
     const isValidDiceValue = diceValue.includes(moveDistance);
 
     if (!isValidDiceValue) return state;
@@ -99,19 +97,13 @@ function reduceMoveChecker(state, { payload: { fromPointId, toPointId } }) {
 
   const fromIndex = points.findIndex((point) => point.id === fromPointId);
   const toIndex = points.findIndex((point) => point.id === toPointId);
-  if (
-    fromIndex === -1 || toIndex === -1 ||
-    points[fromIndex].checkers < 1
-  ) return state;
+  if (fromIndex === -1 || toIndex === -1 || points[fromIndex].checkers < 1) return state;
 
   const pointKey = generatePointIndexMap(player, 'point');
   const moveDistance = Math.abs(pointKey[toIndex] - pointKey[fromIndex]);
   const isValidDiceValue = diceValue.includes(moveDistance);
 
-  if (
-    !isValidDiceValue ||
-    !(pointKey[toIndex] > pointKey[fromIndex])
-  ) return state;
+  if (!isValidDiceValue || !(pointKey[toIndex] > pointKey[fromIndex])) return state;
 
   return updateMoveCheckerState(state, fromIndex, toIndex, moveDistance);
 }
@@ -135,7 +127,7 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
     updatedCheckersOnBar[state.player] -= 1;
   }
 
-  // Handle bearing off
+  // update borne off checker count
   if (toIndex === -1) {
     updatedCheckersBornOff[state.player] = (state.checkersBornOff[state.player] || 0) + 1;
   }
