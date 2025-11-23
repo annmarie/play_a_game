@@ -98,7 +98,9 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
 export const canBearOff = (points, player, checkersOnBar) => {
   if (checkersOnBar[player] > 0) return false;
 
-  const homeRange = player === PLAYER_LEFT ? [18, 23] : [6, 11];
+  // For custom setup: left player (starts at 12) bears off from points 19-24 (indices 18-23)
+  // right player (starts at 24) bears off from points 1-6 (indices 0-5)
+  const homeRange = player === PLAYER_LEFT ? [18, 23] : [0, 5];
 
   return points.every((point, index) => {
     if (point.player !== player) return true;
@@ -122,16 +124,19 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   const hasCheckerOnBar = checkersOnBar[player] ? (checkersOnBar[player] || 0) > 0 : 0;
 
   if (hasCheckerOnBar) {
-    const startPointId = generatePointIndexMap(player, 'index')[0] + 1;
+    // Use the custom starting points from globals
+    const startPointId = player === PLAYER_LEFT ? 12 : 24;
     for (const die of dice) {
-      const targetPointId = startPointId + 1 - die;
-      const targetPoint = points[targetPointId - 1]
-      if (
-        targetPoint.checkers === 0 ||
-        targetPoint.player === player ||
-        (targetPoint.checkers === 1 && targetPoint.player !== player)
-      ) {
-        potentialMoves[targetPointId] = []
+      const targetPointId = player === PLAYER_LEFT ? startPointId + die : startPointId - die;
+      if (targetPointId >= 1 && targetPointId <= 24) {
+        const targetPoint = points[targetPointId - 1];
+        if (
+          targetPoint.checkers === 0 ||
+          targetPoint.player === player ||
+          (targetPoint.checkers === 1 && targetPoint.player !== player)
+        ) {
+          potentialMoves[targetPointId] = [];
+        }
       }
     }
     return potentialMoves;

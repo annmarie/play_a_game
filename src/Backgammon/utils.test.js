@@ -126,7 +126,7 @@ describe('Utility Functions', () => {
     it('should return potential moves PLAYER_RIGHT based on dice [3,5] when they are on the bar', () => {
       const points = initializeBoard()
       const result = findPotentialMoves(points, PLAYER_RIGHT, [3, 5], { 'right': 2 });
-      expect(result).toEqual({ '20': [], '22': []});
+      expect(result).toEqual({ '21': []});
     });
 
     it('should return potential moves for PLAYER_LEFT with dice [5,5,5,5] nobody on bar', () => {

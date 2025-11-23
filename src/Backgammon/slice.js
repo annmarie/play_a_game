@@ -53,7 +53,8 @@ function reduceSelectSpot(state, action) {
 
     for (const potentialPointId of Object.keys(state.potentialMoves)) {
       if (pointId == potentialPointId) {
-        const moveDistance = startKeyId - potentialPointId;
+        const moveDistance = state.player === PLAYER_LEFT ?
+          potentialPointId - startKeyId : startKeyId - potentialPointId;
         return updateMoveCheckerState(state, INVALID_INDEX, selectedIndex, moveDistance)
       }
     }
