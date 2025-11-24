@@ -1,9 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import SlidePuzzle from './SlidePuzzle';
-import Connect4 from './Connect4';
 import Backgammon from './Backgammon';
+import Connect4 from './Connect4';
 import Home from './Home';
 import './layout.css'
 
@@ -13,9 +12,8 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/slidepuzzle" element={<SlidePuzzle />} />
-          <Route path="/connect4" element={<Connect4 />} />
           <Route path="/backgammon" element={<Backgammon />} />
+          <Route path="/connect4" element={<Connect4 />} />
         </Routes>
       </Router>
     </Provider>
