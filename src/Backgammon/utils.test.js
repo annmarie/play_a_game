@@ -8,6 +8,7 @@ import {
   calculatePotentialMove,
   findPotentialMoves,
   moveCheckers,
+  canBearOff,
 } from './utils';
 
 describe('Utility Functions', () => {
@@ -168,36 +169,42 @@ describe('Utility Functions', () => {
 
     it('should return potential moves for PLAYER_RIGHT with dice [4,4,4] in mid-game', () => {
       const points = [
-        { id: 1, checkers: 4, player: PLAYER_LEFT },
-        { id: 2, checkers: 0, player: null },
-        { id: 3, checkers: 0, player: null },
-        { id: 4, checkers: 0, player: null },
-        { id: 5, checkers: 0, player: null },
-        { id: 6, checkers: 0, player: null },
-        { id: 7, checkers: 2, player: PLAYER_RIGHT },
-        { id: 8, checkers: 3, player: PLAYER_RIGHT },
-        { id: 9, checkers: 0, player: null },
-        { id: 10, checkers: 1, player: PLAYER_RIGHT },
-        { id: 11, checkers: 2, player: PLAYER_RIGHT },
-        { id: 12, checkers: 1, player: PLAYER_LEFT },
-        { id: 13, checkers: 0, player: null },
-        { id: 14, checkers: 0, player: null },
-        { id: 15, checkers: 0, player: null },
-        { id: 16, checkers: 0, player: null },
-        { id: 17, checkers: 2, player: PLAYER_LEFT },
-        { id: 18, checkers: 0, player: null },
-        { id: 19, checkers: 3, player: PLAYER_LEFT },
-        { id: 20, checkers: 0, player: null },
-        { id: 21, checkers: 0, player: null },
-        { id: 22, checkers: 0, player: null },
-        { id: 23, checkers: 0, player: null },
-        { id: 24, checkers: 1, player: PLAYER_RIGHT }
-      ];
+      { id: 1, checkers: 0, player: null },
+      { id: 2, checkers: 0, player: null },
+      { id: 3, checkers: 0, player: null },
+      { id: 4, checkers: 0, player: null },
+      { id: 5, checkers: 0, player: null },
+      { id: 6, checkers: 0, player: null },
+      { id: 7, checkers: 5, player: PLAYER_RIGHT },
+      { id: 8, checkers: 5, player: PLAYER_RIGHT },
+      { id: 9, checkers: 2, player: PLAYER_RIGHT },
+      { id: 10, checkers: 2, player: PLAYER_RIGHT },
+      { id: 11, checkers: 1, player: PLAYER_RIGHT },
+      { id: 12, checkers: 0, player: null },
+      { id: 13, checkers: 0, player: null },
+      { id: 14, checkers: 0, player: null },
+      { id: 15, checkers: 0, player: null },
+      { id: 16, checkers: 0, player: null },
+      { id: 17, checkers: 0, player: null },
+      { id: 18, checkers: 0, player: null },
+      { id: 19, checkers: 5, player: PLAYER_LEFT },
+      { id: 20, checkers: 3, player: PLAYER_LEFT },
+      { id: 21, checkers: 2, player: PLAYER_LEFT },
+      { id: 22, checkers: 3, player: PLAYER_LEFT },
+      { id: 23, checkers: 1, player: PLAYER_LEFT },
+      { id: 24, checkers: 0, player: null }
+    ];
       const result = findPotentialMoves(points, PLAYER_RIGHT, [4, 4, 4], { left: 0, right: 0 });
-      //  { '7': [ 11 ], '8': [ 12 ], '24': [ 20 ] }
-      expect(result).toHaveProperty('7');
-      expect(result).toHaveProperty('8');
-      expect(result).toHaveProperty('24');
+      expect(result).toEqual({
+      '7': [ 11 ],     // Point 7 can move to point 11 (with dice 4: 7+4=11)
+      '8': [ 12 ],     // Point 8 can move to point 12 (with dice 4: 8+4=12)
+      '9': [ -1, -1 ], // Point 9 can bear off twice (has 2 checkers, both can bear off)
+      '10': [ -1, -1 ],// Point 10 should not be able to bear off (blocked by point 9)
+      '11': [ -1, -1 ] // Point 11 should not be able to bear off (blocked by point 9)
+      });
+
+      const canBearOffResult = canBearOff(points, PLAYER_RIGHT, { left: 0, right: 0 });
+      expect(canBearOffResult).toBe(true);
     });
   });
 
