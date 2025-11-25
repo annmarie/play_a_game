@@ -168,32 +168,23 @@ describe('Utility Functions', () => {
     })
 
     it('should return potential moves for PLAYER_RIGHT with dice [4,4,4] in mid-game', () => {
-      const points = [
-        { id: 1, checkers: 0, player: null },
-        { id: 2, checkers: 0, player: null },
-        { id: 3, checkers: 0, player: null },
-        { id: 4, checkers: 0, player: null },
-        { id: 5, checkers: 0, player: null },
-        { id: 6, checkers: 0, player: null },
-        { id: 7, checkers: 5, player: PLAYER_RIGHT },
-        { id: 8, checkers: 5, player: PLAYER_RIGHT },
-        { id: 9, checkers: 2, player: PLAYER_RIGHT },
-        { id: 10, checkers: 2, player: PLAYER_RIGHT },
-        { id: 11, checkers: 1, player: PLAYER_RIGHT },
-        { id: 12, checkers: 0, player: null },
-        { id: 13, checkers: 0, player: null },
-        { id: 14, checkers: 0, player: null },
-        { id: 15, checkers: 0, player: null },
-        { id: 16, checkers: 0, player: null },
-        { id: 17, checkers: 0, player: null },
-        { id: 18, checkers: 0, player: null },
-        { id: 19, checkers: 5, player: PLAYER_LEFT },
-        { id: 20, checkers: 3, player: PLAYER_LEFT },
-        { id: 21, checkers: 2, player: PLAYER_LEFT },
-        { id: 22, checkers: 3, player: PLAYER_LEFT },
-        { id: 23, checkers: 1, player: PLAYER_LEFT },
-        { id: 24, checkers: 0, player: null }
-      ];
+       const points = Array.from({ length: 24 }, (_, i) => ({
+          id: i + 1,
+          checkers: 0,
+          player: null
+        }));
+
+        points[6] = { id: 7, checkers: 5, player: PLAYER_RIGHT }
+        points[7] = { id: 8, checkers: 5, player: PLAYER_RIGHT }
+        points[8] = { id: 9, checkers: 2, player: PLAYER_RIGHT }
+        points[9] = { id: 10, checkers: 2, player: PLAYER_RIGHT }
+        points[10] = { id: 11, checkers: 1, player: PLAYER_RIGHT }
+        points[18] = { id: 19, checkers: 5, player: PLAYER_LEFT }
+        points[19] = { id: 20, checkers: 3, player: PLAYER_LEFT }
+        points[20] = { id: 21, checkers: 2, player: PLAYER_LEFT }
+        points[21] = { id: 22, checkers: 3, player: PLAYER_LEFT }
+        points[22] = { id: 23, checkers: 1, player: PLAYER_LEFT }
+
       const result = findPotentialMoves(points, PLAYER_RIGHT, [4, 4, 4], { left: 0, right: 0 });
       expect(result).toEqual({
         '7': [11],     // Point 7 can move to point 11 (with dice 4: 7+4=11)
