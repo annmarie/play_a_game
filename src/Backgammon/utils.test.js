@@ -131,40 +131,30 @@ describe('Utility Functions', () => {
     });
 
     it('should return potential moves for PLAYER_LEFT with dice [5,5,5,5] nobody on bar', () => {
-      const points = [
-        { 'id': 1, 'checkers': 3, 'player': 'left' },
-        { 'id': 2, 'checkers': 2, 'player': 'right' },
-        { 'id': 3, 'checkers': 0, 'player': null },
-        { 'id': 4, 'checkers': 3, 'player': 'right' },
-        { 'id': 5, 'checkers': 3, 'player': 'right' },
-        { 'id': 6, 'checkers': 1, 'player': 'left' },
-        { 'id': 7, 'checkers': 3, 'player': 'right' },
-        { 'id': 8, 'checkers': 2, 'player': 'right' },
-        { 'id': 9, 'checkers': 1, 'player': 'left' },
-        { 'id': 10, 'checkers': 0, 'player': null },
-        { 'id': 11, 'checkers': 1, 'player': 'right' },
-        { 'id': 12, 'checkers': 0, 'player': null },
-        { 'id': 13, 'checkers': 0, 'player': null },
-        { 'id': 14, 'checkers': 0, 'player': null },
-        { 'id': 15, 'checkers': 0, 'player': null },
-        { 'id': 16, 'checkers': 1, 'player': 'left' },
-        { 'id': 17, 'checkers': 3, 'player': 'left' },
-        { 'id': 18, 'checkers': 0, 'player': null },
-        { 'id': 19, 'checkers': 4, 'player': 'left' },
-        { 'id': 20, 'checkers': 2, 'player': 'left' },
-        { 'id': 21, 'checkers': 0, 'player': null },
-        { 'id': 22, 'checkers': 0, 'player': null },
-        { 'id': 23, 'checkers': 1, 'player': 'right' },
-        { 'id': 24, 'checkers': 0, 'player': null }
-      ];
+        const points = Array.from({ length: 24 }, (_, i) => ({
+          id: i + 1,
+          checkers: 0,
+          player: null
+        }));
+        points[0] = { 'id': 1, 'checkers': 3, 'player': PLAYER_LEFT }
+        points[1] = { 'id': 2, 'checkers': 2, 'player': PLAYER_RIGHT }
+        points[3] = { 'id': 4, 'checkers': 3, 'player': PLAYER_RIGHT }
+        points[4] = { 'id': 5, 'checkers': 3, 'player': PLAYER_RIGHT }
+        points[5] = { 'id': 6, 'checkers': 1, 'player': PLAYER_LEFT }
+        points[6] = { 'id': 7, 'checkers': 3, 'player': PLAYER_RIGHT }
+        points[7] = { 'id': 8, 'checkers': 2, 'player': PLAYER_RIGHT }
+        points[8] = { 'id': 9, 'checkers': 1, 'player': PLAYER_LEFT }
+        points[10] = { 'id': 11, 'checkers': 1, 'player': PLAYER_RIGHT }
+        points[15] = { 'id': 16, 'checkers': 1, 'player': PLAYER_LEFT }
+        points[16] = { 'id': 17, 'checkers': 3, 'player': PLAYER_LEFT }
+        points[18] = { 'id': 19, 'checkers': 4, 'player': PLAYER_LEFT }
+        points[19] = { 'id': 20, 'checkers': 2, 'player': PLAYER_LEFT }
+        points[22] = { 'id': 23, 'checkers': 1, 'player': PLAYER_RIGHT }
+
       const player = PLAYER_LEFT;
-      const diceValue = [5, 5, 5, 5]
-      const result = findPotentialMoves(points, player, diceValue, {});
-      expect(result[1][0]).toEqual(17);
-      expect(result[6][0]).toEqual(1);
-      expect(result[16][0]).toEqual(21);
-      expect(result[17][0]).toEqual(22);
-      expect(result[19][0]).toEqual(24);
+      const diceValue = [5, 5, 5]
+      const result = findPotentialMoves(points, player, diceValue, { left: 0, right: 0 });
+      expect( { '1': [ 17 ], '6': [ 1 ], '16': [ 21 ], '17': [ 22 ], '19': [ 24 ] }).toEqual(result);
     })
 
     it('should return potential moves for PLAYER_RIGHT with dice [4,4,4] in mid-game', () => {
@@ -261,7 +251,6 @@ describe('Utility Functions', () => {
           player: null
         }));
 
-        // Place all left player checkers in home board
         points[18] = { id: 19, checkers: 5, player: PLAYER_LEFT };
         points[19] = { id: 20, checkers: 5, player: PLAYER_LEFT };
         points[20] = { id: 21, checkers: 5, player: PLAYER_LEFT };
@@ -276,7 +265,6 @@ describe('Utility Functions', () => {
           player: null
         }));
 
-        // Place all right player checkers in home board
         points[6] = { id: 7, checkers: 5, player: PLAYER_RIGHT };
         points[7] = { id: 8, checkers: 5, player: PLAYER_RIGHT };
         points[8] = { id: 9, checkers: 5, player: PLAYER_RIGHT };
@@ -313,13 +301,11 @@ describe('Utility Functions', () => {
 
     describe('calculatePotentialMove bearing off', () => {
       it('should return -2 when move goes beyond board for left player', () => {
-        // Left player at point 1 (position 11) with die 13+ would go beyond board
         const result = calculatePotentialMove(PLAYER_LEFT, 0, 13); // Point 1, die 13
         expect(result).toBe(-2);
       });
 
       it('should return -2 when move goes beyond board for right player', () => {
-        // Right player at point 24 (position 0) with die 24+ would go beyond board
         const result = calculatePotentialMove(PLAYER_RIGHT, 23, 24); // Point 24, die 24
         expect(result).toBe(-2);
       });
@@ -338,7 +324,6 @@ describe('Utility Functions', () => {
           player: null
         }));
 
-        // Left player checkers in home board
         points[18] = { id: 19, checkers: 2, player: PLAYER_LEFT };
         points[19] = { id: 20, checkers: 3, player: PLAYER_LEFT };
         points[22] = { id: 23, checkers: 1, player: PLAYER_LEFT };
@@ -356,7 +341,6 @@ describe('Utility Functions', () => {
           player: null
         }));
 
-        // Right player checkers in home board
         points[10] = { id: 11, checkers: 2, player: PLAYER_RIGHT };
         points[11] = { id: 12, checkers: 3, player: PLAYER_RIGHT };
 
@@ -373,7 +357,6 @@ describe('Utility Functions', () => {
           player: null
         }));
 
-        // Left player has checkers in and outside home board
         points[18] = { id: 19, checkers: 2, player: PLAYER_LEFT };
         points[6] = { id: 7, checkers: 1, player: PLAYER_LEFT }; // Outside home board
 
