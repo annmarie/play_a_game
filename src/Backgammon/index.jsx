@@ -5,17 +5,31 @@ import {
   ROLL_DICE_BUTTON_TEXT,
   PLAYER_LEFT, PLAYER_RIGHT
 } from './globals';
-import { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot } from './slice';
+import { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard, setCustomDice } from './slice';
 import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
 import './layout.css';
 import { useDispatch } from 'react-redux';
 import Header from '../Header';
+import { testBoards } from './testBoards';
+import { decodeBoardState } from './boardEncoder';
 
 const Backgammon = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.backgammon);
+
+  useEffect(() => {
+    // Load board from URL if present
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get('board');
+    if (encoded) {
+      const boardState = decodeBoardState(encoded);
+      if (boardState) {
+        dispatch(loadTestBoard(boardState));
+      }
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -119,6 +133,33 @@ const Backgammon = () => {
           >
             {RESET_BUTTON_TEXT}
           </button>
+        </div>
+        
+        {/* Debug Controls */}
+        <div className="debug-controls" style={{ marginTop: '20px', padding: '10px', border: '1px solid #ccc' }}>
+          <h4>Debug Controls</h4>
+          <div>
+            <label>Load Test Board: </label>
+            <select onChange={(e) => e.target.value && dispatch(loadTestBoard(testBoards[e.target.value]))}>
+              <option value="">Select...</option>
+              <option value="bearOffTest">Bear Off Test</option>
+              <option value="endGame">End Game</option>
+            </select>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <label>Set Dice: </label>
+            <input 
+              type="text" 
+              placeholder="e.g., 4,4,4" 
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  const dice = e.target.value.split(',').map(n => parseInt(n.trim())).filter(n => n >= 1 && n <= 6);
+                  if (dice.length > 0) dispatch(setCustomDice(dice));
+                  e.target.value = '';
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
 

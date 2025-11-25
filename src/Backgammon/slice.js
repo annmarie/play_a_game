@@ -33,6 +33,20 @@ export const slice = createSlice({
     undoRoll: (state) => reduceUndo(state),
     togglePlayerRoll: (state) => ({ ...state, player: togglePlayer(state.player), diceValue: null }),
     resetGame: () => ({ ...initialState, board: initializeBoard() }),
+    loadTestBoard: (state, action) => ({
+      ...state,
+      ...action.payload,
+      potentialMoves: action.payload.diceValue ? 
+        findPotentialMoves(action.payload.points, action.payload.player, action.payload.diceValue, action.payload.checkersOnBar) : {},
+      selectedSpot: null,
+      potentialSpots: []
+    }),
+    setCustomDice: (state, action) => ({
+      ...state,
+      diceValue: action.payload,
+      potentialMoves: state.player ? 
+        findPotentialMoves(state.points, state.player, action.payload, state.checkersOnBar) : {}
+    }),
   },
 });
 
@@ -245,6 +259,6 @@ function reduceRollDice(state) {
   return { ...state, diceValue, potentialMoves, player };
 }
 
-export const { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot } = slice.actions;
+export const { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard, setCustomDice } = slice.actions;
 
 export default slice.reducer;
