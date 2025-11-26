@@ -7,6 +7,11 @@ import {
   generatePointIndexMap,
   calculatePotentialMove,
   findPotentialMoves,
+  getPointOrder,
+  getIndexToPointIdMap,
+  getPointIdToIndexMap,
+  rightPlayerPointOrder,
+  leftPlayerPointOrder,
   moveCheckers,
   canBearOff,
 } from './utils';
@@ -87,6 +92,31 @@ describe('Utility Functions', () => {
       expect(pointIdToIndexMap[12]).toBe(12);
       expect(pointIdToIndexMap[23]).toBe(23);
     });
+
+    it('getPointOrder returns the correct arrays for each player', () => {
+      expect(getPointOrder(PLAYER_RIGHT)).toEqual(rightPlayerPointOrder);
+      expect(getPointOrder(PLAYER_LEFT)).toEqual(leftPlayerPointOrder);
+    });
+
+    it('getPointIdToIndexMap and getIndexToPointIdMap are consistent for PLAYER_RIGHT', () => {
+      const map = getPointIdToIndexMap(PLAYER_RIGHT);
+      const idx = getIndexToPointIdMap(PLAYER_RIGHT);
+
+      for (let i = 0; i < 24; i++) {
+        const pointIndex = idx[i];
+        expect(map[pointIndex]).toBe(i);
+      }
+    });
+
+    it('getPointIdToIndexMap and getIndexToPointIdMap are consistent for PLAYER_LEFT', () => {
+      const map = getPointIdToIndexMap(PLAYER_LEFT);
+      const idx = getIndexToPointIdMap(PLAYER_LEFT);
+      for (let i = 0; i < 24; i++) {
+        const pointIndex = idx[i];
+        expect(map[pointIndex]).toBe(i);
+      }
+    });
+
   });
 
   describe('calculatePotentialMove', () => {
@@ -131,49 +161,49 @@ describe('Utility Functions', () => {
     });
 
     it('should return potential moves for PLAYER_LEFT with dice [5,5,5,5] nobody on bar', () => {
-        const points = Array.from({ length: 24 }, (_, i) => ({
-          id: i + 1,
-          checkers: 0,
-          player: null
-        }));
-        points[0] = { 'id': 1, 'checkers': 3, 'player': PLAYER_LEFT }
-        points[1] = { 'id': 2, 'checkers': 2, 'player': PLAYER_RIGHT }
-        points[3] = { 'id': 4, 'checkers': 3, 'player': PLAYER_RIGHT }
-        points[4] = { 'id': 5, 'checkers': 3, 'player': PLAYER_RIGHT }
-        points[5] = { 'id': 6, 'checkers': 1, 'player': PLAYER_LEFT }
-        points[6] = { 'id': 7, 'checkers': 3, 'player': PLAYER_RIGHT }
-        points[7] = { 'id': 8, 'checkers': 2, 'player': PLAYER_RIGHT }
-        points[8] = { 'id': 9, 'checkers': 1, 'player': PLAYER_LEFT }
-        points[10] = { 'id': 11, 'checkers': 1, 'player': PLAYER_RIGHT }
-        points[15] = { 'id': 16, 'checkers': 1, 'player': PLAYER_LEFT }
-        points[16] = { 'id': 17, 'checkers': 3, 'player': PLAYER_LEFT }
-        points[18] = { 'id': 19, 'checkers': 4, 'player': PLAYER_LEFT }
-        points[19] = { 'id': 20, 'checkers': 2, 'player': PLAYER_LEFT }
-        points[22] = { 'id': 23, 'checkers': 1, 'player': PLAYER_RIGHT }
+      const points = Array.from({ length: 24 }, (_, i) => ({
+        id: i + 1,
+        checkers: 0,
+        player: null
+      }));
+      points[0] = { 'id': 1, 'checkers': 3, 'player': PLAYER_LEFT }
+      points[1] = { 'id': 2, 'checkers': 2, 'player': PLAYER_RIGHT }
+      points[3] = { 'id': 4, 'checkers': 3, 'player': PLAYER_RIGHT }
+      points[4] = { 'id': 5, 'checkers': 3, 'player': PLAYER_RIGHT }
+      points[5] = { 'id': 6, 'checkers': 1, 'player': PLAYER_LEFT }
+      points[6] = { 'id': 7, 'checkers': 3, 'player': PLAYER_RIGHT }
+      points[7] = { 'id': 8, 'checkers': 2, 'player': PLAYER_RIGHT }
+      points[8] = { 'id': 9, 'checkers': 1, 'player': PLAYER_LEFT }
+      points[10] = { 'id': 11, 'checkers': 1, 'player': PLAYER_RIGHT }
+      points[15] = { 'id': 16, 'checkers': 1, 'player': PLAYER_LEFT }
+      points[16] = { 'id': 17, 'checkers': 3, 'player': PLAYER_LEFT }
+      points[18] = { 'id': 19, 'checkers': 4, 'player': PLAYER_LEFT }
+      points[19] = { 'id': 20, 'checkers': 2, 'player': PLAYER_LEFT }
+      points[22] = { 'id': 23, 'checkers': 1, 'player': PLAYER_RIGHT }
 
       const player = PLAYER_LEFT;
       const diceValue = [5, 5, 5]
       const result = findPotentialMoves(points, player, diceValue, { left: 0, right: 0 });
-      expect( { '1': [ 17 ], '6': [ 1 ], '16': [ 21 ], '17': [ 22 ], '19': [ 24 ] }).toEqual(result);
+      expect({ '1': [17], '6': [1], '16': [21], '17': [22], '19': [24] }).toEqual(result);
     })
 
     it('should return potential moves for PLAYER_RIGHT with dice [4,4,4] in mid-game', () => {
-       const points = Array.from({ length: 24 }, (_, i) => ({
-          id: i + 1,
-          checkers: 0,
-          player: null
-        }));
+      const points = Array.from({ length: 24 }, (_, i) => ({
+        id: i + 1,
+        checkers: 0,
+        player: null
+      }));
 
-        points[6] = { id: 7, checkers: 5, player: PLAYER_RIGHT }
-        points[7] = { id: 8, checkers: 5, player: PLAYER_RIGHT }
-        points[8] = { id: 9, checkers: 2, player: PLAYER_RIGHT }
-        points[9] = { id: 10, checkers: 2, player: PLAYER_RIGHT }
-        points[10] = { id: 11, checkers: 1, player: PLAYER_RIGHT }
-        points[18] = { id: 19, checkers: 5, player: PLAYER_LEFT }
-        points[19] = { id: 20, checkers: 3, player: PLAYER_LEFT }
-        points[20] = { id: 21, checkers: 2, player: PLAYER_LEFT }
-        points[21] = { id: 22, checkers: 3, player: PLAYER_LEFT }
-        points[22] = { id: 23, checkers: 1, player: PLAYER_LEFT }
+      points[6] = { id: 7, checkers: 5, player: PLAYER_RIGHT }
+      points[7] = { id: 8, checkers: 5, player: PLAYER_RIGHT }
+      points[8] = { id: 9, checkers: 2, player: PLAYER_RIGHT }
+      points[9] = { id: 10, checkers: 2, player: PLAYER_RIGHT }
+      points[10] = { id: 11, checkers: 1, player: PLAYER_RIGHT }
+      points[18] = { id: 19, checkers: 5, player: PLAYER_LEFT }
+      points[19] = { id: 20, checkers: 3, player: PLAYER_LEFT }
+      points[20] = { id: 21, checkers: 2, player: PLAYER_LEFT }
+      points[21] = { id: 22, checkers: 3, player: PLAYER_LEFT }
+      points[22] = { id: 23, checkers: 1, player: PLAYER_LEFT }
 
       const result = findPotentialMoves(points, PLAYER_RIGHT, [4, 4, 4], { left: 0, right: 0 });
       expect(result).toEqual({

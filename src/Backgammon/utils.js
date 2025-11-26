@@ -53,6 +53,39 @@ export const rightPlayerPointOrder = [
 export const leftPlayerPointOrder = [...rightPlayerPointOrder].reverse();
 
 /**
+ * Selector: returns the point order array for the given player.
+ * @param {string} player
+ * @returns {Array<number>}
+ */
+export const getPointOrder = (player) => (
+  player === PLAYER_RIGHT ? rightPlayerPointOrder : leftPlayerPointOrder
+);
+
+/**
+ * Selector: map from pointId to index in the player's travel order.
+ * @param {string} player
+ * @returns {Object<number, number>} mapping pointId(0-based) -> index
+ */
+export const getPointIdToIndexMap = (player) => (
+  getPointOrder(player).reduce((map, pointId, index) => {
+    map[pointId - 1] = index;
+    return map;
+  }, {})
+);
+
+/**
+ * Selector: map from index in the player's travel order to pointId (0-based).
+ * @param {string} player
+ * @returns {Object<number, number>}
+ */
+export const getIndexToPointIdMap = (player) => (
+  getPointOrder(player).reduce((map, pointId, index) => {
+    map[index] = pointId - 1;
+    return map;
+  }, {})
+);
+
+/**
  * Generates a mapping of point IDs to their indices for a given player.
  * or a mapping of indices to point IDs for a given player.
  * @param {string} player - The current player
@@ -60,11 +93,9 @@ export const leftPlayerPointOrder = [...rightPlayerPointOrder].reverse();
  * @returns {Object} A mapping of point IDs to indices.
  */
 export const generatePointIndexMap = (player, indexBy = 'point') => {
-  const pointOrder = player === PLAYER_RIGHT ? rightPlayerPointOrder : leftPlayerPointOrder;
-  return pointOrder.reduce((map, pointId, index) => {
-    indexBy === 'point' ? map[pointId - 1] = index : map[index] = pointId - 1;
-    return map;
-  }, {});
+  // Keep backward-compatible API but implement using selectors.
+  if (indexBy === 'point') return getPointIdToIndexMap(player);
+  return getIndexToPointIdMap(player);
 };
 
 /**
@@ -75,8 +106,8 @@ export const generatePointIndexMap = (player, indexBy = 'point') => {
  * @returns {number} The target point ID, or -2 for bearing off, or -1 if invalid.
  */
 export const calculatePotentialMove = (player, selectedIndex, die) => {
-  const pointIdToIndexMap = generatePointIndexMap(player, 'point');
-  const indexToPointIdMap = generatePointIndexMap(player, 'index');
+  const pointIdToIndexMap = getPointIdToIndexMap(player);
+  const indexToPointIdMap = getIndexToPointIdMap(player);
 
   const currentPosition = pointIdToIndexMap[selectedIndex];
   const targetIndex = currentPosition + die;
@@ -86,7 +117,9 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
     return -2; // Special value for bearing off
   }
 
-  return indexToPointIdMap[targetIndex] >= 0 ? indexToPointIdMap[targetIndex] : -1;
+  return typeof indexToPointIdMap[targetIndex] === 'number'
+    ? indexToPointIdMap[targetIndex]
+    : -1;
 };
 
 /**
@@ -99,7 +132,6 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
 export const canBearOff = (points, player, checkersOnBar) => {
   if (checkersOnBar[player] > 0) return false;
 
-  // Home board is last 6 points in movement direction from start key
   const homeRange = player === PLAYER_LEFT ?
     [START_KEY_LEFT + 7, START_KEY_LEFT + 12] :
     [START_KEY_RIGHT - 17, START_KEY_RIGHT - 12];
