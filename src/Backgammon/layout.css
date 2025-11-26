@@ -38,3 +38,7 @@
   cursor: not-allowed;
   outline: transparent;
 }
+
+.backgammon-game .debug-controls {
+  padding-top: 10px;
+}
