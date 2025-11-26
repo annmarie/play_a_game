@@ -7,14 +7,11 @@ export const testBoards = {
       let checkers = 0;
       let player = null;
 
-      // Right player in home board
       if (id === 7) { checkers = 5; player = PLAYER_RIGHT; }
       if (id === 8) { checkers = 5; player = PLAYER_RIGHT; }
       if (id === 9) { checkers = 2; player = PLAYER_RIGHT; }
       if (id === 10) { checkers = 2; player = PLAYER_RIGHT; }
       if (id === 11) { checkers = 1; player = PLAYER_RIGHT; }
-
-      // Left player scattered
       if (id === 19) { checkers = 5; player = PLAYER_LEFT; }
       if (id === 20) { checkers = 3; player = PLAYER_LEFT; }
       if (id === 21) { checkers = 2; player = PLAYER_LEFT; }
