@@ -195,10 +195,10 @@ describe('Utility Functions', () => {
         return { id, checkers, player };
       })
 
-      points[23] = { checkers: 2, player: PLAYER_LEFT }
-      points[24] = { checkers: 1, player: PLAYER_LEFT }
-      points[11] = { checkers: 1, player: PLAYER_RIGHT }
-      points[12] = { checkers: 2, player: PLAYER_RIGHT }
+      points[22] = { id: 23, checkers: 2, player: PLAYER_LEFT }
+      points[23] = { id: 24, checkers: 1, player: PLAYER_LEFT }
+      points[10] = { id: 11, checkers: 1, player: PLAYER_RIGHT }
+      points[11] = { id: 12, checkers: 2, player: PLAYER_RIGHT }
 
       const canBearOffResult = canBearOff(points, PLAYER_LEFT, { left: 0, right: 0 });
       expect(canBearOffResult).toBe(true);
