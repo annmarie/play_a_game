@@ -42,5 +42,24 @@ export const testBoards = {
     checkersBorneOff: { [PLAYER_LEFT]: 12, [PLAYER_RIGHT]: 12 },
     player: PLAYER_LEFT,
     diceValue: [6, 5]
+  },
+
+  barTest: {
+    points: Array.from({ length: 24 }, (_, i) => {
+      const id = i + 1;
+      let checkers = 0;
+      let player = null;
+
+      if (id === 23) { checkers = 2; player = PLAYER_LEFT; }
+      if (id === 24) { checkers = 1; player = PLAYER_LEFT; }
+      if (id === 11) { checkers = 1; player = PLAYER_RIGHT; }
+      if (id === 12) { checkers = 2; player = PLAYER_RIGHT; }
+
+      return { id, checkers, player };
+    }),
+    checkersOnBar: { [PLAYER_LEFT]: 1, [PLAYER_RIGHT]: 0 },
+    checkersBorneOff: { [PLAYER_LEFT]: 11, [PLAYER_RIGHT]: 12 },
+    player: PLAYER_LEFT,
+    diceValue: [6, 5]
   }
 };

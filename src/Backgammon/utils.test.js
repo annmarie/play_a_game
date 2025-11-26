@@ -187,7 +187,29 @@ describe('Utility Functions', () => {
       expect({ '1': [17], '6': [1], '16': [21], '17': [22], '19': [24] }).toEqual(result);
     })
 
-    it('should return potential moves for PLAYER_RIGHT with dice [4,4,4] in mid-game', () => {
+    it('should allow bearing off when there are three moves left and the role is high', () => {
+      const points = Array.from({ length: 24 }, (_, i) => {
+        const id = i + 1;
+        let checkers = 0;
+        let player = null;
+        return { id, checkers, player };
+      })
+
+      points[23] = { checkers: 2, player: PLAYER_LEFT }
+      points[24] = { checkers: 1, player: PLAYER_LEFT }
+      points[11] = { checkers: 1, player: PLAYER_RIGHT }
+      points[12] = { checkers: 2, player: PLAYER_RIGHT }
+
+      const canBearOffResult = canBearOff(points, PLAYER_LEFT, { left: 0, right: 0 });
+      expect(canBearOffResult).toBe(true);
+
+      const bearOffResult = moveCheckers(points, -1, 22, PLAYER_LEFT);
+      expect(bearOffResult.updatedPoints[22].checkers).toBe(1);
+      expect(bearOffResult.updatedPoints[23].checkers).toBe(1);
+
+    });
+
+    it('should not allow bearing off at point 10 when there are valid moves before this one', () => {
       const points = Array.from({ length: 24 }, (_, i) => ({
         id: i + 1,
         checkers: 0,
@@ -216,6 +238,10 @@ describe('Utility Functions', () => {
 
       const canBearOffResult = canBearOff(points, PLAYER_RIGHT, { left: 0, right: 0 });
       expect(canBearOffResult).toBe(true);
+
+      const bearOffResult = moveCheckers(points, -1, 10, PLAYER_RIGHT);
+      expect(bearOffResult.updatedPoints[10].checkers).toBe(0);
+
     });
   });
 

@@ -225,9 +225,8 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
  * Moves checkers on the board.
  *
  * @param {Array} points - The current state of the board.
- * @param {Object} checkersOnBar - The number of checkers each player has on the bar.
- * @param {number} toIndex - The index of the destination point.
- * @param {number} fromIndex - The index of the source point.
+ * @param {number} toIndex - The index of the destination point (0-based) or -1 for bearing off.
+ * @param {number} fromIndex - The index of the source point (0-based).
  * @param {string} player - The player making the move.
  * @returns {Object} An object containing updated points and checkers on the bar.
  */
@@ -253,9 +252,15 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
     hasBarPlayer = destinationPoint.player;
     updatedPoints[toIndex] = {
       ...updatedPoints[toIndex],
-      checkers: 0,
-      player: null
+      checkers: 1,
+      player: player
     }
+  } else {
+    updatedPoints[toIndex] = {
+      ...updatedPoints[toIndex],
+      checkers: updatedPoints[toIndex].checkers + 1,
+      player: updatedPoints[toIndex].checkers + 1 === 1 ? player : updatedPoints[toIndex].player,
+    };
   }
 
   if (fromIndex >= 0) {
@@ -265,12 +270,6 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
       player: updatedPoints[fromIndex].checkers - 1 === 0 ? null : player,
     };
   }
-
-  updatedPoints[toIndex] = {
-    ...updatedPoints[toIndex],
-    checkers: updatedPoints[toIndex].checkers + 1,
-    player: updatedPoints[toIndex].checkers + 1 === 1 ? player : updatedPoints[toIndex].player,
-  };
 
   return { updatedPoints, hasBarPlayer };
 }
