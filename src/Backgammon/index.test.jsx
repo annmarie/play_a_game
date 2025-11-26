@@ -267,7 +267,7 @@ describe('Backgammon Component Tests', () => {
         backgammon: {
           points: customPoints,
           checkersOnBar: { left: 0, right: 0 },
-          checkersBornOff: { left: 1, right: 4 },
+          checkersBorneOff: { left: 1, right: 4 },
           diceValue: [4, 4, 4],
           player: PLAYER_RIGHT,
           winner: null,
@@ -309,7 +309,7 @@ describe('Backgammon Component Tests', () => {
         backgammon: {
           points: Array.from({ length: 24 }, (_, i) => ({ id: i + 1, checkers: 0, player: null })),
           checkersOnBar: { left: 0, right: 0 },
-          checkersBornOff: { left: 0, right: 0 },
+          checkersBorneOff: { left: 0, right: 0 },
           diceValue: [6, 5],
           player: PLAYER_RIGHT,
           winner: null,

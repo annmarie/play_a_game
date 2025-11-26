@@ -3,7 +3,7 @@ export const encodeBoardState = (state) => {
   const data = {
     points: state.points.map(p => ({ id: p.id, checkers: p.checkers, player: p.player })),
     checkersOnBar: state.checkersOnBar,
-    checkersBornOff: state.checkersBornOff,
+    checkersBorneOff: state.checkersBorneOff,
     player: state.player,
     diceValue: state.diceValue
   };

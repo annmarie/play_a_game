@@ -138,10 +138,10 @@ const Backgammon = () => {
 
       <div className="backgammon-borne-off">
         <div>
-          {PLAYER_LEFT} Borne Off: {state.checkersBornOff[PLAYER_LEFT] || 0}
+          {PLAYER_LEFT} Borne Off: {state.checkersBorneOff[PLAYER_LEFT] || 0}
         </div>
         <div>
-          {PLAYER_RIGHT} Borne Off: {state.checkersBornOff[PLAYER_RIGHT] || 0}
+          {PLAYER_RIGHT} Borne Off: {state.checkersBorneOff[PLAYER_RIGHT] || 0}
         </div>
         <div className="debug-controls">
           <div>

@@ -3,19 +3,19 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    border: 4px solid transparent;
+    border: 0.25em solid transparent;
     align-items: center;
-    min-height: 150px;
+    min-height: 9.375em;
   }
 
   .point:nth-child(6),
   .point:nth-child(18) {
-    border-right: 4px solid black;
+    border-right: 0.25em solid black;
   }
 
   .point:nth-child(7),
   .point:nth-child(19) {
-    border-left: 4px solid black;
+    border-left: 0.25em solid black;
   }
 
   .point.light {
@@ -31,9 +31,9 @@
   }
 
   .point.selected {
-    border: 4px solid #e2f114
+    border: 0.25em solid #e2f114
   }
   .point.potential {
-    border: 4px solid #e7f070
+    border: 0.25em solid #e7f070
   }
 }

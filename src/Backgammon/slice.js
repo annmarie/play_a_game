@@ -9,7 +9,7 @@ import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_IND
 export const initialState = {
   points: initializeBoard(),
   checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
-  checkersBornOff: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
+  checkersBorneOff: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
   diceValue: null,
   player: null,
   winner: null,
@@ -36,7 +36,7 @@ export const slice = createSlice({
     loadTestBoard: (state, action) => ({
       ...state,
       ...action.payload,
-      potentialMoves: action.payload.diceValue ? 
+      potentialMoves: action.payload.diceValue ?
         findPotentialMoves(action.payload.points, action.payload.player, action.payload.diceValue, action.payload.checkersOnBar) : {},
       selectedSpot: null,
       potentialSpots: []
@@ -44,7 +44,7 @@ export const slice = createSlice({
     setCustomDice: (state, action) => ({
       ...state,
       diceValue: action.payload,
-      potentialMoves: state.player ? 
+      potentialMoves: state.player ?
         findPotentialMoves(state.points, state.player, action.payload, state.checkersOnBar) : {}
     }),
   },
@@ -130,7 +130,7 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
   );
 
   const updatedCheckersOnBar = { ...state.checkersOnBar }
-  const updatedCheckersBornOff = { ...state.checkersBornOff }
+  const updatedCheckersBorneOff = { ...state.checkersBorneOff }
 
   if (hasBarPlayer) {
     updatedCheckersOnBar[hasBarPlayer] = state.checkersOnBar[hasBarPlayer] || 0;
@@ -143,7 +143,7 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
 
   // update borne off checker count
   if (toIndex === -1) {
-    updatedCheckersBornOff[state.player] = (state.checkersBornOff[state.player] || 0) + 1;
+    updatedCheckersBorneOff[state.player] = (state.checkersBorneOff[state.player] || 0) + 1;
   }
 
   const updatedDiceValue = state.diceValue.filter((dv, index) =>
@@ -158,13 +158,13 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
   );
 
   const moveInProcess = updatedDiceValue.length > 0;
-  const winner = updatedCheckersBornOff[state.player] === 15 ? state.player : null;
+  const winner = updatedCheckersBorneOff[state.player] === 15 ? state.player : null;
 
   return {
     ...state,
     points: updatedPoints,
     checkersOnBar: updatedCheckersOnBar,
-    checkersBornOff: updatedCheckersBornOff,
+    checkersBorneOff: updatedCheckersBorneOff,
     winner,
     diceValue: moveInProcess && !winner
       ? updatedDiceValue

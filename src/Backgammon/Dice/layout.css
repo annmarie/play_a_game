@@ -1,29 +1,29 @@
 
 .backgammon-game .dice-container {
   display: flex;
-  gap: 10px;
+  gap: 0.625em;
   justify-content: center;
   align-items: center;
 }
 
 .backgammon-game .dice-container .die {
-  width: 60px;
-  height: 60px;
+  width: 3.75em;
+  height: 3.75em;
   background-color: white;
-  border: 2px solid black;
-  border-radius: 10px;
+  border: 0.125em solid black;
+  border-radius: 0.625em;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   justify-items: center;
   align-items: center;
   position: relative;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0.3125em 0.3125em 0.9375em rgba(0, 0, 0, 0.3);
 }
 
 .backgammon-game .dice-container .die-dot {
-  width: 10px;
-  height: 10px;
+  width: 0.625em;
+  height: 0.625em;
   background-color: black;
   border-radius: 50%;
   opacity: 0;

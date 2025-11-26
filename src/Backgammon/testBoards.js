@@ -42,7 +42,7 @@ export const testBoards = {
       return { id, checkers, player };
     }),
     checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
-    checkersBornOff: { [PLAYER_LEFT]: 12, [PLAYER_RIGHT]: 12 },
+    checkersBorneOff: { [PLAYER_LEFT]: 12, [PLAYER_RIGHT]: 12 },
     player: PLAYER_LEFT,
     diceValue: [6, 5]
   }

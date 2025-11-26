@@ -3,22 +3,22 @@
   position: relative;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 2px;
-  width: 600px;
-  margin: 20px auto;
-  border: 2px solid #000;
+  gap: 0.125em;
+  width: 37.5em;
+  margin: 1.25em auto;
+  border: 0.125em solid #000;
 }
 
 .bear-off-area {
   position: absolute;
-  right: -80px;
+  right: -5em;
   top: 50%;
   transform: translateY(-50%);
-  width: 70px;
-  height: 100px;
+  width: 4.375em;
+  height: 6.25em;
   background-color: #f0f0f0;
-  border: 2px solid #333;
-  border-radius: 8px;
+  border: 0.125em solid #333;
+  border-radius: 0.5em;
   display: flex;
   align-items: center;
   justify-content: center;
