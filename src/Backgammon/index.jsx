@@ -19,6 +19,8 @@ const Backgammon = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.backgammon);
 
+  const isDebugMode = new URLSearchParams(window.location.search).has('debug');
+
   useEffect(() => {
     // Load board from URL if present
     const params = new URLSearchParams(window.location.search);
@@ -143,17 +145,19 @@ const Backgammon = () => {
         <div>
           {PLAYER_RIGHT} Borne Off: {state.checkersBorneOff[PLAYER_RIGHT] || 0}
         </div>
-        <div className="debug-controls">
-          <div>
-            <label>Load Test Board:
-            <select onChange={(e) => e.target.value && dispatch(loadTestBoard(testBoards[e.target.value]))}>
-              <option value="">Select...</option>
-              <option value="bearOffTest">Bear Off Test</option>
-              <option value="endGame">End Game</option>
-            </select>
-            </label>
+        {isDebugMode && (
+          <div className="debug-controls">
+            <div>
+              <label>Load Test Board:
+              <select onChange={(e) => e.target.value && dispatch(loadTestBoard(testBoards[e.target.value]))}>
+                <option value="">Select...</option>
+                <option value="bearOffTest">Bear Off Test</option>
+                <option value="endGame">End Game</option>
+              </select>
+              </label>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="backgammon-bar">
         <div>
