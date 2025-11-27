@@ -160,7 +160,7 @@ describe('Utility Functions', () => {
       expect(result).toEqual({ '21': [] });
     });
 
-    it('should return potential moves for PLAYER_LEFT with dice [5,5,5,5] nobody on bar', () => {
+    it('should return potential moves for PLAYER_LEFT with dice [5,5,5] nobody on bar', () => {
       const points = Array.from({ length: 24 }, (_, i) => ({
         id: i + 1,
         checkers: 0,

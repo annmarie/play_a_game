@@ -157,10 +157,13 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   const potentialMoves = {};
   const hasCheckerOnBar = checkersOnBar[player] ? (checkersOnBar[player] || 0) > 0 : 0;
 
+  //export const START_KEY_LEFT = 12;
+  //export const START_KEY_RIGHT = 24;
+
   if (hasCheckerOnBar) {
     const startPointId = player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
     for (const die of dice) {
-      const targetPointId = player === PLAYER_LEFT ? startPointId + die : startPointId - die;
+      const targetPointId = player === PLAYER_LEFT ? (startPointId + 1) - die : startPointId + die;
       if (targetPointId >= 1 && targetPointId <= 24) {
         const targetPoint = points[targetPointId - 1];
         if (
@@ -185,15 +188,10 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
         const pointId = point.id;
         let canBearOffFromThisPoint = false;
 
-        const leftHomeStart = START_KEY_LEFT + 7;
-        const leftHomeEnd = START_KEY_LEFT + 12;
-        const rightHomeStart = START_KEY_RIGHT - 17;
-        const rightHomeEnd = START_KEY_RIGHT - 12;
-
-        if (player === PLAYER_LEFT && pointId >= leftHomeStart && pointId <= leftHomeEnd) {
-          canBearOffFromThisPoint = die >= (leftHomeEnd + 1 - pointId);
-        } else if (player === PLAYER_RIGHT && pointId >= rightHomeStart && pointId <= rightHomeEnd) {
-          canBearOffFromThisPoint = die >= (rightHomeEnd + 1 - pointId);
+        if (player === PLAYER_LEFT && pointId >= 19 && pointId <= 24) {
+          canBearOffFromThisPoint = die >= (25 - pointId);
+        } else if (player === PLAYER_RIGHT && pointId >= 7 && pointId <= 12) {
+          canBearOffFromThisPoint = die >= (13 - pointId);
         }
 
         if (canBearOffFromThisPoint) {
