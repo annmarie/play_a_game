@@ -67,8 +67,7 @@ function reduceSelectSpot(state, action) {
 
     // Check if the clicked point is a valid entry point
     if (Object.keys(state.potentialMoves).includes(pointId.toString())) {
-      const moveDistance = state.player === PLAYER_LEFT ?
-        pointId - startKeyId : startKeyId - pointId;
+      const moveDistance = (startKeyId + 1) - pointId
       return updateMoveCheckerState(state, INVALID_INDEX, selectedIndex, moveDistance);
     }
     return state;
