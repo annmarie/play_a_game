@@ -101,11 +101,32 @@ function reduceMoveChecker(state, { payload: { fromPointId, toPointId } }) {
     const moveDistance = player === PLAYER_LEFT ?
       (START_KEY_LEFT + 12) + 1 - fromPointId :
       (START_KEY_RIGHT - 12) + 1 - fromPointId;
-    const isValidDiceValue = diceValue.includes(moveDistance);
+
+    // Check if exact dice value matches
+    let isValidDiceValue = diceValue.includes(moveDistance);
+    let usedDiceValue = moveDistance;
+
+    // If no exact match, check if we can use a higher dice value (backgammon rule)
+    if (!isValidDiceValue) {
+      const higherDice = diceValue.filter(die => die > moveDistance);
+      if (higherDice.length > 0) {
+        // Check if this is the highest occupied point for this player
+        const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+        const occupiedPoints = points
+          .filter(p => p.player === player && homeRange[0] <= p.id && p.id <= homeRange[1])
+          .map(p => p.id);
+        const highestOccupied = Math.min(...occupiedPoints);
+
+        if (fromPointId === highestOccupied) {
+          isValidDiceValue = true;
+          usedDiceValue = higherDice[0]; // Use the first available higher dice
+        }
+      }
+    }
 
     if (!isValidDiceValue) return state;
 
-    return updateMoveCheckerState(state, fromIndex, -1, moveDistance);
+    return updateMoveCheckerState(state, fromIndex, -1, usedDiceValue);
   }
 
   const fromIndex = points.findIndex((point) => point.id === fromPointId);
