@@ -157,13 +157,10 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   const potentialMoves = {};
   const hasCheckerOnBar = checkersOnBar[player] ? (checkersOnBar[player] || 0) > 0 : 0;
 
-  //export const START_KEY_LEFT = 12;
-  //export const START_KEY_RIGHT = 24;
-
   if (hasCheckerOnBar) {
     const startPointId = player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
     for (const die of dice) {
-      const targetPointId = player === PLAYER_LEFT ? (startPointId + 1) - die : startPointId + die;
+      const targetPointId = player === PLAYER_LEFT ? (startPointId + 1) - die : (startPointId + 1) - die;
       if (targetPointId >= 1 && targetPointId <= 24) {
         const targetPoint = points[targetPointId - 1];
         if (

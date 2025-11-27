@@ -57,9 +57,9 @@ export const testBoards = {
 
       return { id, checkers, player };
     }),
-    checkersOnBar: { [PLAYER_LEFT]: 1, [PLAYER_RIGHT]: 0 },
+    checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 1 },
     checkersBorneOff: { [PLAYER_LEFT]: 11, [PLAYER_RIGHT]: 12 },
-    player: PLAYER_LEFT,
+    player: PLAYER_RIGHT,
     diceValue: [6, 3]
   },
 
