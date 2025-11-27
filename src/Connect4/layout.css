@@ -1,5 +1,5 @@
 .connect4-game {
-  background-color: #989393;
+  background-color: darkgray;
   display: flex;
   flex-direction: column;
   border-radius: 0.75em;

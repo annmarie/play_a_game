@@ -11,9 +11,10 @@ const App = () => {
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Backgammon />} />
           <Route path="/backgammon" element={<Backgammon />} />
           <Route path="/connect4" element={<Connect4 />} />
+          <Route path="/home" element={<Home />} />
         </Routes>
       </Router>
     </Provider>

@@ -4,7 +4,10 @@ import './layout.css'
 const Header = () => {
   return (
     <div className="header">
-      <h1><Link to="/">Play A Game</Link></h1>
+      <nav className="nav">
+        <Link to="/backgammon" className="nav-link">Backgammon</Link>
+        <Link to="/connect4" className="nav-link">Connect Four</Link>
+      </nav>
     </div>
   );
 };
