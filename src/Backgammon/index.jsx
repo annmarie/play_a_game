@@ -150,7 +150,7 @@ const Backgammon = () => {
               <option value="">Select...</option>
               <option value="bearOffTest">Bear Off Test</option>
               <option value="endGame">End Game</option>
-              <option value="barTest">Bar Test</option>
+              <option value="bearOffTestOld">Bear Off Test Old</option>
             </select>
             </label>
           </div>
