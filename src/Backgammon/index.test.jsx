@@ -273,7 +273,7 @@ describe('Backgammon Component Tests', () => {
           winner: null,
           selectedSpot: null,
           potentialSpots: [-1, -1],
-          potentialMoves: { '7': [ 11 ], '8': [ 12 ], '9': [ -1, -1 ], '10': [ -1 ], '11': [ -1, -1 ] },
+          potentialMoves: { '7': [11], '8': [12], '9': [-1, -1], '10': [-1], '11': [-1, -1] },
           pointsHistory: [],
           diceHistory: [],
           playerHistory: [],
@@ -299,7 +299,7 @@ describe('Backgammon Component Tests', () => {
     // if clicked it will not bear off because there are other valid moves.
     // It's just that the bear off button appears when it should not
     //const bearOffButton = screen.getByText(BEAR_OFF);
-    //expect(bearOffButton).toBeInTheDocument();
+    //expect(bearOffButton).not.toBeInTheDocument();
   });
 
   it('should show bear off button when bearing off is possible', async () => {
@@ -329,6 +329,49 @@ describe('Backgammon Component Tests', () => {
 
     const bearOffButton = screen.getByText('Bear Off');
     expect(bearOffButton).toBeInTheDocument();
+  });
+
+  it('should reset checkersBorneOff when undoing a bear off move', async () => {
+    const customStore = configureStore({
+      reducer,
+      preloadedState: {
+        backgammon: {
+          points: Array.from({ length: 24 }, (_, i) => {
+            const id = i + 1;
+            if (id === 24) return { id, checkers: 1, player: PLAYER_LEFT };
+            return { id, checkers: 0, player: null };
+          }),
+          checkersOnBar: { left: 0, right: 0 },
+          checkersBorneOff: { left: 3, right: 0 },
+          diceValue: [6, 4],
+          player: PLAYER_LEFT,
+          winner: null,
+          selectedSpot: null,
+          potentialSpots: [-1],
+          potentialMoves: { '24': [-1] },
+          pointsHistory: [Array.from({ length: 24 }, (_, i) => {
+            const id = i + 1;
+            if (id === 24) return { id, checkers: 2, player: PLAYER_LEFT };
+            return { id, checkers: 0, player: null };
+          })],
+          diceHistory: [[6, 4, 4]],
+          playerHistory: [PLAYER_LEFT],
+          checkersOnBarHistory: [{ left: 0, right: 0 }],
+          checkersBorneOffHistory: [{ left: 2, right: 0 }],
+          potentialMovesHistory: [{ '24': [-1, -1] }]
+        }
+      }
+    });
+
+    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
+
+    expect(screen.getByText('Borne Off: 3')).toBeInTheDocument();
+
+    const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
+    await act(async () => fireEvent.click(undoButton));
+
+    expect(screen.getByText('Borne Off: 2')).toBeInTheDocument();
+    expect(screen.queryByText('Borne Off: 3')).not.toBeInTheDocument();
   });
 });
 

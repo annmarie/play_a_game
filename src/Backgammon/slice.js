@@ -20,6 +20,7 @@ export const initialState = {
   diceHistory: [],
   playerHistory: [],
   checkersOnBarHistory: [],
+  checkersBorneOffHistory: [],
   potentialMovesHistory: [],
 };
 
@@ -199,6 +200,7 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
 
     pointsHistory: [...state.pointsHistory, state.points],
     checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar],
+    checkersBorneOffHistory: [...state.checkersBorneOffHistory, state.checkersBorneOff],
     diceHistory: [...state.diceHistory, state.diceValue],
     playerHistory: [...state.playerHistory, state.player],
     potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves],
@@ -225,6 +227,7 @@ function getPreviousActionState(state) {
     player: state.playerHistory[state.playerHistory.length - 1] || initialState.player,
     potentialMoves: state.potentialMovesHistory[state.potentialMovesHistory.length - 1] || initialState.potentialMoves,
     checkersOnBar: state.checkersOnBarHistory[state.checkersOnBarHistory.length - 1] || initialState.checkersOnBar,
+    checkersBorneOff: state.checkersBorneOffHistory[state.checkersBorneOffHistory.length - 1] || initialState.checkersBorneOff,
   };
 }
 
@@ -235,6 +238,7 @@ function updateHistoryState(state) {
     playerHistory: state.playerHistory.slice(0, -1),
     potentialMovesHistory: state.potentialMovesHistory.slice(0, -1),
     checkersOnBarHistory: state.checkersOnBarHistory.slice(0, -1),
+    checkersBorneOffHistory: state.checkersBorneOffHistory.slice(0, -1),
   };
 }
 

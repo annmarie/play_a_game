@@ -1,4 +1,4 @@
-// Encode/decode Connect4 board state to/from URL
+// Encode/decode state to/from URL
 export const encodeBoardState = (state) => {
   const data = {
     board: state.board,

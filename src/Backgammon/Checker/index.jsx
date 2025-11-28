@@ -3,8 +3,7 @@ import { PLAYER_RIGHT, PLAYER_LEFT } from '../globals';
 import './layout.css'
 
 const Checker = ({ player, selected }) => {
-  const className = `checker ${
-    player === PLAYER_RIGHT
+  const className = `checker ${player === PLAYER_RIGHT
       ? 'player_right'
       : player === PLAYER_LEFT
         ? 'player_left'
