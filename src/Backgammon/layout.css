@@ -26,9 +26,8 @@
 
 .backgammon-game .backgammon-bar {
   display: flex;
-  justify-content: space-between;
-  padding-top: 0.625em;
   gap: 20px;
+  justify-content: right;
 }
 
 .backgammon-game button:active {
@@ -45,7 +44,6 @@
 }
 
 .backgammon-game .debug-controls {
-  padding-top: 0.625em;
   display: flex;
   gap: 10px;
   align-items: center;

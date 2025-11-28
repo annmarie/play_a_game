@@ -153,13 +153,26 @@ const Backgammon = () => {
 
         <div className="backgammon-borne-off">
           {state.checkersBorneOff[PLAYER_LEFT] > 0 && (
-            <div>
+            <div aria-label={`Borne Off for ${PLAYER_LEFT}`}>
               <Checker player={PLAYER_LEFT} /> Borne Off: {state.checkersBorneOff[PLAYER_LEFT]}
             </div>
           )}
           {state.checkersBorneOff[PLAYER_RIGHT] > 0 && (
-            <div>
+            <div aria-label={`Borne Off for ${PLAYER_RIGHT}`}>
               <Checker player={PLAYER_RIGHT} /> Borne Off: {state.checkersBorneOff[PLAYER_RIGHT]}
+            </div>
+          )}
+        </div>
+
+        <div className="backgammon-bar">
+          {state.checkersOnBar[PLAYER_LEFT] > 0 && (
+            <div aria-label={`Checkers Bar for ${PLAYER_LEFT}`}>
+              <Checker player={PLAYER_LEFT} /> Bar: {state.checkersOnBar[PLAYER_LEFT]}
+            </div>
+          )}
+          {state.checkersOnBar[PLAYER_RIGHT] > 0 && (
+            <div aria-label={`Checkers Bar for ${PLAYER_RIGHT}`}>
+              <Checker player={PLAYER_RIGHT} /> Bar: {state.checkersOnBar[PLAYER_RIGHT]}
             </div>
           )}
         </div>
@@ -177,22 +190,6 @@ const Backgammon = () => {
               </label>
             </div>
           )}
-        </div>
-        <div className="backgammon-bar" style={{ display: 'flex', gap: '20px' }}>
-          <div>
-            {state.checkersOnBar[PLAYER_LEFT] > 0 && (
-              <div aria-label={`Checkers Bar for ${PLAYER_LEFT}`} >
-                {state.checkersOnBar[PLAYER_LEFT]} <Checker player={PLAYER_LEFT} />
-              </div>
-            )}
-          </div>
-          <div>
-            {state.checkersOnBar[PLAYER_RIGHT] > 0 && (
-              <div aria-label={`Checkers Bar for ${PLAYER_RIGHT}`} >
-                {state.checkersOnBar[PLAYER_RIGHT]} <Checker player={PLAYER_RIGHT} />
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>
