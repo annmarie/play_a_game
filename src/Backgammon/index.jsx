@@ -67,6 +67,15 @@ const Backgammon = () => {
     alert('Game link copied to clipboard!');
   }, [state]);
 
+  const handleLoadTestBoard = useCallback((boardKey) => {
+    if (boardKey) {
+      dispatch(loadTestBoard(testBoards[boardKey]));
+      const url = new URL(window.location);
+      url.searchParams.delete('debug');
+      window.history.replaceState({}, '', url);
+    }
+  }, [dispatch]);
+
   return (
     <div className="main">
       <Header />
@@ -181,7 +190,7 @@ const Backgammon = () => {
           {isDebugMode && (
             <div className="debug-controls">
               <label>Load Test Board:
-                <select onChange={(e) => e.target.value && dispatch(loadTestBoard(testBoards[e.target.value]))}>
+                <select onChange={(e) => handleLoadTestBoard(e.target.value)}>
                   <option value="">Select...</option>
                   <option value="bearOffTest">Bear Off Test</option>
                   <option value="endGame">End Game</option>
