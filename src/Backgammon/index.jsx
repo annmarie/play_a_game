@@ -13,7 +13,7 @@ import './layout.css';
 import { useDispatch } from 'react-redux';
 import Header from '../Header';
 import { testBoards } from './testBoards';
-import { decodeBoardState } from './boardEncoder';
+import { decodeBoardState, encodeBoardState } from './boardEncoder';
 
 const Backgammon = () => {
   const dispatch = useDispatch();
@@ -22,7 +22,6 @@ const Backgammon = () => {
   const isDebugMode = new URLSearchParams(window.location.search).has('debug');
 
   useEffect(() => {
-    // Load board from URL if present
     const params = new URLSearchParams(window.location.search);
     const encoded = params.get('board');
     if (encoded) {
@@ -60,6 +59,13 @@ const Backgammon = () => {
     },
     [state.selectedSpot, dispatch]
   );
+
+  const handleSaveGameLink = useCallback(() => {
+    const encoded = encodeBoardState(state);
+    const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
+    navigator.clipboard.writeText(url);
+    alert('Game link copied to clipboard!');
+  }, [state]);
 
   return (
     <div className="main">
@@ -135,31 +141,39 @@ const Backgammon = () => {
           >
             {RESET_BUTTON_TEXT}
           </button>
+          <button
+            onClick={handleSaveGameLink}
+            disabled={state.player === null || state.winner}
+            aria-label="Save game link"
+          >
+            Save Game Link
+          </button>
         </div>
       </div>
 
       <div className="backgammon-borne-off">
         <div>
-          {PLAYER_LEFT} Borne Off: {state.checkersBorneOff[PLAYER_LEFT] || 0}
+          <Checker player={PLAYER_LEFT} /> Borne Off: {state.checkersBorneOff[PLAYER_LEFT] || 0}
         </div>
         <div>
-          {PLAYER_RIGHT} Borne Off: {state.checkersBorneOff[PLAYER_RIGHT] || 0}
+          <Checker player={PLAYER_RIGHT} /> Borne Off: {state.checkersBorneOff[PLAYER_RIGHT] || 0}
         </div>
+      </div>
+
+      <div className="backgammon-debug">
         {isDebugMode && (
           <div className="debug-controls">
-            <div>
-              <label>Load Test Board:
-              <select onChange={(e) => e.target.value && dispatch(loadTestBoard(testBoards[e.target.value]))}>
-                <option value="">Select...</option>
-                <option value="bearOffTest">Bear Off Test</option>
-                <option value="endGame">End Game</option>
-              </select>
-              </label>
-            </div>
+            <label>Load Test Board:
+            <select onChange={(e) => e.target.value && dispatch(loadTestBoard(testBoards[e.target.value]))}>
+              <option value="">Select...</option>
+              <option value="bearOffTest">Bear Off Test</option>
+              <option value="endGame">End Game</option>
+            </select>
+            </label>
           </div>
         )}
       </div>
-      <div className="backgammon-bar">
+      <div className="backgammon-bar" style={{ display: 'flex', gap: '20px' }}>
         <div>
           {state.checkersOnBar[PLAYER_LEFT] > 0 && (
             <div aria-label={`Checkers Bar for ${PLAYER_LEFT}`} >

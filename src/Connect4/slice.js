@@ -20,7 +20,10 @@ export const slice = createSlice({
     makeMove: (state,action) => reduceMakeMove(state, action),
     undoMove: (state,action) => reduceUndoMove(state, action),
     resetGame: () => ({ ...initialState, board: initializeBoard() }),
-
+    loadTestBoard: (state, action) => ({
+      ...state,
+      ...action.payload
+    }),
   },
 });
 
@@ -68,6 +71,6 @@ const reduceUndoMove = (state) => {
   };
 };
 
-export const { makeMove, undoMove, resetGame } = slice.actions;
+export const { makeMove, undoMove, resetGame, loadTestBoard } = slice.actions;
 
 export default slice.reducer;
