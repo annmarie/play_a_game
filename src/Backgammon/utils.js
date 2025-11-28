@@ -133,8 +133,8 @@ export const canBearOff = (points, player, checkersOnBar) => {
   if (checkersOnBar[player] > 0) return false;
 
   const homeRange = player === PLAYER_LEFT ?
-    [START_KEY_LEFT + 7, START_KEY_LEFT + 12] :
-    [START_KEY_RIGHT - 17, START_KEY_RIGHT - 12];
+    [START_KEY_RIGHT - 5, START_KEY_RIGHT] :
+    [START_KEY_LEFT - 5, START_KEY_LEFT];
 
   return points.every((point) => {
     if (point.player !== player) return true;

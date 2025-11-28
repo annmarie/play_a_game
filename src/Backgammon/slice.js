@@ -110,8 +110,11 @@ function reduceMoveChecker(state, { payload: { fromPointId, toPointId } }) {
     if (!isValidDiceValue) {
       const higherDice = diceValue.filter(die => die > moveDistance);
       if (higherDice.length > 0) {
+        const homeRange = player === PLAYER_LEFT ?
+          [(START_KEY_RIGHT - 5), START_KEY_RIGHT] :
+          [(START_KEY_LEFT - 5), START_KEY_LEFT];
+
         // Check if this is the highest occupied point for this player
-        const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
         const occupiedPoints = points
           .filter(p => p.player === player && homeRange[0] <= p.id && p.id <= homeRange[1])
           .map(p => p.id);
