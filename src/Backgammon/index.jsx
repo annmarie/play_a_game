@@ -91,7 +91,7 @@ const Backgammon = () => {
         <div className="backgammon-status">
           {state.winner && (
             <div className="winner-announcement">
-              🎉 Winner: <Checker player={state.winner} /> {state.winner}!
+              🎉 Winner: <Checker player={state.winner} />
             </div>
           )}
 
