@@ -1,13 +1,13 @@
 /* globals beforeEach, describe, expect, it */
 import { configureStore } from '@reduxjs/toolkit';
-import reducer, { initialState, setName } from './slice';
+import mainReducer, { initialState, setName } from './slice';
 
 describe('Main Slice', () => {
   let store;
   let state;
 
   beforeEach(() => {
-    store = configureStore({ reducer });
+    store = configureStore({ reducer: mainReducer });
     state = store.getState();
   });
 

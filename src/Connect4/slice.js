@@ -41,7 +41,9 @@ export const slice = createSlice({
       };
       const encoded = encodeBoardState(dataToSave);
       const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
-      navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(url).catch((err) => {
+        console.error('Failed to copy URL to clipboard:', err);
+      });
       return state;
     },
   },

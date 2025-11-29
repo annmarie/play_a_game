@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 import styles from './Dice.module.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 const Dice = ({ diceValue = null }) => {
   const [rolling, setRolling] = useState(false);
+  const dots = useMemo(() => Array.from({ length: 9 }), []);
 
   useEffect(() => {
     if (diceValue) {
@@ -24,7 +25,7 @@ const Dice = ({ diceValue = null }) => {
     };
 
     const positions = dotPositions[numDots] || [];
-    return Array.from({ length: 9 }).map((_, index) => (
+    return dots.map((_, index) => (
       <div
         key={index}
         className={`${styles.dieDot} ${positions.includes(index) ? styles.visible : ''} ${rolling ? styles.animate : ''}`}
@@ -43,16 +44,17 @@ const Dice = ({ diceValue = null }) => {
     </div>
   );
 
-  return (
-    diceValue && (
-      <div className={styles.diceContainer}>
-        {renderDie(diceValue[0], 'left')}
-        {diceValue[2] > 0 && renderDie(diceValue[2], 'doubles-left')}
+  if (!Array.isArray(diceValue) || diceValue.length < 1) {
+    return null;
+  }
 
-        {diceValue[1] > 0 && renderDie(diceValue[1], 'right')}
-        {diceValue[3] > 0 && renderDie(diceValue[3], 'doubles-right')}
-      </div>
-    )
+  return (
+    <div className={styles.diceContainer}>
+      {renderDie(diceValue[0], 'left')}
+      {diceValue.length > 2 && diceValue[2] > 0 && renderDie(diceValue[2], 'doubles-left')}
+      {diceValue[1] > 0 && renderDie(diceValue[1], 'right')}
+      {diceValue.length > 3 && diceValue[3] > 0 && renderDie(diceValue[3], 'doubles-right')}
+    </div>
   );
 };
 

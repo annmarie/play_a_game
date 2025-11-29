@@ -13,19 +13,23 @@ const Cell = ({ cell, rowIndex, colIndex, onCellClick }) => {
     return '';
   };
 
+  const cellClass = `${styles.connect4Cell} connect4-cell`;
+
+  const isOccupied = Boolean(cell);
+  const checkerTestId = `checker-${cell || 'empty'}`;
+
   return (
     <div
-      key={colIndex}
-      className={`${styles.connect4Cell} connect4-cell`}
+      className={cellClass}
       onClick={() => onCellClick(colIndex)}
       role="cell"
       aria-label={`Spot row ${rowIndex} and col ${colIndex} with ${cell || 'empty'}`}
     >
-      {cell && (
+      {isOccupied && (
         <div
           className={`${styles.checker} checker ${getPlayerClass(cell)}`}
-          data-testid={`checker-${cell || 'empty'}`}
-        ></div>
+          data-testid={checkerTestId}
+        />
       )}
     </div>
   );

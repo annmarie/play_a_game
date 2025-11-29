@@ -55,7 +55,10 @@ export const rightPlayerPointOrder = [
 /**
  * Point order for the left player (reverse of the right player's order).
  */
-export const leftPlayerPointOrder = [...rightPlayerPointOrder].reverse();
+export const leftPlayerPointOrder = [
+  12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+  13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+];
 
 /**
  * Selector: returns the point order array for the given player.
@@ -160,23 +163,26 @@ export const canBearOff = (points, player, checkersOnBar) => {
 export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   const dice = new Set(diceValue);
   const potentialMoves = {};
-  const hasCheckerOnBar = checkersOnBar[player] ? (checkersOnBar[player] || 0) > 0 : 0;
-
-
+  const hasCheckerOnBar = (checkersOnBar[player] || 0) > 0;
 
   if (hasCheckerOnBar) {
     const startPointId = player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
     for (const die of dice) {
-      const targetPointId = player === PLAYER_LEFT ? (startPointId + 1) - die : (startPointId + 1) - die;
-      if (targetPointId >= 1 && targetPointId <= 24) {
-        const targetPoint = points[targetPointId - 1];
-        if (
-          targetPoint.checkers === 0 ||
-          targetPoint.player === player ||
-          (targetPoint.checkers === 1 && targetPoint.player !== player)
-        ) {
-          potentialMoves[targetPointId] = [];
-        }
+      // Validate die value and normalize to a number
+      const dieValue = Number(die);
+      if (!Number.isFinite(dieValue) || dieValue < 1 || dieValue > 6) continue;
+      const targetPointId = (startPointId + 1) - dieValue;
+      if (targetPointId < 1 || targetPointId > 24) continue;
+      const targetPoint = points[targetPointId - 1];
+      if (!targetPoint) continue;
+
+      // valid if empty, owned by player, or single opponent checker
+      if (
+        targetPoint.checkers === 0 ||
+        targetPoint.player === player ||
+        (targetPoint.checkers === 1 && targetPoint.player !== player)
+      ) {
+        potentialMoves[targetPointId] = potentialMoves[targetPointId] || [];
       }
     }
     return potentialMoves;
@@ -190,41 +196,36 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
 
       if (canBearOffNow) {
         const pointId = point.id;
-        let canBearOffFromThisPoint = false;
-        let exactMatch = false;
 
-        if (player === PLAYER_LEFT && pointId >= 19 && pointId <= 24) {
-          const requiredDie = 25 - pointId;
-          exactMatch = die === requiredDie;
-          canBearOffFromThisPoint = die >= requiredDie;
-        } else if (player === PLAYER_RIGHT && pointId >= 7 && pointId <= 12) {
-          const requiredDie = 13 - pointId;
-          exactMatch = die === requiredDie;
-          canBearOffFromThisPoint = die >= requiredDie;
-        }
+        // Only points in the player's home board can bear off
+        const isInHomeBoard = (player === PLAYER_LEFT && pointId >= START_KEY_RIGHT - 5 && pointId <= START_KEY_RIGHT) ||
+                              (player === PLAYER_RIGHT && pointId >= START_KEY_LEFT - 5 && pointId <= START_KEY_LEFT);
+        if (!isInHomeBoard) {
+          // Not in home board, cannot bear off from this point
+        } else {
+          const requiredDie = player === PLAYER_LEFT ? 25 - pointId : 13 - pointId;
+          const exactMatch = die === requiredDie;
+          const canBearOffFromThisPoint = die >= requiredDie;
 
-        if (canBearOffFromThisPoint) {
-          // Only allow bearing off with higher dice if this is the highest occupied point
-          if (exactMatch) {
-            potentialMoves[point.id] = potentialMoves[point.id] || [];
-            potentialMoves[point.id].push(-1);
-
-          } else {
-            // Check if this is the highest occupied point for higher dice usage
-            const homeRange = player === PLAYER_LEFT ?
-              [19, 24] : [7, 12];
-            const occupiedPoints = points
-              .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
-              .map(p => p.id);
-            const highestOccupied = player === PLAYER_LEFT ?
-              Math.max(...occupiedPoints) : Math.min(...occupiedPoints);
-
-
-
-            if (pointId === highestOccupied) {
+          if (canBearOffFromThisPoint) {
+            // Exact die always allows bearing off
+            if (exactMatch) {
               potentialMoves[point.id] = potentialMoves[point.id] || [];
               potentialMoves[point.id].push(-1);
+            } else {
+              // For larger dice, only allow if this is the furthest occupied point in home
+              const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+              const occupiedPoints = points
+                .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
+                .map(p => p.id);
 
+              if (occupiedPoints.length > 0) {
+                const furthestOccupied = player === PLAYER_LEFT ? Math.max(...occupiedPoints) : Math.min(...occupiedPoints);
+                if (pointId === furthestOccupied) {
+                  potentialMoves[point.id] = potentialMoves[point.id] || [];
+                  potentialMoves[point.id].push(-1);
+                }
+              }
             }
           }
         }
@@ -286,25 +287,28 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
   const isBearingOff = toIndex === -1;
 
   if (isBearingOff) {
-    if (fromIndex >= 0) {
+    if (fromIndex >= 0 && updatedPoints[fromIndex]) {
+      const newCheckers = updatedPoints[fromIndex].checkers - 1;
       updatedPoints[fromIndex] = {
         ...updatedPoints[fromIndex],
-        checkers: updatedPoints[fromIndex].checkers - 1,
-        player: updatedPoints[fromIndex].checkers - 1 === 0 ? null : player,
+        checkers: newCheckers,
+        player: newCheckers === 0 ? null : player,
       };
     }
     return { updatedPoints, hasBarPlayer };
   }
 
   const destinationPoint = points[toIndex] || -1;
-  if (destinationPoint === -1) return { updatedPoints: points, hasBarPlayer }
+  if (destinationPoint === -1) {
+    return { updatedPoints: points, hasBarPlayer };
+  }
   if (destinationPoint.checkers === 1 && destinationPoint.player !== player) {
     hasBarPlayer = destinationPoint.player;
     updatedPoints[toIndex] = {
       ...updatedPoints[toIndex],
       checkers: 1,
-      player: player
-    }
+      player: player,
+    };
   } else {
     updatedPoints[toIndex] = {
       ...updatedPoints[toIndex],
@@ -313,11 +317,12 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
     };
   }
 
-  if (fromIndex >= 0) {
+  if (fromIndex >= 0 && updatedPoints[fromIndex]) {
+    const newCheckers = updatedPoints[fromIndex].checkers - 1;
     updatedPoints[fromIndex] = {
       ...updatedPoints[fromIndex],
-      checkers: updatedPoints[fromIndex].checkers - 1,
-      player: updatedPoints[fromIndex].checkers - 1 === 0 ? null : player,
+      checkers: newCheckers,
+      player: newCheckers === 0 ? null : player,
     };
   }
 
@@ -325,9 +330,9 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
 }
 
 /**
- * encodes the current board state to a compact string.
+ * Encodes the current board state to a compact string.
  *
- * @state {Object} state - The current state of the board.
+ * @param {Object} state - The current state of the board.
  * @returns {string} Encoded board state.
  */
 export const encodeBoardState = (state) => {

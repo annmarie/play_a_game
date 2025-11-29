@@ -6,7 +6,7 @@ import {
 
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX, MAX_HISTORY } from './globals';
 
-export const initialState = {
+export const backgammonInitialState = {
   points: initializeBoard(),
   checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
   checkersBorneOff: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
@@ -24,16 +24,16 @@ export const initialState = {
   potentialMovesHistory: [],
 };
 
-export const slice = createSlice({
-  name: 'counter',
-  initialState,
+export const backgammonSlice = createSlice({
+  name: 'backgammon',
+  initialState: backgammonInitialState,
   reducers: {
     selectSpot: (state, action) => reduceSelectSpot(state, action),
     makeMove: (state, action) => reduceMoveChecker(state, action),
     rollDice: (state) => reduceRollDice(state),
     undoRoll: (state) => reduceUndo(state),
     togglePlayerRoll: (state) => ({ ...state, player: togglePlayer(state.player), diceValue: null }),
-    resetGame: () => ({ ...initialState, board: initializeBoard() }),
+    resetGame: () => ({ ...backgammonInitialState, points: initializeBoard() }),
     loadTestBoard: (state, action) => ({
       ...state,
       ...action.payload,
@@ -223,13 +223,13 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
     winner,
     diceValue: moveInProcess && !winner
       ? updatedDiceValue
-      : initialState.diceValue,
+      : backgammonInitialState.diceValue,
     player: moveInProcess && !winner
       ? state.player
       : winner ? null : togglePlayer(state.player),
     potentialMoves: moveInProcess && !winner
       ? updatedPotentialMoves
-      : initialState.potentialMoves,
+      : backgammonInitialState.potentialMoves,
     selectedSpot: null,
     potentialSpots: [],
 
@@ -257,12 +257,12 @@ function reduceUndo(state) {
 
 function getPreviousActionState(state) {
   return {
-    points: state.pointsHistory[state.pointsHistory.length - 1] || initialState.points,
-    diceValue: state.diceHistory[state.diceHistory.length - 1] || initialState.diceValue,
-    player: state.playerHistory[state.playerHistory.length - 1] || initialState.player,
-    potentialMoves: state.potentialMovesHistory[state.potentialMovesHistory.length - 1] || initialState.potentialMoves,
-    checkersOnBar: state.checkersOnBarHistory[state.checkersOnBarHistory.length - 1] || initialState.checkersOnBar,
-    checkersBorneOff: state.checkersBorneOffHistory[state.checkersBorneOffHistory.length - 1] || initialState.checkersBorneOff,
+    points: state.pointsHistory[state.pointsHistory.length - 1] || backgammonInitialState.points,
+    diceValue: state.diceHistory[state.diceHistory.length - 1] || backgammonInitialState.diceValue,
+    player: state.playerHistory[state.playerHistory.length - 1] || backgammonInitialState.player,
+    potentialMoves: state.potentialMovesHistory[state.potentialMovesHistory.length - 1] || backgammonInitialState.potentialMoves,
+    checkersOnBar: state.checkersOnBarHistory[state.checkersOnBarHistory.length - 1] || backgammonInitialState.checkersOnBar,
+    checkersBorneOff: state.checkersBorneOffHistory[state.checkersBorneOffHistory.length - 1] || backgammonInitialState.checkersBorneOff,
   };
 }
 
@@ -317,6 +317,6 @@ function reduceRollDice(state) {
   return { ...state, diceValue, potentialMoves, player };
 }
 
-export const { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard, setCustomDice, loadFromURL, saveToURL } = slice.actions;
+export const { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard, setCustomDice, loadFromURL, saveToURL } = backgammonSlice.actions;
 
-export default slice.reducer;
+export default backgammonSlice.reducer;

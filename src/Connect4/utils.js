@@ -27,6 +27,11 @@ export const dropChecker = (col, board, player) => {
     }
   }
 
+  // Handle case where column is full
+  if (currentMove === null) {
+    return { currentMove: null, newBoard: board, error: 'Column is full' };
+  }
+
   return { currentMove, newBoard };
 };
 
@@ -50,6 +55,11 @@ export const isBoardFull = (board) => {
  *                     { haveWinner: boolean, desc: string }
  */
 export const checkWin = (board, move) => {
+  if (!move || typeof move.row !== 'number' || typeof move.col !== 'number' ||
+      move.row < 0 || move.row >= board.length ||
+      move.col < 0 || move.col >= board[0].length) {
+    return { haveWinner: false, desc: '' };
+  }
   const { row, col } = move;
   const player = board[row][col];
   const directions = [

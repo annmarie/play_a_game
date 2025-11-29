@@ -1,6 +1,6 @@
 /* globals jest, beforeEach, describe, expect, it */
 import { configureStore } from '@reduxjs/toolkit';
-import reducer, { initialState, selectSpot, rollDice, makeMove, resetGame, undoRoll } from './slice';
+import backgammonReducer, { backgammonInitialState, selectSpot, rollDice, makeMove, resetGame, undoRoll } from './slice';
 import * as utils from './utils';
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 
@@ -9,24 +9,27 @@ jest.mock('./utils', () => ({
   rollDie: jest.fn(),
 }));
 
-describe('Main Slice', () => {
+describe('Backgammon Slice', () => {
   let store;
   let state;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    store = configureStore({ reducer });
+    store = configureStore({ reducer: backgammonReducer });
     state = store.getState();
   });
 
   it('should initialize with the correct state', () => {
-    expect(state).toEqual(initialState);
+    expect(state).toEqual(backgammonInitialState);
   });
 
   it('should select spot with dice roll 2 3', () => {
     utils.rollDie.mockReturnValueOnce(2).mockReturnValueOnce(3);
-    store.dispatch(rollDice())
-    store.dispatch(selectSpot(24))
+    // Roll the dice for the current turn
+    store.dispatch(rollDice());
+
+    // Select spot 24 after rolling dice
+    store.dispatch(selectSpot(24));
     state = store.getState()
     expect(state.potentialSpots).toEqual([22,21])
     store.dispatch(selectSpot(5))
@@ -188,9 +191,6 @@ describe('Main Slice', () => {
   it('should handle undo with no history', () => {
     store.dispatch(undoRoll())
     state = store.getState()
-    expect(state).toEqual(initialState);
+    expect(state).toEqual(backgammonInitialState);
   });
-
-
-
 });

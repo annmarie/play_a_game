@@ -17,8 +17,13 @@ const Connect4 = () => {
   }, [dispatch]);
 
   const handleSaveGameLink = useCallback(() => {
-    dispatch(saveToURL());
-    alert('Game link copied to clipboard!');
+    try {
+      dispatch(saveToURL());
+      alert('Game link copied to clipboard!');
+    } catch (error) {
+      alert('Failed to save game link. Please try again.');
+      console.error('Error saving game link:', error);
+    }
   }, [dispatch]);
 
   return (

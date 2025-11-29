@@ -14,15 +14,17 @@ describe('Board Component', () => {
   });
 
   it('should render the board with the correct number of rows and cells', async () => {
-    await act(async () => render(<Board board={mockBoard} handleCellClick={mockHandleCellClick} />));
+    await act(async () => {
+      render(<Board board={mockBoard} handleCellClick={mockHandleCellClick} />);
+    });
     const rows = screen.getAllByRole('row');
     expect(rows.length).toEqual(3);
     const cells = screen.getAllByRole('cell');
     expect(cells.length).toEqual(9);
   });
 
-  it('should render the correct cell values', async () => {
-    await act(async () => render(<Board board={mockBoard} handleCellClick={mockHandleCellClick} />));
+  it('should render the correct cell values', () => {
+    render(<Board board={mockBoard} handleCellClick={mockHandleCellClick} />);
 
     mockBoard.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
