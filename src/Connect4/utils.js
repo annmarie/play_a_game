@@ -1,20 +1,6 @@
 import { PLAYER_ONE, PLAYER_TWO } from './globals';
 import { encodeBoardState as encode, decodeBoardState as decode, loadBoardFromURL } from '../utils/boardEncoder.js';
 
-export const encodeBoardState = (state) => {
-  const data = {
-    board: state.board,
-    player: state.player,
-    winner: state.winner,
-    winnerDesc: state.winnerDesc,
-    boardFull: state.boardFull
-  };
-  return encode(data);
-};
-
-export const decodeBoardState = decode;
-export { loadBoardFromURL };
-
 /**
  * Drops a checker into the specified column of the board.
  *
@@ -140,3 +126,23 @@ export const togglePlayer = (player) => {
  * @returns {Array} - A 6x7 game board filled with null values.
  */
 export const initializeBoard = () => Array.from({ length: 6 }, () => Array(7).fill(null));
+
+/**
+ * encodes the current board state to a compact string.
+ *
+ * @state {Object} state - The current state of the board.
+ * @returns {string} Encoded board state.
+ */
+export const encodeBoardState = (state) => {
+  const data = {
+    board: state.board,
+    player: state.player,
+    winner: state.winner,
+    winnerDesc: state.winnerDesc,
+    boardFull: state.boardFull
+  };
+  return encode(data);
+};
+
+export const decodeBoardState = decode;
+export { loadBoardFromURL };
