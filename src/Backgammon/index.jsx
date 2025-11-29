@@ -24,7 +24,9 @@ const Backgammon = () => {
 
   useEffect(() => {
     dispatch(loadFromURL());
+  }, [dispatch]);
 
+  useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === ' ') {
         if (state.diceValue === null) {

@@ -1,4 +1,4 @@
-/* Base checker */
+/* backgammon checker */
 .checker {
   width: 1.375em;
   height: 1.375em;
@@ -10,7 +10,6 @@
   box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.3);
 }
 
-/* Player colors */
 .playerLeft {
   background: linear-gradient(135deg, #f5f5dc 0%, #e6e6c7 100%);
   border-color: #8b7355;
@@ -21,7 +20,6 @@
   border-color: #666;
 }
 
-/* Interactive states */
 .checker:hover {
   transform: scale(1.1);
   box-shadow: 0 0.1875em 0.375em rgba(0, 0, 0, 0.4);

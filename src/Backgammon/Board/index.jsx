@@ -1,3 +1,4 @@
+// backgammon board
 import PropTypes from 'prop-types';
 import Point from '../Point'
 import styles from './Board.module.css'
@@ -12,7 +13,7 @@ const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
       {points.map((point) => {
         const isSelected = selectedSpot === point.id;
         const isPotential = potentialSpots.includes(point.id);
-        
+
         return (
           <Point
             key={point.id}

@@ -3,31 +3,21 @@ import { PLAYER_ONE, PLAYER_TWO } from '../globals';
 import styles from './Cell.module.css'
 
 const Cell = ({ cell, rowIndex, colIndex, onCellClick }) => {
-  const getPlayerClass = (cell) => {
-    if (cell === PLAYER_ONE) {
-      return `${styles.playerOne} player_one`; // Keep original class for tests
-    }
-    if (cell === PLAYER_TWO) {
-      return `${styles.playerTwo} player_two`; // Keep original class for tests
-    }
-    return '';
-  };
-
-  const cellClass = `${styles.connect4Cell} connect4-cell`;
-
   const isOccupied = Boolean(cell);
   const checkerTestId = `checker-${cell || 'empty'}`;
+  const playerClass = cell === PLAYER_ONE ? styles.playerOne : cell === PLAYER_TWO ? styles.playerTwo : '';
 
   return (
     <div
-      className={cellClass}
+      className={styles.connect4Cell}
       onClick={() => onCellClick(colIndex)}
       role="cell"
       aria-label={`Spot row ${rowIndex} and col ${colIndex} with ${cell || 'empty'}`}
+      data-testid="connect4-cell"
     >
       {isOccupied && (
         <div
-          className={`${styles.checker} checker ${getPlayerClass(cell)}`}
+          className={`${styles.checker} ${playerClass}`}
           data-testid={checkerTestId}
         />
       )}

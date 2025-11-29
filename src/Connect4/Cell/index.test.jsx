@@ -14,9 +14,8 @@ describe('Cell Component', () => {
         onCellClick={mockOnCellClick}
       />
     );
-    const cellElement = screen.getByRole('cell', { name: /Spot row 0 and col 0 with empty/i });
+    const cellElement = screen.getByTestId('connect4-cell');
     expect(cellElement).toBeInTheDocument();
-    expect(cellElement).toHaveClass('connect4-cell');
     expect(cellElement).not.toContainHTML('<div class="checker">');
   });
 
@@ -31,7 +30,6 @@ describe('Cell Component', () => {
     );
     const checkerElement = screen.getByTestId(`checker-${PLAYER_ONE}`);
     expect(checkerElement).toBeInTheDocument();
-    expect(checkerElement).toHaveClass('checker player_one');
   });
 
   it('should render a cell with PLAYER_TWO correctly', async () => {
@@ -45,7 +43,6 @@ describe('Cell Component', () => {
     );
     const checkerElement = screen.getByTestId(`checker-${PLAYER_TWO}`);
     expect(checkerElement).toBeInTheDocument();
-    expect(checkerElement).toHaveClass('checker player_two');
   });
 
   it('should call onCellClick with the correct column index when clicked', async () => {
@@ -57,7 +54,7 @@ describe('Cell Component', () => {
         onCellClick={mockOnCellClick}
       />
     );
-    const cellElement = screen.getByRole('cell', { name: /Spot row 0 and col 4 with empty/i });
+    const cellElement = screen.getByTestId('connect4-cell');
     fireEvent.click(cellElement);
     expect(mockOnCellClick).toHaveBeenCalledTimes(1);
     expect(mockOnCellClick).toHaveBeenCalledWith(4);

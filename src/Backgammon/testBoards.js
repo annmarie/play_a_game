@@ -68,5 +68,4 @@ export const testBoards = {
     player: PLAYER_LEFT,
     diceValue: [6, 4]
   },
-
 };

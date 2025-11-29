@@ -141,8 +141,7 @@ function reduceMoveChecker(state, { payload: { fromPointId, toPointId } }) {
     if (fromIndex === -1 || points[fromIndex].checkers < 1) return state;
 
     const moveDistance = player === PLAYER_LEFT ?
-      (START_KEY_LEFT + 12) + 1 - fromPointId :
-      (START_KEY_RIGHT - 12) + 1 - fromPointId;
+      (START_KEY_LEFT + 11) - fromPointId : (START_KEY_RIGHT - 11) - fromPointId;
 
     // Check if exact dice value matches
     let isValidDiceValue = diceValue.includes(moveDistance);
@@ -153,8 +152,7 @@ function reduceMoveChecker(state, { payload: { fromPointId, toPointId } }) {
       const higherDice = diceValue.filter(die => die > moveDistance);
       if (higherDice.length > 0) {
         const homeRange = player === PLAYER_LEFT ?
-          [(START_KEY_RIGHT - 5), START_KEY_RIGHT] :
-          [(START_KEY_LEFT - 5), START_KEY_LEFT];
+          [(START_KEY_RIGHT - 5), START_KEY_RIGHT] : [(START_KEY_LEFT - 5), START_KEY_LEFT];
 
         // Check if this is the highest occupied point for this player
         const occupiedPoints = points

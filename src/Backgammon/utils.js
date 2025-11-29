@@ -1,4 +1,6 @@
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
+import { RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER } from './globals';
+
 import {
   encodeBoardState as encode,
   decodeBoardState as decode,
@@ -45,53 +47,30 @@ export const togglePlayer = (player) => {
 };
 
 /**
- * Point order for the right player.
- */
-export const rightPlayerPointOrder = [
-  24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13,
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-];
-
-/**
- * Point order for the left player (reverse of the right player's order).
- */
-export const leftPlayerPointOrder = [
-  12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
-  13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-];
-
-/**
- * Selector: returns the point order array for the given player.
+ * the point order array for the given player.
  * @param {string} player
  * @returns {Array<number>}
  */
 export const getPointOrder = (player) => (
-  player === PLAYER_RIGHT ? rightPlayerPointOrder : leftPlayerPointOrder
+  player === PLAYER_RIGHT ? RIGHT_PLAYER_POINT_ORDER : LEFT_PLAYER_POINT_ORDER
 );
 
 /**
- * Selector: map from pointId to index in the player's travel order.
+ * map from pointId to index in the player's travel order.
  * @param {string} player
- * @returns {Object<number, number>} mapping pointId(0-based) -> index
+ * @returns {Object<number, number>} mapping pointId -> index
  */
 export const getPointIdToIndexMap = (player) => (
-  getPointOrder(player).reduce((map, pointId, index) => {
-    map[pointId - 1] = index;
-    return map;
-  }, {})
+  getPointOrder(player).reduce((map, pointId, index) => { map[pointId - 1] = index; return map; }, {})
 );
 
 /**
- * Selector: map from index in the player's travel order to pointId (0-based).
+ * map from index in the player's travel order to pointId
  * @param {string} player
  * @returns {Object<number, number>}
  */
 export const getIndexToPointIdMap = (player) => (
-  getPointOrder(player).reduce((map, pointId, index) => {
-    map[index] = pointId - 1;
-    return map;
-  }, {})
-);
+  getPointOrder(player).reduce((map, pointId, index) => { map[index] = pointId - 1; return map; }, {}));
 
 /**
  * Generates a mapping of point IDs to their indices for a given player.
@@ -101,7 +80,6 @@ export const getIndexToPointIdMap = (player) => (
  * @returns {Object} A mapping of point IDs to indices.
  */
 export const generatePointIndexMap = (player, indexBy = 'point') => {
-  // Keep backward-compatible API but implement using selectors.
   if (indexBy === 'point') return getPointIdToIndexMap(player);
   return getIndexToPointIdMap(player);
 };
@@ -168,7 +146,6 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   if (hasCheckerOnBar) {
     const startPointId = player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
     for (const die of dice) {
-      // Validate die value and normalize to a number
       const dieValue = Number(die);
       if (!Number.isFinite(dieValue) || dieValue < 1 || dieValue > 6) continue;
       const targetPointId = (startPointId + 1) - dieValue;
@@ -203,7 +180,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
         if (!isInHomeBoard) {
           // Not in home board, cannot bear off from this point
         } else {
-          const requiredDie = player === PLAYER_LEFT ? 25 - pointId : 13 - pointId;
+          const requiredDie = player === PLAYER_LEFT ? (START_KEY_RIGHT + 1) - pointId : (START_KEY_LEFT + 1) - pointId;
           const exactMatch = die === requiredDie;
           const canBearOffFromThisPoint = die >= requiredDie;
 
@@ -213,8 +190,11 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
               potentialMoves[point.id] = potentialMoves[point.id] || [];
               potentialMoves[point.id].push(-1);
             } else {
-              // For larger dice, only allow if this is the furthest occupied point in home
-              const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+
+              // For larger dice, only allow if this is the furthest occupied point in home section
+              const homeRange = player === PLAYER_LEFT ?
+                [START_KEY_RIGHT - 5, START_KEY_RIGHT] :
+                [START_KEY_LEFT - 5, START_KEY_LEFT];
               const occupiedPoints = points
                 .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
                 .map(p => p.id);
@@ -242,7 +222,9 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
           potentialMoves[point.id].push(-1);
         } else {
           // Only allow bearing off with higher dice if this is the highest occupied point
-          const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+          const homeRange = player === PLAYER_LEFT ?
+                [START_KEY_RIGHT - 5, START_KEY_RIGHT] :
+                [START_KEY_LEFT - 5, START_KEY_LEFT];
           const occupiedPoints = points
             .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
             .map(p => p.id);
@@ -267,7 +249,6 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
       }
     }
   }
-
 
   return potentialMoves;
 }
@@ -357,4 +338,3 @@ export const encodeBoardState = (state) => {
 
 export const decodeBoardState = decode;
 export const loadBoardFromURL = loadFromURL;
-

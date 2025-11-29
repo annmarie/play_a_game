@@ -1,3 +1,4 @@
+/* Backgammon point styles */
 .point {
   display: flex;
   flex-direction: column;
@@ -7,7 +8,6 @@
   border: 0.25em solid transparent;
 }
 
-/* Board separators */
 .point:nth-child(6),
 .point:nth-child(18) {
   border-right-color: black;
@@ -18,7 +18,6 @@
   border-left-color: black;
 }
 
-/* Point colors */
 .light {
   background-color: #f4a261;
 }
@@ -27,12 +26,10 @@
   background-color: #2a9d8f;
 }
 
-/* Point orientation */
 .bottom {
   justify-content: flex-end;
 }
 
-/* Interactive states */
 .selected {
   border-color: #e2f114;
 }

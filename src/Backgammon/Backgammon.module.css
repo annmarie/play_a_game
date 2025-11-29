@@ -1,4 +1,4 @@
-/* Game container */
+/* Backgammon game container */
 .backgammonGame {
   background-color: darkgray;
   border-radius: 0.625em;
@@ -7,7 +7,6 @@
   padding: 1.25em;
 }
 
-/* Buttons */
 .diceButton {
   width: 100%;
   border-radius: 0.5em;
@@ -30,7 +29,6 @@
   outline: transparent;
 }
 
-/* Game layout */
 .backgammonStatus {
   display: flex;
   justify-content: space-between;
@@ -43,7 +41,6 @@
   justify-content: right;
 }
 
-/* Debug controls */
 .backgammonDebug {
   margin-top: 1.25em;
 }

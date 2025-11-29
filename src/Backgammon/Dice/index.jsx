@@ -1,14 +1,16 @@
 import PropTypes from 'prop-types';
 import styles from './Dice.module.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const DOTS = Array.from({ length: 9 });
 
 const Dice = ({ diceValue = null }) => {
   const [rolling, setRolling] = useState(false);
+  const prevDiceValue = useRef(null);
 
   useEffect(() => {
-    if (diceValue) {
+    if (diceValue && JSON.stringify(diceValue) !== JSON.stringify(prevDiceValue.current)) {
+      prevDiceValue.current = diceValue;
       setRolling(true);
       const timer = setTimeout(() => setRolling(false), 1000);
       return () => clearTimeout(timer);

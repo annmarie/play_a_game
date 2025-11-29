@@ -1,7 +1,15 @@
 export const PLAYER_RIGHT = 'right';
 export const PLAYER_LEFT = 'left';
 export const START_KEY_LEFT = 12;
+export const LEFT_PLAYER_POINT_ORDER = [
+  12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+  13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+];
 export const START_KEY_RIGHT = 24;
+export const RIGHT_PLAYER_POINT_ORDER = [
+  24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13,
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+];
 export const INVALID_INDEX = -1;
 export const UNDO_BUTTON_TEXT = 'Undo Move';
 export const RESET_BUTTON_TEXT = 'Reset Game';

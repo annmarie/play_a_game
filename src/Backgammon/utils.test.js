@@ -1,5 +1,5 @@
 /* globals describe, expect, it */
-import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
+import { PLAYER_LEFT, PLAYER_RIGHT, RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER } from './globals';
 import {
   initializeBoard,
   rollDie,
@@ -10,8 +10,6 @@ import {
   getPointOrder,
   getIndexToPointIdMap,
   getPointIdToIndexMap,
-  rightPlayerPointOrder,
-  leftPlayerPointOrder,
   moveCheckers,
   canBearOff,
 } from './utils';
@@ -94,8 +92,8 @@ describe('Utility Functions', () => {
     });
 
     it('getPointOrder returns the correct arrays for each player', () => {
-      expect(getPointOrder(PLAYER_RIGHT)).toEqual(rightPlayerPointOrder);
-      expect(getPointOrder(PLAYER_LEFT)).toEqual(leftPlayerPointOrder);
+      expect(getPointOrder(PLAYER_RIGHT)).toEqual(RIGHT_PLAYER_POINT_ORDER);
+      expect(getPointOrder(PLAYER_LEFT)).toEqual(LEFT_PLAYER_POINT_ORDER);
     });
 
     it('getPointIdToIndexMap and getIndexToPointIdMap are consistent for PLAYER_RIGHT', () => {

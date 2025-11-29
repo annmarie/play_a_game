@@ -1,4 +1,4 @@
-/* Board grid */
+/* backgammon board */
 .backgammonBoard {
   position: relative;
   display: grid;
@@ -9,7 +9,6 @@
   border: 0.125em solid #000;
 }
 
-/* Bear off area */
 .bearOffArea {
   position: absolute;
   right: -5em;

@@ -104,8 +104,6 @@ describe("Connect4 Component", () => {
     expect(screen.getAllByLabelText(spotRex).length).toBe(1);
     expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
     expect(undoButton).toHaveAttribute('disabled');
-
-
   });
 });
 
