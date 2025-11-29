@@ -1,4 +1,4 @@
-.backgammon-board .point {
+.point {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -8,35 +8,35 @@
 }
 
 /* Board separators */
-.backgammon-board .point:nth-child(6),
-.backgammon-board .point:nth-child(18) {
+.point:nth-child(6),
+.point:nth-child(18) {
   border-right-color: black;
 }
 
-.backgammon-board .point:nth-child(7),
-.backgammon-board .point:nth-child(19) {
+.point:nth-child(7),
+.point:nth-child(19) {
   border-left-color: black;
 }
 
 /* Point colors */
-.backgammon-board .point.light {
+.light {
   background-color: #f4a261;
 }
 
-.backgammon-board .point.dark {
+.dark {
   background-color: #2a9d8f;
 }
 
 /* Point orientation */
-.backgammon-board .point.bottom {
+.bottom {
   justify-content: flex-end;
 }
 
 /* Interactive states */
-.backgammon-board .point.selected {
+.selected {
   border-color: #e2f114;
 }
 
-.backgammon-board .point.potential {
+.potential {
   border-color: #e7f070;
 }

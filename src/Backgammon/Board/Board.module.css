@@ -1,5 +1,5 @@
 /* Board grid */
-.backgammon-board {
+.backgammonBoard {
   position: relative;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -10,7 +10,7 @@
 }
 
 /* Bear off area */
-.backgammon-board .bear-off-area {
+.bearOffArea {
   position: absolute;
   right: -5em;
   top: 50%;
@@ -28,6 +28,6 @@
   color: #333;
 }
 
-.backgammon-board .bear-off-area:hover {
+.bearOffArea:hover {
   background-color: #e0e0e0;
 }

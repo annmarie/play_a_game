@@ -1,5 +1,5 @@
 /* Cell base */
-.connect4-board .connect4-cell {
+.connect4Cell {
   width: 3.125em;
   height: 3.125em;
   background-color: #ddd;
@@ -9,12 +9,12 @@
   cursor: pointer;
 }
 
-.connect4-board .connect4-cell.winner {
+.winner {
   cursor: default;
 }
 
 /* Checker pieces */
-.connect4-board .connect4-cell .checker {
+.checker {
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -22,10 +22,10 @@
   margin: 0.125em auto;
 }
 
-.connect4-board .connect4-cell .checker.player_one {
+.playerOne {
   background-color: red;
 }
 
-.connect4-board .connect4-cell .checker.player_two {
+.playerTwo {
   background-color: yellow;
 }

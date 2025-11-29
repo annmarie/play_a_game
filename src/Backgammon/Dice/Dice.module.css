@@ -1,5 +1,5 @@
 /* Dice container */
-.backgammon-game .dice-container {
+.diceContainer {
   display: flex;
   gap: 0.625em;
   justify-content: center;
@@ -7,7 +7,7 @@
 }
 
 /* Individual die */
-.backgammon-game .dice-container .die {
+.die {
   width: 3.75em;
   height: 3.75em;
   background-color: white;
@@ -23,7 +23,7 @@
 }
 
 /* Die dots */
-.backgammon-game .dice-container .die-dot {
+.dieDot {
   width: 0.625em;
   height: 0.625em;
   background-color: black;
@@ -32,11 +32,11 @@
   transition: opacity 0.3s ease;
 }
 
-.backgammon-game .dice-container .die-dot.visible {
+.visible {
   opacity: 1;
 }
 
-.backgammon-game .dice-container .die-dot.animate {
+.animate {
   animation: bounce 0.5s ease forwards;
 }
 

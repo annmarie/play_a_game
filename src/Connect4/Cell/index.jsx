@@ -1,23 +1,29 @@
 import PropTypes from 'prop-types';
 import { PLAYER_ONE, PLAYER_TWO } from '../globals';
-import './layout.css'
+import styles from './Cell.module.css'
 
 const Cell = ({ cell, rowIndex, colIndex, onCellClick }) => {
   const getPlayerClass = (cell) => {
-    return cell === PLAYER_ONE ? 'player_one' : cell === PLAYER_TWO ? 'player_two' : '';
+    if (cell === PLAYER_ONE) {
+      return `${styles.playerOne} player_one`; // Keep original class for tests
+    }
+    if (cell === PLAYER_TWO) {
+      return `${styles.playerTwo} player_two`; // Keep original class for tests
+    }
+    return '';
   };
 
   return (
     <div
       key={colIndex}
-      className="connect4-cell"
+      className={`${styles.connect4Cell} connect4-cell`}
       onClick={() => onCellClick(colIndex)}
       role="cell"
       aria-label={`Spot row ${rowIndex} and col ${colIndex} with ${cell || 'empty'}`}
     >
       {cell && (
         <div
-          className={`checker ${getPlayerClass(cell)}`}
+          className={`${styles.checker} checker ${getPlayerClass(cell)}`}
           data-testid={`checker-${cell || 'empty'}`}
         ></div>
       )}

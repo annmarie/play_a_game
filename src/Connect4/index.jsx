@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, resetGame, loadFromURL, saveToURL } from './slice';
 import StatusBox from './StatusBox';
 import Board from './Board';
-import './layout.css';
+import styles from './Connect4.module.css';
 import Layout from '../Layout';
 
 const Connect4 = () => {
@@ -23,8 +23,8 @@ const Connect4 = () => {
 
   return (
     <Layout>
-      <div className="connect4-game">
-        <h2 className="connect4-title">Connect Four</h2>
+      <div className={styles.connect4Game}>
+        <h2 className={styles.connect4Title}>Connect Four</h2>
 
         <StatusBox
           player={state.player}
@@ -38,7 +38,7 @@ const Connect4 = () => {
           handleCellClick={handleCellClick}
         />
 
-        <div className="connect4-actions">
+        <div className={styles.connect4Actions}>
           <button
             aria-label="Undo Move"
             onClick={() => dispatch(undoMove())}

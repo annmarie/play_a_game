@@ -1,0 +1,44 @@
+.list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listItem {
+  margin: 1em 0;
+}
+
+.listItem a {
+  text-decoration: none;
+  font-size: 1.125em;
+}
+
+.listItem a:hover {
+  text-decoration: underline;
+}
+
+.homeContent {
+  text-align: center;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-top: 2em;
+}
+
+.navLink {
+  padding: 1em 2em;
+  background-color: #006400;
+  color: white;
+  border-radius: 0.5em;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.25s;
+}
+
+.navLink:hover {
+  background-color: #004d00;
+  color: white;
+}

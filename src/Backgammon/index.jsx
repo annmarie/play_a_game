@@ -9,7 +9,7 @@ import { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, 
 import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
-import './layout.css';
+import styles from './Backgammon.module.css';
 import { useDispatch } from 'react-redux';
 import { testBoards } from './testBoards';
 import Layout from '../Layout';
@@ -66,7 +66,7 @@ const Backgammon = () => {
 
   return (
     <Layout>
-      <div className="backgammon-game">
+      <div className={styles.backgammonGame}>
 
         <Board
           points={state.points}
@@ -75,7 +75,7 @@ const Backgammon = () => {
           handleSpotClick={handleSpotClick}
         />
 
-        <div className="backgammon-status">
+        <div className={styles.backgammonStatus}>
           {state.winner && (
             <div className="winner-announcement">
               🎉 Winner: <Checker player={state.winner} />
@@ -88,7 +88,7 @@ const Backgammon = () => {
             ) : (
               <div className="dice-roll">
                 <button
-                  className="dice-button"
+                  className={styles.diceButton}
                   aria-label="Roll Dice"
                   onClick={() => dispatch(rollDice())}
                   disabled={state.winner}
@@ -147,7 +147,7 @@ const Backgammon = () => {
           </div>
         </div>
 
-        <div className="backgammon-borne-off">
+        <div className={styles.backgammonBorneOff}>
           {state.checkersBorneOff[PLAYER_LEFT] > 0 && (
             <div aria-label={`Borne Off for ${PLAYER_LEFT}`}>
               <Checker player={PLAYER_LEFT} /> Borne Off: {state.checkersBorneOff[PLAYER_LEFT]}
@@ -160,7 +160,7 @@ const Backgammon = () => {
           )}
         </div>
 
-        <div className="backgammon-bar">
+        <div className={styles.backgammonBar}>
           {state.checkersOnBar[PLAYER_LEFT] > 0 && (
             <div aria-label={`Checkers Bar for ${PLAYER_LEFT}`}>
               <Checker player={PLAYER_LEFT} /> Bar: {state.checkersOnBar[PLAYER_LEFT]}
@@ -173,9 +173,9 @@ const Backgammon = () => {
           )}
         </div>
 
-        <div className="backgammon-debug">
+        <div className={styles.backgammonDebug}>
           {isDebugMode && (
-            <div className="debug-controls">
+            <div className={styles.debugControls}>
               <label>Load Test Board:
                 <select onChange={(e) => handleLoadTestBoard(e.target.value)}>
                   <option value="">Select...</option>

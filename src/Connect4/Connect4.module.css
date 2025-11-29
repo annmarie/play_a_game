@@ -1,5 +1,5 @@
 /* Game container */
-.connect4-game {
+.connect4Game {
   background-color: darkgray;
   display: flex;
   flex-direction: column;
@@ -13,22 +13,22 @@
 }
 
 /* Game elements */
-.connect4-game .connect4-title {
+.connect4Title {
   margin: 0 0 1em 0;
 }
 
-.connect4-game .connect4-actions {
+.connect4Actions {
   display: flex;
   justify-content: center;
   margin: 1em;
 }
 
 /* Button states */
-.connect4-game button:active {
+.connect4Game button:active {
   outline: 0.5em auto #646cff;
 }
 
-.connect4-game button:disabled {
+.connect4Game button:disabled {
   cursor: not-allowed;
   outline: transparent;
 }

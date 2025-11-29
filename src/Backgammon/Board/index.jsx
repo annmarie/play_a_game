@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Point from '../Point'
-import './layout.css'
+import styles from './Board.module.css'
 
 const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
   const handleBearOffClick = () => {
@@ -8,7 +8,7 @@ const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
   };
 
   return (
-    <div className="backgammon-board">
+    <div className={styles.backgammonBoard}>
       {points.map((point) => (
         <Point
           key={point.id}
@@ -20,7 +20,7 @@ const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
       ))}
       {potentialSpots.includes(-1) && (
         <div
-          className="bear-off-area"
+          className={styles.bearOffArea}
           onClick={handleBearOffClick}
         >
           Bear Off

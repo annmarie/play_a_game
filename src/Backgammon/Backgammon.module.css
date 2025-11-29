@@ -1,5 +1,5 @@
 /* Game container */
-.backgammon-game {
+.backgammonGame {
   background-color: darkgray;
   border-radius: 0.625em;
   border: 0.0625em solid black;
@@ -8,7 +8,7 @@
 }
 
 /* Buttons */
-.backgammon-game .dice-button {
+.diceButton {
   width: 100%;
   border-radius: 0.5em;
   border: 0.0625em solid transparent;
@@ -17,38 +17,38 @@
   transition: border-color 0.25s;
 }
 
-.backgammon-game .dice-button:active {
+.diceButton:active {
   outline: 0.5em auto black;
 }
 
-.backgammon-game button:active {
+.backgammonGame button:active {
   outline: 0.5em auto #e76f51;
 }
 
-.backgammon-game button:disabled {
+.backgammonGame button:disabled {
   cursor: not-allowed;
   outline: transparent;
 }
 
 /* Game layout */
-.backgammon-game .backgammon-status {
+.backgammonStatus {
   display: flex;
   justify-content: space-between;
 }
 
-.backgammon-game .backgammon-bar,
-.backgammon-game .backgammon-borne-off {
+.backgammonBar,
+.backgammonBorneOff {
   display: flex;
   gap: 1.25em;
   justify-content: right;
 }
 
 /* Debug controls */
-.backgammon-game .backgammon-debug {
+.backgammonDebug {
   margin-top: 1.25em;
 }
 
-.backgammon-game .debug-controls {
+.debugControls {
   display: flex;
   gap: 0.625em;
   align-items: center;

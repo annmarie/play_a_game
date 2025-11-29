@@ -4,7 +4,7 @@ import { store } from './store';
 import Home from './Home';
 import Backgammon from './Backgammon';
 import Connect4 from './Connect4';
-import './layout.css'
+import './App.module.css'
 
 const App = () => {
   return (

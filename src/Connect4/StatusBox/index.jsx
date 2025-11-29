@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import { DRAW_MESSAGE } from '../globals';
-import './layout.css';
+import styles from './StatusBox.module.css';
 
 const StatusBox = ({ winner, winnerDesc, boardFull, player }) => {
   return (
     <div
       aria-label="Game Status"
-      className="connect4-status"
+      className={styles.connect4Status}
       role="status"
       aria-live="polite"
     >

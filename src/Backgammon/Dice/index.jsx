@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import './layout.css';
+import styles from './Dice.module.css';
 import { useEffect, useState } from 'react';
 
 const Dice = ({ diceValue = null }) => {
@@ -27,7 +27,7 @@ const Dice = ({ diceValue = null }) => {
     return Array.from({ length: 9 }).map((_, index) => (
       <div
         key={index}
-        className={`die-dot ${positions.includes(index) ? 'visible' : ''} ${rolling ? 'animate' : ''}`}
+        className={`${styles.dieDot} ${positions.includes(index) ? styles.visible : ''} ${rolling ? styles.animate : ''}`}
         data-testid={positions.includes(index) ? `die-dot-${diceId}` : ''}
       />
     ));
@@ -37,7 +37,7 @@ const Dice = ({ diceValue = null }) => {
     <div
       key={id}
       aria-label={`Dice ${id} showing ${value || 0}`}
-      className="die"
+      className={styles.die}
     >
       {renderDots(value, id)}
     </div>
@@ -45,7 +45,7 @@ const Dice = ({ diceValue = null }) => {
 
   return (
     diceValue && (
-      <div className="dice-container">
+      <div className={styles.diceContainer}>
         {renderDie(diceValue[0], 'left')}
         {diceValue[2] > 0 && renderDie(diceValue[2], 'doubles-left')}
 

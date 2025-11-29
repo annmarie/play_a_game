@@ -1,10 +1,10 @@
-.connect4-board {
+.connect4Board {
   display: grid;
   grid-template-rows: repeat(6, 3.125em);
   grid-template-columns: repeat(7, 3.125em);
   gap: 0.3125em;
 }
 
-.connect4-board .connect4-row {
+.connect4Row {
   display: contents;
 }

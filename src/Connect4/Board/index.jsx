@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types'
 import Cell from '../Cell'
-import './layout.css'
+import styles from './Board.module.css'
 
 const Board = ({ board, handleCellClick }) => (
 
-  <div className="connect4-board">
+  <div className={styles.connect4Board}>
     {board.map((row, rowIndex) => (
-      <div key={rowIndex} className="connect4-row" role="row">
+      <div key={rowIndex} className={styles.connect4Row} role="row">
         {row.map((cell, colIndex) => (
           <Cell
             key={colIndex}
