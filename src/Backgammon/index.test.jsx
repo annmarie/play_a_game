@@ -56,9 +56,9 @@ describe('Backgammon Component Tests', () => {
     const points = screen.queryAllByRole('point');
     const selectCell = 4;
     await act(async () => fireEvent.click(points[selectCell]));
-    expect(points[selectCell].className).toContain('selected');
-    expect(points[9].className).toContain('potential');
-    expect(points[7].className).toContain('potential');
+    expect(points[selectCell]).toHaveAttribute('data-testid', expect.stringContaining('selected'));
+    expect(points[9]).toHaveAttribute('data-testid', expect.stringContaining('potential'));
+    expect(points[7]).toHaveAttribute('data-testid', expect.stringContaining('potential'));
   });
 
   it('should roll the dice and render the dots for each die', async () => {
@@ -269,12 +269,12 @@ describe('Backgammon Component Tests', () => {
 
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_RIGHT);
 
-    const point11 = screen.getByTestId('point-11');
+    const point11 = screen.getByTestId(/point-11/);
     expect(point11).toBeInTheDocument();
     expect(point11.getAttribute('aria-label')).toContain('Point 11 with 1 right checkers');
 
     await act(async () => fireEvent.click(point11));
-    expect(point11.className).toContain('selected');
+    expect(point11).toHaveAttribute('data-testid', expect.stringContaining('selected'));
 
     const bearOffButton = screen.queryByText(BEAR_OFF);
     expect(bearOffButton).not.toBeInTheDocument();

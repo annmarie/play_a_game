@@ -8,17 +8,23 @@ const Point = ({ point, onClick, selected, potential }) => {
   const getPointClasses = (id) => {
     const classes = [
       styles.point,
-      'point', // Keep original class for tests
       id % 2 === 0 ? styles.light : styles.dark,
-      id % 2 === 0 ? 'light' : 'dark', // Keep original classes for tests
       id > START_KEY_LEFT ? styles.bottom : '',
-      id > START_KEY_LEFT ? 'bottom' : 'top', // Keep original classes for tests
       selected ? styles.selected : '',
-      selected ? 'selected' : '', // Keep original class for tests
-      potential ? styles.potential : '',
-      potential ? 'potential' : '' // Keep original class for tests
+      potential ? styles.potential : ''
     ];
     return classes.filter(Boolean).join(' ');
+  };
+
+  const getTestData = (id) => {
+    const testClasses = [
+      'point',
+      id % 2 === 0 ? 'light' : 'dark',
+      id > START_KEY_LEFT ? 'bottom' : 'top',
+      selected ? 'selected' : '',
+      potential ? 'potential' : ''
+    ];
+    return testClasses.filter(Boolean).join(' ');
   };
 
   return (
@@ -28,7 +34,7 @@ const Point = ({ point, onClick, selected, potential }) => {
       data-key={point.id}
       className={getPointClasses(point.id)}
       onClick={() => onClick(point)}
-      data-testid={`point-${point.id}`}
+      data-testid={`point-${point.id} ${getTestData(point.id)}`}
       aria-label={`Point ${point.id} with ${point.checkers} ${point.player ? point.player + ' ' : ''}checkers`}
     >
       {useMemo(() =>

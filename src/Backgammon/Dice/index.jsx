@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import styles from './Dice.module.css';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
+
+const DOTS = Array.from({ length: 9 });
 
 const Dice = ({ diceValue = null }) => {
   const [rolling, setRolling] = useState(false);
-  const dots = useMemo(() => Array.from({ length: 9 }), []);
 
   useEffect(() => {
     if (diceValue) {
@@ -25,7 +26,7 @@ const Dice = ({ diceValue = null }) => {
     };
 
     const positions = dotPositions[numDots] || [];
-    return dots.map((_, index) => (
+    return DOTS.map((_, index) => (
       <div
         key={index}
         className={`${styles.dieDot} ${positions.includes(index) ? styles.visible : ''} ${rolling ? styles.animate : ''}`}

@@ -40,14 +40,14 @@ describe('Board Component', () => {
       />
     );
 
-    expect(screen.getByTestId('point-1')).toHaveClass('selected');
-    expect(screen.getByTestId('point-2')).toHaveClass('potential');
-    expect(screen.getByTestId('point-3')).toHaveClass('potential');
+    expect(screen.getByTestId(/point-1/)).toHaveAttribute('data-testid', expect.stringContaining('selected'));
+    expect(screen.getByTestId(/point-2/)).toHaveAttribute('data-testid', expect.stringContaining('potential'));
+    expect(screen.getByTestId(/point-3/)).toHaveAttribute('data-testid', expect.stringContaining('potential'));
     const nonSelectedPoints = mockPoints.filter(
       (point) => ![mockSelectedSpot, ...mockPotentialSpots].includes(point.id)
     );
     nonSelectedPoints.forEach((point) => {
-      expect(screen.getByTestId(`point-${point.id}`)).not.toHaveClass('selected');
+      expect(screen.getByTestId(new RegExp(`point-${point.id}`))).toHaveAttribute('data-testid', expect.not.stringContaining('selected'));
     });
   });
 
@@ -62,7 +62,7 @@ describe('Board Component', () => {
     );
 
     mockPoints.forEach((point) => {
-      expect(screen.getByTestId(`point-${point.id}`)).not.toHaveClass('selected');
+      expect(screen.getByTestId(new RegExp(`point-${point.id}`))).toHaveAttribute('data-testid', expect.not.stringContaining('selected'));
     });
   });
 });

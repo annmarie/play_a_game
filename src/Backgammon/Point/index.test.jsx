@@ -12,10 +12,10 @@ describe('Point Component', () => {
 
   const mockOnClick = jest.fn();
 
-  it('should render with the correct class based on point id', async () => {
+  it('should render with the correct test data based on point id', async () => {
     await act(async () => render(<Point point={mockPoint} onClick={mockOnClick} />));
     const point = screen.getByLabelText(/Point 1 with 3 right checkers/);
-    expect(point).toHaveClass('point dark top');
+    expect(point).toHaveAttribute('data-testid', expect.stringContaining('point dark top'));
   });
 
   it('should render the correct number of checkers', async () => {
