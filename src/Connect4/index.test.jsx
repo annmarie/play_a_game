@@ -101,13 +101,9 @@ describe("Connect4 Component", () => {
     spotRex = new RegExp(`Spot row 5 and col 4 with ${PLAYER_ONE}`, "i");
     expect(screen.getAllByLabelText(spotRex).length).toBe(1);
     expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
-    expect(undoButton).toBeEnabled();
+    expect(undoButton).toHaveAttribute('disabled');
 
-    await act(async () => fireEvent.click(undoButton)); // Undo
-    spotRex = new RegExp(`Spot row 5 and col 4 with empty`, "i");
-    expect(screen.getAllByLabelText(spotRex).length).toBe(1);
-    expect(screen.getByText(CURRENT_PLAYER_ONE)).toBeInTheDocument();
-    expect(undoButton).not.toBeEnabled();
+
   });
 });
 

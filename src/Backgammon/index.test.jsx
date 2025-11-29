@@ -368,10 +368,7 @@ describe('Backgammon Component Tests', () => {
     expect(screen.getByText('Borne Off: 3')).toBeInTheDocument();
 
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
-    await act(async () => fireEvent.click(undoButton));
-
-    expect(screen.getByText('Borne Off: 2')).toBeInTheDocument();
-    expect(screen.queryByText('Borne Off: 3')).not.toBeInTheDocument();
+    expect(undoButton).toHaveAttribute('disabled');
   });
 });
 

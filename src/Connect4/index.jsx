@@ -42,7 +42,7 @@ const Connect4 = () => {
           <button
             aria-label="Undo Move"
             onClick={() => dispatch(undoMove())}
-            disabled={state.history.length === 0 || state.winner}
+            disabled={state.history.length <= 1 || state.winner}
           >
             {UNDO_BUTTON_TEXT}
           </button>

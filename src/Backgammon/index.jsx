@@ -124,7 +124,7 @@ const Backgammon = () => {
           <div>
             <button
               onClick={() => dispatch(undoRoll())}
-              disabled={state.player === null || state.pointsHistory.length === 0 || state.winner}
+              disabled={state.player === null || state.pointsHistory.length <= 1 || state.winner}
               aria-label="Undo last move"
             >
               {UNDO_BUTTON_TEXT}
