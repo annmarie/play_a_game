@@ -9,15 +9,20 @@ const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
 
   return (
     <div className={styles.backgammonBoard}>
-      {points.map((point) => (
-        <Point
-          key={point.id}
-          point={point}
-          onClick={handleSpotClick}
-          selected={selectedSpot === point.id ? true : false}
-          potential={potentialSpots.includes(point.id) ? true : false}
-        />
-      ))}
+      {points.map((point) => {
+        const isSelected = selectedSpot === point.id;
+        const isPotential = potentialSpots.includes(point.id);
+        
+        return (
+          <Point
+            key={point.id}
+            point={point}
+            onClick={handleSpotClick}
+            selected={isSelected}
+            potential={isPotential}
+          />
+        );
+      })}
       {potentialSpots.includes(-1) && (
         <div
           className={styles.bearOffArea}
