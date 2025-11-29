@@ -1,5 +1,9 @@
 import { PLAYER_ONE, PLAYER_TWO } from './globals';
-import { encodeBoardState as encode, decodeBoardState as decode, loadBoardFromURL } from '../utils/boardEncoder.js';
+import {
+  encodeBoardState as encode,
+  decodeBoardState as decode,
+  loadBoardFromURL
+} from '../utils/boardEncoder.js';
 
 /**
  * Drops a checker into the specified column of the board.

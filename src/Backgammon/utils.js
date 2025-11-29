@@ -1,5 +1,9 @@
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
-import { encodeBoardState as encode, decodeBoardState as decode, loadBoardFromURL as loadFromURL } from '../utils/boardEncoder.js';
+import {
+  encodeBoardState as encode,
+  decodeBoardState as decode,
+  loadBoardFromURL as loadFromURL
+} from '../utils/boardEncoder.js';
 
 /**
  * Initializes the game board.
