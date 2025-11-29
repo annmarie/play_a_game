@@ -20,7 +20,11 @@ module.exports = {
     "^.+\\.module\\.(css|sass|scss)$",
   ],
   modulePaths: ["<rootDir>/src"],
-  moduleNameMapper: { "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/jest_config/assetsMapper.cjs", "\\.(css|less)$": "<rootDir>/jest_config/assetsMapper.cjs" },
+  moduleNameMapper: {
+    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/jest_config/assetsMapper.cjs",
+    "\\.module\\.(css|scss|sass)$": "identity-obj-proxy",
+    "\\.(css|less)$": "<rootDir>/jest_config/assetsMapper.cjs"
+  },
   moduleFileExtensions: [
     // Place tsx and ts to beginning as suggestion from Jest team
     // https://jestjs.io/docs/configuration#modulefileextensions-arraystring

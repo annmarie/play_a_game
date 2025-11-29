@@ -3,21 +3,32 @@ import { PLAYER_RIGHT, PLAYER_LEFT } from '../globals';
 import styles from './Checker.module.css'
 
 const getClassNames = (player, selected) => {
-  let classes = [styles.checker, 'checker'];
+  let playerClass;
   if (player === PLAYER_RIGHT) {
-    classes.push(styles.playerRight, 'player_right');
+    playerClass = styles.playerRight;
   } else if (player === PLAYER_LEFT) {
-    classes.push(styles.playerLeft, 'player_left');
+    playerClass = styles.playerLeft;
+  } else {
+    playerClass = styles.playerLeft;
   }
-  if (selected) {
-    classes.push(styles.selected, 'selected');
-  }
-  return classes.join(' ');
+  const selectedClass = selected ? ` ${styles.selected}` : '';
+  return `${styles.checker} ${playerClass}${selectedClass}`;
 };
 
-const Checker = ({ player, selected }) => {
+const getPlayerId = (player) => {
+  if (player === PLAYER_RIGHT) {
+    return 'player_right';
+  } else if (player === PLAYER_LEFT) {
+    return 'player_left';
+  } else {
+    return 'player_left';
+  }
+};
+
+const Checker = ({ player, selected = false }) => {
   const classNames = getClassNames(player, selected);
-  return (<div role="checker" className={classNames}></div>);
+  const playerId = getPlayerId(player);
+  return (<div role="checker" className={classNames} id={playerId}></div>);
 };
 
 Checker.propTypes = {
