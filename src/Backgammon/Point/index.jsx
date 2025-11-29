@@ -5,43 +5,44 @@ import styles from './Point.module.css'
 import { START_KEY_LEFT } from '../globals';
 
 const Point = ({ point, onClick, selected, potential }) => {
-  const getPointClasses = (id) => {
+  const pointClasses = useMemo(() => {
     const classes = [
       styles.point,
-      id % 2 === 0 ? styles.light : styles.dark,
-      id > START_KEY_LEFT ? styles.bottom : '',
+      point.id % 2 === 0 ? styles.light : styles.dark,
+      point.id > START_KEY_LEFT ? styles.bottom : '',
       selected ? styles.selected : '',
       potential ? styles.potential : ''
     ];
     return classes.filter(Boolean).join(' ');
-  };
+  }, [point.id, selected, potential]);
 
-  const getTestData = (id) => {
+  const testData = useMemo(() => {
     const testClasses = [
       'point',
-      id % 2 === 0 ? 'light' : 'dark',
-      id > START_KEY_LEFT ? 'bottom' : 'top',
+      point.id % 2 === 0 ? 'light' : 'dark',
+      point.id > START_KEY_LEFT ? 'bottom' : 'top',
       selected ? 'selected' : '',
       potential ? 'potential' : ''
     ];
-    return testClasses.filter(Boolean).join(' ');
-  };
+    return `point-${point.id} ${testClasses.filter(Boolean).join(' ')}`;
+  }, [point.id, selected, potential]);
+
+  const checkers = useMemo(() =>
+    Array.from({ length: point.checkers }).map((_, i) => (
+      <Checker key={i} player={point.player} />
+    )), [point.checkers, point.player]
+  );
 
   return (
     <div
-      key={point.id}
       role="point"
       data-key={point.id}
-      className={getPointClasses(point.id)}
+      className={pointClasses}
       onClick={() => onClick(point)}
-      data-testid={`point-${point.id} ${getTestData(point.id)}`}
+      data-testid={testData}
       aria-label={`Point ${point.id} with ${point.checkers} ${point.player ? point.player + ' ' : ''}checkers`}
     >
-      {useMemo(() =>
-        Array.from({ length: point.checkers }).map((_, i) => (
-          <Checker key={i} player={point.player} />
-        )), [point.checkers, point.player]
-      )}
+      {checkers}
     </div>
   );
 };
