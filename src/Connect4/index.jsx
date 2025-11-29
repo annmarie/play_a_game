@@ -4,9 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, resetGame, loadTestBoard } from './slice';
 import StatusBox from './StatusBox';
 import Board from './Board';
-import Header from '../Header';
 import { encodeBoardState, decodeBoardState } from './boardEncoder';
 import './layout.css';
+import Layout from '../Layout';
 
 const Connect4 = () => {
   const dispatch = useDispatch();
@@ -32,8 +32,7 @@ const Connect4 = () => {
   }, [state]);
 
   return (
-    <div className="main">
-      <Header />
+    <Layout>
       <div className="connect4-game">
         <h2 className="connect4-title">Connect Four</h2>
 
@@ -74,7 +73,7 @@ const Connect4 = () => {
         </div>
 
       </div>
-    </div>
+    </Layout>
   );
 };
 

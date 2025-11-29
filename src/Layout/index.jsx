@@ -1,19 +1,23 @@
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './layout.css'
 
-const Home = () => {
+const Layout = ({ children }) => {
   return (
     <div className="main">
-      <div className="home-content">
-        <h1>Welcome to Play A Game!</h1>
-        <p>Select a game to start playing:</p>
+      <div className="header">
         <nav className="nav">
           <Link to="/backgammon" className="nav-link">Backgammon</Link>
           <Link to="/connect4" className="nav-link">Connect Four</Link>
         </nav>
       </div>
+      {children}
     </div>
   );
 };
 
-export default Home;
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export default Layout;

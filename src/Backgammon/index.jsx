@@ -11,9 +11,9 @@ import Board from './Board';
 import Checker from './Checker';
 import './layout.css';
 import { useDispatch } from 'react-redux';
-import Header from '../Header';
 import { testBoards } from './testBoards';
 import { decodeBoardState, encodeBoardState } from './boardEncoder';
+import Layout from '../Layout';
 
 const Backgammon = () => {
   const dispatch = useDispatch();
@@ -77,8 +77,7 @@ const Backgammon = () => {
   }, [dispatch]);
 
   return (
-    <div className="main">
-      <Header />
+    <Layout>
       <div className="backgammon-game">
 
         <Board
@@ -201,7 +200,7 @@ const Backgammon = () => {
           )}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
