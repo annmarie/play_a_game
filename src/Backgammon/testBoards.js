@@ -2,6 +2,7 @@ import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 
 export const testBoards = {
   bearOffTest: {
+    name: 'Bear Off Test',
     points: Array.from({ length: 24 }, (_, i) => {
       const id = i + 1;
       let checkers = 0;
@@ -27,6 +28,7 @@ export const testBoards = {
   },
 
   endGame: {
+    name: 'End Game',
     points: Array.from({ length: 24 }, (_, i) => {
       const id = i + 1;
       let checkers = 0;
@@ -46,6 +48,7 @@ export const testBoards = {
   },
 
   undoTest: {
+    name: 'Undo Test',
     points: Array.from({ length: 24 }, (_, i) => {
       const id = i + 1;
       let checkers = 0;

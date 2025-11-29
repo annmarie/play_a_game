@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import {
   UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT,
   ROLL_DICE_BUTTON_TEXT,
-  PLAYER_LEFT, PLAYER_RIGHT, LOAD_TEST_BOARD_LABEL
+  PLAYER_LEFT, PLAYER_RIGHT
 } from './globals';
 import {
   makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame,
@@ -13,15 +13,14 @@ import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
 import styles from './Backgammon.module.css';
+import Layout from '../Layout';
 import { useDispatch } from 'react-redux';
 import { testBoards } from './testBoards';
-import Layout from '../Layout';
+import TestBoardLoader from '../TestBoardLoader';
 
 const Backgammon = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.backgammon);
-
-  const isDebugMode = new URLSearchParams(window.location.search).has('debug');
 
   useEffect(() => {
     dispatch(loadFromURL());
@@ -66,13 +65,8 @@ const Backgammon = () => {
     }
   }, [dispatch]);
 
-  const handleLoadTestBoard = useCallback((boardKey) => {
-    if (boardKey) {
-      dispatch(loadTestBoard(testBoards[boardKey]));
-      const url = new URL(window.location);
-      url.searchParams.delete('debug');
-      window.history.replaceState({}, '', url);
-    }
+  const handleLoadTestBoard = useCallback((testBoard) => {
+    dispatch(loadTestBoard(testBoard));
   }, [dispatch]);
 
   return (
@@ -186,18 +180,12 @@ const Backgammon = () => {
         </div>
 
         <div className={styles.backgammonDebug}>
-          {isDebugMode && (
-            <div className={styles.debugControls}>
-              <label>{LOAD_TEST_BOARD_LABEL}
-                <select aria-label={LOAD_TEST_BOARD_LABEL} onChange={(e) => handleLoadTestBoard(e.target.value)}>
-                  <option value="">Select...</option>
-                  <option value="bearOffTest">Bear Off Test</option>
-                  <option value="endGame">End Game</option>
-                  <option value="undoTest">Undo Test</option>
-                </select>
-              </label>
-            </div>
-          )}
+          <div className={styles.debugControls}>
+            <TestBoardLoader
+              testBoards={testBoards}
+              onLoadTestBoard={handleLoadTestBoard}
+            />
+          </div>
         </div>
       </div>
     </Layout>

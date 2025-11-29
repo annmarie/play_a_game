@@ -6,6 +6,8 @@ import { reducer } from '../store';
 import { PLAYER_ONE, PLAYER_TWO, DRAW_MESSAGE } from './globals';
 import Connect4 from '../Connect4';
 
+jest.mock('../TestBoardLoader', () => () => null);
+
 const BOARD_LENGTH = 6 * 7; // 6 rows * 7 columns
 const CURRENT_PLAYER_ONE = new RegExp(`Current Player: ${PLAYER_ONE}`, "i");
 const CURRENT_PLAYER_TWO = new RegExp(`Current Player: ${PLAYER_TWO}`, "i");

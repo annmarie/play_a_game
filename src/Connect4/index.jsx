@@ -1,11 +1,13 @@
 import { useCallback, useEffect } from 'react';
 import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, undoMove, resetGame, loadFromURL, saveToURL } from './slice';
+import { makeMove, undoMove, resetGame, loadTestBoard, loadFromURL, saveToURL } from './slice';
 import StatusBox from './StatusBox';
 import Board from './Board';
 import styles from './Connect4.module.css';
 import Layout from '../Layout';
+import TestBoardLoader from '../TestBoardLoader';
+import { testBoards } from './testBoards';
 
 const Connect4 = () => {
   const dispatch = useDispatch();
@@ -24,6 +26,10 @@ const Connect4 = () => {
       alert('Failed to save game link. Please try again.');
       console.error('Error saving game link:', error);
     }
+  }, [dispatch]);
+
+  const handleLoadTestBoard = useCallback((testBoard) => {
+    dispatch(loadTestBoard(testBoard));
   }, [dispatch]);
 
   return (
@@ -65,6 +71,13 @@ const Connect4 = () => {
           >
             Save Game Link
           </button>
+        </div>
+
+        <div className={styles.connect4Debug}>
+          <TestBoardLoader
+            testBoards={testBoards}
+            onLoadTestBoard={handleLoadTestBoard}
+          />
         </div>
 
       </div>

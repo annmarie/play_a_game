@@ -7,4 +7,3 @@ export const UNDO_BUTTON_TEXT = 'Undo Move';
 export const RESET_BUTTON_TEXT = 'Reset Game';
 export const ROLL_DICE_BUTTON_TEXT = 'Roll Dice';
 export const MAX_HISTORY = 2;
-export const LOAD_TEST_BOARD_LABEL = 'Load Test Board:';

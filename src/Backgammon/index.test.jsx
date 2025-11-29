@@ -12,6 +12,8 @@ jest.mock('./utils', () => ({
   rollDie: jest.fn(),
 }));
 
+jest.mock('../TestBoardLoader', () => () => null);
+
 const PLAYER_LABEL = /current player [left|right]/i
 const DICE_DOT_LEFT_TEST_ID = /die-dot-left/i;
 const DICE_DOT_EXTRA_LEFT_TEST_ID = /die-dot-doubles-left/i;
