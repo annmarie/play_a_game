@@ -158,6 +158,8 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   const potentialMoves = {};
   const hasCheckerOnBar = checkersOnBar[player] ? (checkersOnBar[player] || 0) > 0 : 0;
 
+
+
   if (hasCheckerOnBar) {
     const startPointId = player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
     for (const die of dice) {
@@ -185,22 +187,68 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
       if (canBearOffNow) {
         const pointId = point.id;
         let canBearOffFromThisPoint = false;
+        let exactMatch = false;
 
         if (player === PLAYER_LEFT && pointId >= 19 && pointId <= 24) {
-          canBearOffFromThisPoint = die >= (25 - pointId);
+          const requiredDie = 25 - pointId;
+          exactMatch = die === requiredDie;
+          canBearOffFromThisPoint = die >= requiredDie;
         } else if (player === PLAYER_RIGHT && pointId >= 7 && pointId <= 12) {
-          canBearOffFromThisPoint = die >= (13 - pointId);
+          const requiredDie = 13 - pointId;
+          exactMatch = die === requiredDie;
+          canBearOffFromThisPoint = die >= requiredDie;
         }
 
         if (canBearOffFromThisPoint) {
-          potentialMoves[point.id] = potentialMoves[point.id] || [];
-          potentialMoves[point.id].push(-1); // bearing off position
+          // Only allow bearing off with higher dice if this is the highest occupied point
+          if (exactMatch) {
+            potentialMoves[point.id] = potentialMoves[point.id] || [];
+            potentialMoves[point.id].push(-1);
+
+          } else {
+            // Check if this is the highest occupied point for higher dice usage
+            const homeRange = player === PLAYER_LEFT ?
+              [19, 24] : [7, 12];
+            const occupiedPoints = points
+              .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
+              .map(p => p.id);
+            const highestOccupied = player === PLAYER_LEFT ?
+              Math.max(...occupiedPoints) : Math.min(...occupiedPoints);
+
+
+
+            if (pointId === highestOccupied) {
+              potentialMoves[point.id] = potentialMoves[point.id] || [];
+              potentialMoves[point.id].push(-1);
+
+            }
+          }
         }
       }
 
       if (movePointId === -2 && canBearOffNow) {
-        potentialMoves[point.id] = potentialMoves[point.id] || [];
-        potentialMoves[point.id].push(-1); // bearing off position
+        // Check if this is an exact move or if it's the highest occupied point
+        const pointId = point.id;
+        const requiredDie = player === PLAYER_LEFT ? 25 - pointId : 13 - pointId;
+        const exactMatch = die === requiredDie;
+
+        if (exactMatch) {
+          potentialMoves[point.id] = potentialMoves[point.id] || [];
+          potentialMoves[point.id].push(-1);
+        } else {
+          // Only allow bearing off with higher dice if this is the highest occupied point
+          const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+          const occupiedPoints = points
+            .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
+            .map(p => p.id);
+          const highestOccupied = player === PLAYER_LEFT ?
+            Math.max(...occupiedPoints) : Math.min(...occupiedPoints);
+
+          if (pointId === highestOccupied) {
+            potentialMoves[point.id] = potentialMoves[point.id] || [];
+            potentialMoves[point.id].push(-1);
+          }
+        }
       } else if (movePointId >= 0) {
         const targetPoint = points[movePointId];
         if (
@@ -214,6 +262,8 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
       }
     }
   }
+
+
   return potentialMoves;
 }
 

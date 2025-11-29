@@ -231,9 +231,7 @@ describe('Utility Functions', () => {
       expect(result).toEqual({
         '7': [11],     // Point 7 can move to point 11 (with dice 4: 7+4=11)
         '8': [12],     // Point 8 can move to point 12 (with dice 4: 8+4=12)
-        '9': [-1, -1], // Point 9 can bear off twice (has 2 checkers, both can bear off)
-        '10': [-1, -1],// Point 10 should not be able to bear off (blocked by point 9)
-        '11': [-1, -1] // Point 11 should not be able to bear off (blocked by point 9)
+        '9': [-1, -1]  // Point 9 can bear off twice (exact match: die 4 = required die 4)
       });
 
       const canBearOffResult = canBearOff(points, PLAYER_RIGHT, { left: 0, right: 0 });

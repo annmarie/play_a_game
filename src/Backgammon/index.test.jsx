@@ -261,19 +261,24 @@ describe('Backgammon Component Tests', () => {
       { id: 24, checkers: 0, player: null }
     ];
 
+    const checkersOnBar = { left: 0, right: 0 };
+    const diceValue = [4, 4, 4];
+    const player = PLAYER_RIGHT;
+    const potentialMoves =  { '7': [ 11 ], '8': [ 12 ], '9': [ -1, -1 ] };
+
     const customStore = configureStore({
       reducer,
       preloadedState: {
         backgammon: {
           points: customPoints,
-          checkersOnBar: { left: 0, right: 0 },
+          checkersOnBar,
           checkersBorneOff: { left: 1, right: 4 },
-          diceValue: [4, 4, 4],
-          player: PLAYER_RIGHT,
+          diceValue,
+          player,
           winner: null,
           selectedSpot: null,
-          potentialSpots: [-1, -1],
-          potentialMoves: { '7': [11], '8': [12], '9': [-1, -1], '10': [-1], '11': [-1, -1] },
+          potentialSpots: [],
+          potentialMoves,
           pointsHistory: [],
           diceHistory: [],
           playerHistory: [],
@@ -294,12 +299,8 @@ describe('Backgammon Component Tests', () => {
     await act(async () => fireEvent.click(point11));
     expect(point11.className).toContain('selected');
 
-    // TODO: THIS NEEDS TO BE FIXED
-    // if button 11 is selected bear off button should not appear
-    // if clicked it will not bear off because there are other valid moves.
-    // It's just that the bear off button appears when it should not
-    //const bearOffButton = screen.getByText(BEAR_OFF);
-    //expect(bearOffButton).not.toBeInTheDocument();
+    const bearOffButton = screen.queryByText(BEAR_OFF);
+    expect(bearOffButton).not.toBeInTheDocument();
   });
 
   it('should show bear off button when bearing off is possible', async () => {
