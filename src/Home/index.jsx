@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import styles from './Home.module.css'
-import globalStyles from '../App.module.css'
+import Layout from '../Layout';
 
 const Home = () => {
   return (
-    <div className={globalStyles.main}>
+    <Layout showHeader={false}>
       <div className={styles.homeContent}>
         <h1>Welcome to Play A Game!</h1>
         <p>Select a game to start playing:</p>
@@ -13,7 +13,7 @@ const Home = () => {
           <Link to="/connect4" className={styles.navLink}>Connect Four</Link>
         </nav>
       </div>
-    </div>
+    </Layout>
   );
 };
 

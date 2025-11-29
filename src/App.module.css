@@ -35,12 +35,3 @@ button:disabled {
   cursor: not-allowed;
   outline: transparent;
 }
-
-/* Main layout */
-.main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: cornsilk;
-  height: 100vh;
-}
