@@ -3,9 +3,12 @@ import { useSelector } from 'react-redux';
 import {
   UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT,
   ROLL_DICE_BUTTON_TEXT,
-  PLAYER_LEFT, PLAYER_RIGHT
+  PLAYER_LEFT, PLAYER_RIGHT, LOAD_TEST_BOARD_LABEL
 } from './globals';
-import { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard, loadFromURL, saveToURL } from './slice';
+import {
+  makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame,
+  selectSpot, loadTestBoard, loadFromURL, saveToURL
+} from './slice';
 import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
@@ -13,9 +16,6 @@ import styles from './Backgammon.module.css';
 import { useDispatch } from 'react-redux';
 import { testBoards } from './testBoards';
 import Layout from '../Layout';
-
-// i18n: Load Test Board
-const LOAD_TEST_BOARD_LABEL = 'Load Test Board:';
 
 const Backgammon = () => {
   const dispatch = useDispatch();
