@@ -73,6 +73,7 @@ const Backgammon = () => {
           selectedSpot={state.selectedSpot}
           potentialSpots={state.potentialSpots}
           handleSpotClick={handleSpotClick}
+          potentialMoves={state.potentialMoves}
         />
 
         <div className={styles.backgammonStatus}>
