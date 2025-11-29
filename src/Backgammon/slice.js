@@ -49,36 +49,45 @@ export const backgammonSlice = createSlice({
         findPotentialMoves(state.points, state.player, action.payload, state.checkersOnBar) : {}
     }),
     loadFromURL: (state) => {
-      const params = new URLSearchParams(window.location.search);
-      const encoded = params.get('board');
-      if (encoded) {
-        const boardState = decodeBoardState(encoded);
-        if (boardState) {
-          return {
-            ...state,
-            ...boardState,
-            potentialMoves: boardState.diceValue ?
-              findPotentialMoves(boardState.points, boardState.player, boardState.diceValue, boardState.checkersOnBar) : {},
-            selectedSpot: null,
-            potentialSpots: []
-          };
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const encoded = params.get('board');
+        if (encoded) {
+          const boardState = decodeBoardState(encoded);
+          if (boardState) {
+            return {
+              ...state,
+              ...boardState,
+              potentialMoves: boardState.diceValue ?
+                findPotentialMoves(boardState.points, boardState.player, boardState.diceValue, boardState.checkersOnBar) : {},
+              selectedSpot: null,
+              potentialSpots: []
+            };
+          }
         }
+      } catch (error) {
+        console.warn('Failed to load board from URL:', error);
       }
       return state;
     },
     saveToURL: (state) => {
+      const getLastItem = (arr) => arr.length > 0 ? [arr[arr.length - 1]] : [];
       const dataToSave = {
         ...state,
-        pointsHistory: state.pointsHistory.length > 0 ? [state.pointsHistory[state.pointsHistory.length - 1]] : [],
-        diceHistory: state.diceHistory.length > 0 ? [state.diceHistory[state.diceHistory.length - 1]] : [],
-        playerHistory: state.playerHistory.length > 0 ? [state.playerHistory[state.playerHistory.length - 1]] : [],
-        checkersOnBarHistory: state.checkersOnBarHistory.length > 0 ? [state.checkersOnBarHistory[state.checkersOnBarHistory.length - 1]] : [],
-        checkersBorneOffHistory: state.checkersBorneOffHistory.length > 0 ? [state.checkersBorneOffHistory[state.checkersBorneOffHistory.length - 1]] : [],
-        potentialMovesHistory: state.potentialMovesHistory.length > 0 ? [state.potentialMovesHistory[state.potentialMovesHistory.length - 1]] : []
+        pointsHistory: getLastItem(state.pointsHistory),
+        diceHistory: getLastItem(state.diceHistory),
+        playerHistory: getLastItem(state.playerHistory),
+        checkersOnBarHistory: getLastItem(state.checkersOnBarHistory),
+        checkersBorneOffHistory: getLastItem(state.checkersBorneOffHistory),
+        potentialMovesHistory: getLastItem(state.potentialMovesHistory)
       };
       const encoded = encodeBoardState(dataToSave);
       const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
-      navigator.clipboard.writeText(url);
+      try {
+        navigator.clipboard.writeText(url);
+      } catch (error) {
+        console.warn('Failed to copy to clipboard:', error);
+      }
       return state;
     },
   },
@@ -101,7 +110,7 @@ function reduceSelectSpot(state, action) {
 
     // Check if the clicked point is a valid entry point
     if (Object.keys(state.potentialMoves).includes(pointId.toString())) {
-      const moveDistance = (startKeyId + 1) - pointId
+      const moveDistance = (startKeyId + 1) - pointId;
       return updateMoveCheckerState(state, INVALID_INDEX, selectedIndex, moveDistance);
     }
     return state;

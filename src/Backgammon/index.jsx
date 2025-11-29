@@ -14,12 +14,6 @@ import { useDispatch } from 'react-redux';
 import { testBoards } from './testBoards';
 import Layout from '../Layout';
 
-// basic escaping helper to avoid untrusted content being injected into attributes/text
-const escapeHtml = (str) =>
-  String(str === undefined || str === null ? '' : str).replace(/[&<>"'`=/]/g, (s) =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;', '`': '&#96;', '=': '&#61;', '/': '&#47;' })[s]
-  );
-
 // i18n: Load Test Board
 const LOAD_TEST_BOARD_LABEL = 'Load Test Board:';
 
@@ -118,7 +112,7 @@ const Backgammon = () => {
           </div>
 
           {state.player && !state.winner && (
-            <div aria-label={`Current player ${escapeHtml(state.player)}`} >
+            <div aria-label={`Current player ${state.player}`} >
               <div>
                 Current Player <Checker player={state.player} />
               </div>
@@ -167,12 +161,12 @@ const Backgammon = () => {
 
         <div className={styles.backgammonBorneOff}>
           {state.checkersBorneOff[PLAYER_LEFT] > 0 && (
-            <div aria-label={`Borne Off for ${escapeHtml(PLAYER_LEFT)}`}>
+            <div aria-label={`Borne Off for ${PLAYER_LEFT}`}>
               <Checker player={PLAYER_LEFT} /> Borne Off: {state.checkersBorneOff[PLAYER_LEFT]}
             </div>
           )}
           {state.checkersBorneOff[PLAYER_RIGHT] > 0 && (
-            <div aria-label={`Borne Off for ${escapeHtml(PLAYER_RIGHT)}`}>
+            <div aria-label={`Borne Off for ${PLAYER_RIGHT}`}>
               <Checker player={PLAYER_RIGHT} /> Borne Off: {state.checkersBorneOff[PLAYER_RIGHT]}
             </div>
           )}
@@ -180,12 +174,12 @@ const Backgammon = () => {
 
         <div className={styles.backgammonBar}>
           {state.checkersOnBar[PLAYER_LEFT] > 0 && (
-            <div aria-label={`Checkers Bar for ${escapeHtml(PLAYER_LEFT)}`}>
+            <div aria-label={`Checkers Bar for ${PLAYER_LEFT}`}>
               <Checker player={PLAYER_LEFT} /> Bar: {state.checkersOnBar[PLAYER_LEFT]}
             </div>
           )}
           {state.checkersOnBar[PLAYER_RIGHT] > 0 && (
-            <div aria-label={`Checkers Bar for ${escapeHtml(PLAYER_RIGHT)}`}>
+            <div aria-label={`Checkers Bar for ${PLAYER_RIGHT}`}>
               <Checker player={PLAYER_RIGHT} /> Bar: {state.checkersOnBar[PLAYER_RIGHT]}
             </div>
           )}

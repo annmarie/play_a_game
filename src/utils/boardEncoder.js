@@ -2,13 +2,13 @@
 export const encodeBoardState = (state) => {
   try {
     return btoa(JSON.stringify(state));
-  } catch (err) {
-    console.error('Failed to encode board state:', err);
+  } catch {
     return null;
   }
 };
 
 export const decodeBoardState = (encoded) => {
+  if (!encoded) return null;
   try {
     return JSON.parse(atob(encoded));
   } catch {
@@ -21,7 +21,7 @@ export const loadBoardFromURL = () => {
   try {
     const params = new URLSearchParams(window.location.search);
     const encoded = params.get('board');
-    return encoded ? decodeBoardState(encoded) : null;
+    return decodeBoardState(encoded);
   } catch {
     return null;
   }

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import { useMemo } from 'react'
 import Checker from '../Checker'
 import styles from './Point.module.css'
 import { START_KEY_LEFT } from '../globals';
@@ -28,11 +29,13 @@ const Point = ({ point, onClick, selected, potential }) => {
       className={getPointClasses(point.id)}
       onClick={() => onClick(point)}
       data-testid={`point-${point.id}`}
-      aria-label={`Point ${point.id} with ${point.checkers} ${point.player ? point.player + ' ': ''}checkers`}
+      aria-label={`Point ${point.id} with ${point.checkers} ${point.player ? point.player + ' ' : ''}checkers`}
     >
-      {Array.from({ length: point.checkers }).map((_, i) => (
-        <Checker key={i} player={point.player} />
-      ))}
+      {useMemo(() =>
+        Array.from({ length: point.checkers }).map((_, i) => (
+          <Checker key={i} player={point.player} />
+        )), [point.checkers, point.player]
+      )}
     </div>
   );
 };

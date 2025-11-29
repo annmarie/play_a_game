@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { initializeBoard, dropChecker, checkWin, isBoardFull,
-  togglePlayer, encodeBoardState, decodeBoardState } from './utils';
+import {
+  initializeBoard, dropChecker, checkWin, isBoardFull,
+  togglePlayer, encodeBoardState, decodeBoardState
+} from './utils';
 import { PLAYER_ONE, MAX_HISTORY } from './globals';
 
 export const initialState = {
@@ -16,8 +18,8 @@ export const slice = createSlice({
   name: 'connect4',
   initialState,
   reducers: {
-    makeMove: (state,action) => reduceMakeMove(state, action),
-    undoMove: (state,action) => reduceUndoMove(state, action),
+    makeMove: (state, action) => reduceMakeMove(state, action),
+    undoMove: (state, action) => reduceUndoMove(state, action),
     resetGame: () => ({ ...initialState, board: initializeBoard() }),
     loadTestBoard: (state, action) => ({
       ...state,
@@ -26,18 +28,19 @@ export const slice = createSlice({
     loadFromURL: (state) => {
       const params = new URLSearchParams(window.location.search);
       const encoded = params.get('board');
-      if (encoded) {
-        const boardState = decodeBoardState(encoded);
-        if (boardState) {
-          return { ...state, ...boardState };
-        }
-      }
-      return state;
+      if (!encoded) return state;
+
+      const boardState = decodeBoardState(encoded);
+      if (!boardState) return state;
+
+      return { ...state, ...boardState };
     },
     saveToURL: (state) => {
+      const lastHistoryItem = state.history.length > 0 ? state.history[state.history.length - 1] : null;
+      const history = lastHistoryItem ? [lastHistoryItem] : [];
       const dataToSave = {
         ...state,
-        history: state.history.length > 0 ? [state.history[state.history.length - 1]] : []
+        history
       };
       const encoded = encodeBoardState(dataToSave);
       const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;

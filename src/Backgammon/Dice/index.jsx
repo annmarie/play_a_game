@@ -51,9 +51,9 @@ const Dice = ({ diceValue = null }) => {
   return (
     <div className={styles.diceContainer}>
       {renderDie(diceValue[0], 'left')}
-      {diceValue.length > 2 && diceValue[2] > 0 && renderDie(diceValue[2], 'doubles-left')}
-      {diceValue[1] > 0 && renderDie(diceValue[1], 'right')}
-      {diceValue.length > 3 && diceValue[3] > 0 && renderDie(diceValue[3], 'doubles-right')}
+      {diceValue.length > 2 && diceValue[2] && diceValue[2] > 0 && renderDie(diceValue[2], 'doubles-left')}
+      {diceValue.length > 1 && diceValue[1] && diceValue[1] > 0 && renderDie(diceValue[1], 'right')}
+      {diceValue.length > 3 && diceValue[3] && diceValue[3] > 0 && renderDie(diceValue[3], 'doubles-right')}
     </div>
   );
 };

@@ -199,7 +199,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
 
         // Only points in the player's home board can bear off
         const isInHomeBoard = (player === PLAYER_LEFT && pointId >= START_KEY_RIGHT - 5 && pointId <= START_KEY_RIGHT) ||
-                              (player === PLAYER_RIGHT && pointId >= START_KEY_LEFT - 5 && pointId <= START_KEY_LEFT);
+          (player === PLAYER_RIGHT && pointId >= START_KEY_LEFT - 5 && pointId <= START_KEY_LEFT);
         if (!isInHomeBoard) {
           // Not in home board, cannot bear off from this point
         } else {
@@ -298,8 +298,12 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
     return { updatedPoints, hasBarPlayer };
   }
 
-  const destinationPoint = points[toIndex] || -1;
-  if (destinationPoint === -1) {
+  if (toIndex < 0 || toIndex >= points.length) {
+    return { updatedPoints: points, hasBarPlayer };
+  }
+
+  const destinationPoint = points[toIndex];
+  if (!destinationPoint) {
     return { updatedPoints: points, hasBarPlayer };
   }
   if (destinationPoint.checkers === 1 && destinationPoint.player !== player) {
@@ -336,14 +340,19 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
  * @returns {string} Encoded board state.
  */
 export const encodeBoardState = (state) => {
-  const data = {
-    points: state.points.map(p => ({ id: p.id, checkers: p.checkers, player: p.player })),
-    checkersOnBar: state.checkersOnBar,
-    checkersBorneOff: state.checkersBorneOff,
-    player: state.player,
-    diceValue: state.diceValue
-  };
-  return encode(data);
+  try {
+    const data = {
+      points: state.points.map(p => ({ id: p.id, checkers: p.checkers, player: p.player })),
+      checkersOnBar: state.checkersOnBar,
+      checkersBorneOff: state.checkersBorneOff,
+      player: state.player,
+      diceValue: state.diceValue
+    };
+    return encode(data);
+  } catch (error) {
+    console.warn('Failed to encode board state:', error);
+    return null;
+  }
 };
 
 export const decodeBoardState = decode;

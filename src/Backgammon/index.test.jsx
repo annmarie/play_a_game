@@ -22,6 +22,7 @@ const RESET_GAME = /reset the game/i;
 const UNDO_MOVE = /undo last move/i;
 const BEAR_OFF = /bear off/i;
 const SPACEBAR_KEY = ' ';
+const UNDO_KEY = 'u';
 
 describe('Backgammon Component Tests', () => {
   let store;
@@ -223,7 +224,7 @@ describe('Backgammon Component Tests', () => {
     await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }))
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(4);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
-    await act(async () => fireEvent.keyDown(window, { key: 'u' }))
+    await act(async () => fireEvent.keyDown(window, { key: UNDO_KEY }))
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(0);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(0);
   });
@@ -236,36 +237,10 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should not display bear off when clicking on point 11 with specific board', async () => {
-    const customPoints = [
-      { id: 1, checkers: 0, player: null },
-      { id: 2, checkers: 0, player: null },
-      { id: 3, checkers: 0, player: null },
-      { id: 4, checkers: 0, player: null },
-      { id: 5, checkers: 0, player: null },
-      { id: 6, checkers: 0, player: null },
-      { id: 7, checkers: 5, player: PLAYER_RIGHT },
-      { id: 8, checkers: 5, player: PLAYER_RIGHT },
-      { id: 9, checkers: 2, player: PLAYER_RIGHT },
-      { id: 10, checkers: 2, player: PLAYER_RIGHT },
-      { id: 11, checkers: 1, player: PLAYER_RIGHT },
-      { id: 12, checkers: 0, player: null },
-      { id: 13, checkers: 0, player: null },
-      { id: 14, checkers: 0, player: null },
-      { id: 15, checkers: 0, player: null },
-      { id: 16, checkers: 0, player: null },
-      { id: 17, checkers: 0, player: null },
-      { id: 18, checkers: 0, player: null },
-      { id: 19, checkers: 5, player: PLAYER_LEFT },
-      { id: 20, checkers: 3, player: PLAYER_LEFT },
-      { id: 21, checkers: 2, player: PLAYER_LEFT },
-      { id: 22, checkers: 3, player: PLAYER_LEFT },
-      { id: 23, checkers: 1, player: PLAYER_LEFT },
-      { id: 24, checkers: 0, player: null }
-    ];
+    const customPoints = createCustomBoardState();
 
     const checkersOnBar = { left: 0, right: 0 };
     const diceValue = [4, 4, 4];
-    const player = PLAYER_RIGHT;
     const potentialMoves = { '7': [11], '8': [12], '9': [-1, -1] };
 
     const customStore = configureStore({
@@ -276,7 +251,7 @@ describe('Backgammon Component Tests', () => {
           checkersOnBar,
           checkersBorneOff: { left: 1, right: 4 },
           diceValue,
-          player,
+          player: PLAYER_RIGHT,
           winner: null,
           selectedSpot: null,
           potentialSpots: [],
@@ -347,16 +322,12 @@ describe('Backgammon Component Tests', () => {
           checkersOnBar: { left: 0, right: 0 },
           checkersBorneOff: { left: 3, right: 0 },
           diceValue: [6, 4],
-          player: PLAYER_LEFT,
+          player: PLAYER_LEFT, // Current game player
           winner: null,
           selectedSpot: null,
           potentialSpots: [-1],
           potentialMoves: { '24': [-1] },
-          pointsHistory: [Array.from({ length: 24 }, (_, i) => {
-            const id = i + 1;
-            if (id === 24) return { id, checkers: 2, player: PLAYER_LEFT };
-            return { id, checkers: 0, player: null };
-          })],
+          pointsHistory: [createBoardStateWithPoint24()],
           diceHistory: [[6, 4, 4]],
           playerHistory: [PLAYER_LEFT],
           checkersOnBarHistory: [{ left: 0, right: 0 }],
@@ -374,6 +345,43 @@ describe('Backgammon Component Tests', () => {
     expect(undoButton).toHaveAttribute('disabled');
   });
 });
+
+function createCustomBoardState() {
+  return [
+    { id: 1, checkers: 0, player: null },
+    { id: 2, checkers: 0, player: null },
+    { id: 3, checkers: 0, player: null },
+    { id: 4, checkers: 0, player: null },
+    { id: 5, checkers: 0, player: null },
+    { id: 6, checkers: 0, player: null },
+    { id: 7, checkers: 5, player: PLAYER_RIGHT },
+    { id: 8, checkers: 5, player: PLAYER_RIGHT },
+    { id: 9, checkers: 2, player: PLAYER_RIGHT },
+    { id: 10, checkers: 2, player: PLAYER_RIGHT },
+    { id: 11, checkers: 1, player: PLAYER_RIGHT },
+    { id: 12, checkers: 0, player: null },
+    { id: 13, checkers: 0, player: null },
+    { id: 14, checkers: 0, player: null },
+    { id: 15, checkers: 0, player: null },
+    { id: 16, checkers: 0, player: null },
+    { id: 17, checkers: 0, player: null },
+    { id: 18, checkers: 0, player: null },
+    { id: 19, checkers: 5, player: PLAYER_LEFT },
+    { id: 20, checkers: 3, player: PLAYER_LEFT },
+    { id: 21, checkers: 2, player: PLAYER_LEFT },
+    { id: 22, checkers: 3, player: PLAYER_LEFT },
+    { id: 23, checkers: 1, player: PLAYER_LEFT },
+    { id: 24, checkers: 0, player: null }
+  ];
+}
+
+function createBoardStateWithPoint24() {
+  return Array.from({ length: 24 }, (_, i) => {
+    const id = i + 1;
+    if (id === 24) return { id, checkers: 2, player: PLAYER_LEFT };
+    return { id, checkers: 0, player: null };
+  });
+}
 
 function validateInitialBoardState(points) {
   points.forEach((point, index) => {

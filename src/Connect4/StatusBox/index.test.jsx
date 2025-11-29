@@ -48,7 +48,7 @@ describe('StatusBox Component', () => {
     render(
       <StatusBox
         winner={null}
-        winnerDesc={null}
+        winnerDesc=""
         boardFull={false}
         player="Player 1"
       />

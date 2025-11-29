@@ -6,7 +6,9 @@ export const slice = createSlice({
   name: 'main',
   initialState,
   reducers: {
-    setName: (state, action) => ({ ...state, name: action.payload })
+    setName: (state, action) => {
+      state.name = action.payload;
+    }
   },
 });
 

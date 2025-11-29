@@ -3,9 +3,7 @@ import { DRAW_MESSAGE } from '../globals';
 import styles from './StatusBox.module.css';
 
 const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player = 'Unknown' }) => {
-  if (typeof boardFull !== 'boolean') {
-    console.error('StatusBox: expected "boardFull" to be a boolean, received:', boardFull);
-  }
+  const normalizedBoardFull = Boolean(boardFull);
 
   return (
     <div
@@ -16,7 +14,7 @@ const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player =
     >
       {winner
         ? `Winner: ${winner} Winning move (${winnerDesc})`
-        : boardFull
+        : normalizedBoardFull
         ? DRAW_MESSAGE
         : `Current Player: ${player}`}
     </div>
@@ -26,15 +24,8 @@ const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player =
 StatusBox.propTypes = {
   winner: PropTypes.string,
   winnerDesc: PropTypes.string,
-  boardFull: PropTypes.bool.isRequired,
-  player: PropTypes.string.isRequired,
-};
-
-StatusBox.defaultProps = {
-  winner: null,
-  winnerDesc: '',
-  boardFull: false,
-  player: 'Unknown',
+  boardFull: PropTypes.bool,
+  player: PropTypes.string,
 };
 
 export default StatusBox;
