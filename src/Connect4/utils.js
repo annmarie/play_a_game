@@ -1,4 +1,19 @@
 import { PLAYER_ONE, PLAYER_TWO } from './globals';
+import { encodeBoardState as encode, decodeBoardState as decode, loadBoardFromURL } from '../utils/boardEncoder.js';
+
+export const encodeBoardState = (state) => {
+  const data = {
+    board: state.board,
+    player: state.player,
+    winner: state.winner,
+    winnerDesc: state.winnerDesc,
+    boardFull: state.boardFull
+  };
+  return encode(data);
+};
+
+export const decodeBoardState = decode;
+export { loadBoardFromURL };
 
 /**
  * Drops a checker into the specified column of the board.

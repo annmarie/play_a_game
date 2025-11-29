@@ -1,13 +1,6 @@
-// Encode/decode board state to/from URL
+// Shared encode/decode utilities for board state
 export const encodeBoardState = (state) => {
-  const data = {
-    points: state.points.map(p => ({ id: p.id, checkers: p.checkers, player: p.player })),
-    checkersOnBar: state.checkersOnBar,
-    checkersBorneOff: state.checkersBorneOff,
-    player: state.player,
-    diceValue: state.diceValue
-  };
-  return btoa(JSON.stringify(data));
+  return btoa(JSON.stringify(state));
 };
 
 export const decodeBoardState = (encoded) => {

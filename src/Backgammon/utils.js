@@ -1,4 +1,19 @@
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
+import { encodeBoardState as encode, decodeBoardState as decode, loadBoardFromURL as loadFromURL } from '../utils/boardEncoder.js';
+
+export const encodeBoardState = (state) => {
+  const data = {
+    points: state.points.map(p => ({ id: p.id, checkers: p.checkers, player: p.player })),
+    checkersOnBar: state.checkersOnBar,
+    checkersBorneOff: state.checkersBorneOff,
+    player: state.player,
+    diceValue: state.diceValue
+  };
+  return encode(data);
+};
+
+export const decodeBoardState = decode;
+export const loadBoardFromURL = loadFromURL;
 
 /**
  * Initializes the game board.

@@ -5,14 +5,13 @@ import {
   ROLL_DICE_BUTTON_TEXT,
   PLAYER_LEFT, PLAYER_RIGHT
 } from './globals';
-import { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard } from './slice';
+import { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard, loadFromURL, saveToURL } from './slice';
 import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
 import './layout.css';
 import { useDispatch } from 'react-redux';
 import { testBoards } from './testBoards';
-import { decodeBoardState, encodeBoardState } from './boardEncoder';
 import Layout from '../Layout';
 
 const Backgammon = () => {
@@ -22,17 +21,8 @@ const Backgammon = () => {
   const isDebugMode = new URLSearchParams(window.location.search).has('debug');
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const encoded = params.get('board');
-    if (encoded) {
-      const boardState = decodeBoardState(encoded);
-      if (boardState) {
-        dispatch(loadTestBoard(boardState));
-      }
-    }
-  }, [dispatch]);
+    dispatch(loadFromURL());
 
-  useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === ' ') {
         if (state.diceValue === null) {
@@ -61,11 +51,9 @@ const Backgammon = () => {
   );
 
   const handleSaveGameLink = useCallback(() => {
-    const encoded = encodeBoardState(state);
-    const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
-    navigator.clipboard.writeText(url);
+    dispatch(saveToURL());
     alert('Game link copied to clipboard!');
-  }, [state]);
+  }, [dispatch]);
 
   const handleLoadTestBoard = useCallback((boardKey) => {
     if (boardKey) {

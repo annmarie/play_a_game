@@ -1,10 +1,9 @@
 import { useCallback, useEffect } from 'react';
 import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, undoMove, resetGame, loadTestBoard } from './slice';
+import { makeMove, undoMove, resetGame, loadFromURL, saveToURL } from './slice';
 import StatusBox from './StatusBox';
 import Board from './Board';
-import { encodeBoardState, decodeBoardState } from './boardEncoder';
 import './layout.css';
 import Layout from '../Layout';
 
@@ -14,22 +13,13 @@ const Connect4 = () => {
   const handleCellClick = (col) => dispatch(makeMove({ col }));
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const encoded = params.get('board');
-    if (encoded) {
-      const boardState = decodeBoardState(encoded);
-      if (boardState) {
-        dispatch(loadTestBoard(boardState));
-      }
-    }
+    dispatch(loadFromURL());
   }, [dispatch]);
 
   const handleSaveGameLink = useCallback(() => {
-    const encoded = encodeBoardState(state);
-    const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
-    navigator.clipboard.writeText(url);
+    dispatch(saveToURL());
     alert('Game link copied to clipboard!');
-  }, [state]);
+  }, [dispatch]);
 
   return (
     <Layout>

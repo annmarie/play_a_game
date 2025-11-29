@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { initializeBoard, dropChecker, checkWin, isBoardFull, togglePlayer } from './utils';
+import { initializeBoard, dropChecker, checkWin, isBoardFull,
+  togglePlayer, encodeBoardState, decodeBoardState } from './utils';
 import { PLAYER_ONE } from './globals';
 
-const MAX_HISTORY = 10;
+const MAX_HISTORY = 3;
 
 export const initialState = {
   board: initializeBoard(),
@@ -24,6 +25,23 @@ export const slice = createSlice({
       ...state,
       ...action.payload
     }),
+    loadFromURL: (state) => {
+      const params = new URLSearchParams(window.location.search);
+      const encoded = params.get('board');
+      if (encoded) {
+        const boardState = decodeBoardState(encoded);
+        if (boardState) {
+          return { ...state, ...boardState };
+        }
+      }
+      return state;
+    },
+    saveToURL: (state) => {
+      const encoded = encodeBoardState(state);
+      const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
+      navigator.clipboard.writeText(url);
+      return state;
+    },
   },
 });
 
@@ -71,6 +89,6 @@ const reduceUndoMove = (state) => {
   };
 };
 
-export const { makeMove, undoMove, resetGame, loadTestBoard } = slice.actions;
+export const { makeMove, undoMove, resetGame, loadTestBoard, loadFromURL, saveToURL } = slice.actions;
 
 export default slice.reducer;

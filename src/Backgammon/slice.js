@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
   initializeBoard, togglePlayer, rollDie, moveCheckers,
-  generatePointIndexMap, findPotentialMoves
+  generatePointIndexMap, findPotentialMoves, encodeBoardState, decodeBoardState
 } from './utils';
 
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX } from './globals';
@@ -48,6 +48,30 @@ export const slice = createSlice({
       potentialMoves: state.player ?
         findPotentialMoves(state.points, state.player, action.payload, state.checkersOnBar) : {}
     }),
+    loadFromURL: (state) => {
+      const params = new URLSearchParams(window.location.search);
+      const encoded = params.get('board');
+      if (encoded) {
+        const boardState = decodeBoardState(encoded);
+        if (boardState) {
+          return {
+            ...state,
+            ...boardState,
+            potentialMoves: boardState.diceValue ?
+              findPotentialMoves(boardState.points, boardState.player, boardState.diceValue, boardState.checkersOnBar) : {},
+            selectedSpot: null,
+            potentialSpots: []
+          };
+        }
+      }
+      return state;
+    },
+    saveToURL: (state) => {
+      const encoded = encodeBoardState(state);
+      const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
+      navigator.clipboard.writeText(url);
+      return state;
+    },
   },
 });
 
@@ -164,7 +188,6 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
     updatedCheckersOnBar[state.player] -= 1;
   }
 
-  // update borne off checker count
   if (toIndex === -1) {
     updatedCheckersBorneOff[state.player] = (state.checkersBorneOff[state.player] || 0) + 1;
   }
@@ -285,6 +308,6 @@ function reduceRollDice(state) {
   return { ...state, diceValue, potentialMoves, player };
 }
 
-export const { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard, setCustomDice } = slice.actions;
+export const { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard, setCustomDice, loadFromURL, saveToURL } = slice.actions;
 
 export default slice.reducer;
