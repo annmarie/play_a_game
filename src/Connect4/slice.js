@@ -1,9 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard, dropChecker, checkWin, isBoardFull,
   togglePlayer, encodeBoardState, decodeBoardState } from './utils';
-import { PLAYER_ONE } from './globals';
-
-const MAX_HISTORY = 3;
+import { PLAYER_ONE, MAX_HISTORY } from './globals';
 
 export const initialState = {
   board: initializeBoard(),

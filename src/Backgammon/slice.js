@@ -4,9 +4,7 @@ import {
   generatePointIndexMap, findPotentialMoves, encodeBoardState, decodeBoardState
 } from './utils';
 
-import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX } from './globals';
-
-const MAX_HISTORY = 3;
+import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX, MAX_HISTORY } from './globals';
 
 export const initialState = {
   points: initializeBoard(),
