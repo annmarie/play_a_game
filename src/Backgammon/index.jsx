@@ -104,7 +104,7 @@ const Backgammon = () => {
               <div>
                 Current Player <Checker player={state.player} />
               </div>
-              {Object.keys(state.potentialMoves).length < 1 &&
+              {Object.keys(state.potentialMoves || {}).length < 1 &&
                 state.diceValue !== null &&
                 state.diceValue.length > 0 && (
                   <div className="toggle-player">
@@ -124,7 +124,7 @@ const Backgammon = () => {
           <div>
             <button
               onClick={() => dispatch(undoRoll())}
-              disabled={state.player === null || state.winner}
+              disabled={state.player === null || state.pointsHistory.length === 0 || state.winner}
               aria-label="Undo last move"
             >
               {UNDO_BUTTON_TEXT}

@@ -6,6 +6,8 @@ import {
 
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX } from './globals';
 
+const MAX_HISTORY = 3;
+
 export const initialState = {
   points: initializeBoard(),
   checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
@@ -67,7 +69,16 @@ export const slice = createSlice({
       return state;
     },
     saveToURL: (state) => {
-      const encoded = encodeBoardState(state);
+      const dataToSave = {
+        ...state,
+        pointsHistory: state.pointsHistory.length > 0 ? [state.pointsHistory[state.pointsHistory.length - 1]] : [],
+        diceHistory: state.diceHistory.length > 0 ? [state.diceHistory[state.diceHistory.length - 1]] : [],
+        playerHistory: state.playerHistory.length > 0 ? [state.playerHistory[state.playerHistory.length - 1]] : [],
+        checkersOnBarHistory: state.checkersOnBarHistory.length > 0 ? [state.checkersOnBarHistory[state.checkersOnBarHistory.length - 1]] : [],
+        checkersBorneOffHistory: state.checkersBorneOffHistory.length > 0 ? [state.checkersBorneOffHistory[state.checkersBorneOffHistory.length - 1]] : [],
+        potentialMovesHistory: state.potentialMovesHistory.length > 0 ? [state.potentialMovesHistory[state.potentialMovesHistory.length - 1]] : []
+      };
+      const encoded = encodeBoardState(dataToSave);
       const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
       navigator.clipboard.writeText(url);
       return state;
@@ -224,12 +235,12 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
     selectedSpot: null,
     potentialSpots: [],
 
-    pointsHistory: [...state.pointsHistory, state.points],
-    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar],
-    checkersBorneOffHistory: [...state.checkersBorneOffHistory, state.checkersBorneOff],
-    diceHistory: [...state.diceHistory, state.diceValue],
-    playerHistory: [...state.playerHistory, state.player],
-    potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves],
+    pointsHistory: [...state.pointsHistory, state.points].slice(-MAX_HISTORY),
+    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar].slice(-MAX_HISTORY),
+    checkersBorneOffHistory: [...state.checkersBorneOffHistory, state.checkersBorneOff].slice(-MAX_HISTORY),
+    diceHistory: [...state.diceHistory, state.diceValue].slice(-MAX_HISTORY),
+    playerHistory: [...state.playerHistory, state.player].slice(-MAX_HISTORY),
+    potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves].slice(-MAX_HISTORY),
   };
 }
 

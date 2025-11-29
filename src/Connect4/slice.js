@@ -37,7 +37,11 @@ export const slice = createSlice({
       return state;
     },
     saveToURL: (state) => {
-      const encoded = encodeBoardState(state);
+      const dataToSave = {
+        ...state,
+        history: state.history.length > 0 ? [state.history[state.history.length - 1]] : []
+      };
+      const encoded = encodeBoardState(dataToSave);
       const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
       navigator.clipboard.writeText(url);
       return state;
