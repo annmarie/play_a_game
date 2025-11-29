@@ -7,6 +7,7 @@ body {
   height: 100vh;
 }
 
+/* Links */
 a {
   font-weight: 500;
   color: #006400;
@@ -17,8 +18,9 @@ a:hover {
   color: #004d00;
 }
 
+/* Buttons */
 button {
-  border-radius: 0.50em;
+  border-radius: 0.5em;
   border: 0.0625em solid transparent;
   cursor: pointer;
   height: fit-content;
@@ -26,7 +28,7 @@ button {
 }
 
 button:active {
-  outline: 0.50em auto #646cff;
+  outline: 0.5em auto #646cff;
 }
 
 button:disabled {
@@ -34,6 +36,7 @@ button:disabled {
   outline: transparent;
 }
 
+/* Main layout */
 .main {
   display: flex;
   flex-direction: column;

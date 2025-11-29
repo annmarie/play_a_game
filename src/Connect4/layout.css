@@ -1,16 +1,18 @@
+/* Game container */
 .connect4-game {
   background-color: darkgray;
   display: flex;
   flex-direction: column;
   border-radius: 0.75em;
   border: 0.0625em solid black;
-  box-shadow: 0 0.25em 0.50em rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1);
   padding: 1.25em;
   text-align: center;
   align-items: center;
   width: 25em;
 }
 
+/* Game elements */
 .connect4-game .connect4-title {
   margin: 0 0 1em 0;
 }
@@ -21,6 +23,7 @@
   margin: 1em;
 }
 
+/* Button states */
 .connect4-game button:active {
   outline: 0.5em auto #646cff;
 }

@@ -1,40 +1,42 @@
-.backgammon-board {
-  .point {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    border: 0.25em solid transparent;
-    align-items: center;
-    min-height: 9.375em;
-  }
+.backgammon-board .point {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 9.375em;
+  border: 0.25em solid transparent;
+}
 
-  .point:nth-child(6),
-  .point:nth-child(18) {
-    border-right: 0.25em solid black;
-  }
+/* Board separators */
+.backgammon-board .point:nth-child(6),
+.backgammon-board .point:nth-child(18) {
+  border-right-color: black;
+}
 
-  .point:nth-child(7),
-  .point:nth-child(19) {
-    border-left: 0.25em solid black;
-  }
+.backgammon-board .point:nth-child(7),
+.backgammon-board .point:nth-child(19) {
+  border-left-color: black;
+}
 
-  .point.light {
-    background-color: #f4a261;
-  }
+/* Point colors */
+.backgammon-board .point.light {
+  background-color: #f4a261;
+}
 
-  .point.dark {
-    background-color: #2a9d8f;
-  }
+.backgammon-board .point.dark {
+  background-color: #2a9d8f;
+}
 
-  .point.bottom {
-    justify-content: flex-end;
-  }
+/* Point orientation */
+.backgammon-board .point.bottom {
+  justify-content: flex-end;
+}
 
-  .point.selected {
-    border: 0.25em solid #e2f114
-  }
+/* Interactive states */
+.backgammon-board .point.selected {
+  border-color: #e2f114;
+}
 
-  .point.potential {
-    border: 0.25em solid #e7f070
-  }
+.backgammon-board .point.potential {
+  border-color: #e7f070;
 }

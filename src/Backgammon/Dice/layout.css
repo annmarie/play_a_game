@@ -1,4 +1,4 @@
-
+/* Dice container */
 .backgammon-game .dice-container {
   display: flex;
   gap: 0.625em;
@@ -6,6 +6,7 @@
   align-items: center;
 }
 
+/* Individual die */
 .backgammon-game .dice-container .die {
   width: 3.75em;
   height: 3.75em;
@@ -21,6 +22,7 @@
   box-shadow: 0.3125em 0.3125em 0.9375em rgba(0, 0, 0, 0.3);
 }
 
+/* Die dots */
 .backgammon-game .dice-container .die-dot {
   width: 0.625em;
   height: 0.625em;
@@ -38,14 +40,9 @@
   animation: bounce 0.5s ease forwards;
 }
 
+/* Animations */
 @keyframes bounce {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
