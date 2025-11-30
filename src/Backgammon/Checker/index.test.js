@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { PLAYER_RIGHT, PLAYER_LEFT } from '../globals';
-import Checker from '../Checker';
+import Checker from '.';
 
 describe('Checker Component', () => {
   it('should render the checker div', () => {

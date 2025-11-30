@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
-import Dice from '../Dice';
+import Dice from '.';
 
 const DICE_DOT_LEFT_TEST_ID = /die-dot-left/i;
 const DICE_DOT_EXTRA_LEFT_TEST_ID = /die-dot-doubles-left/i;

@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../store';
 import { PLAYER_ONE, PLAYER_TWO, DRAW_MESSAGE } from './globals';
-import Connect4 from '../Connect4';
+import Connect4 from '.';
 
 jest.mock('../TestBoardLoader', () => () => null);
 

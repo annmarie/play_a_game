@@ -4,7 +4,7 @@ import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../store';
-import Backgammon from '../Backgammon';
+import Backgammon from '.';
 import * as gameLogic from './gameLogic';
 
 jest.mock('./gameLogic', () => ({

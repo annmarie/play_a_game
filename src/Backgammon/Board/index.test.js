@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import Board from '../Board';
+import Board from '.';
 
 describe('Board Component', () => {
   const mockHandleSpotClick = jest.fn();
