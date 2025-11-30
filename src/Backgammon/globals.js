@@ -10,7 +10,6 @@ export const RIGHT_PLAYER_POINT_ORDER = [
   24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13,
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
 ];
-export const INVALID_INDEX = -1;
 export const UNDO_BUTTON_TEXT = 'Undo Move';
 export const RESET_BUTTON_TEXT = 'Reset Game';
 export const ROLL_DICE_BUTTON_TEXT = 'Roll Dice';

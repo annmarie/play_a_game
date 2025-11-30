@@ -4,7 +4,7 @@ import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gam
 import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveValidation';
 import { generatePointIndexMap } from './boardUtils';
 import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
-import { PLAYER_LEFT, PLAYER_RIGHT, INVALID_INDEX, MAX_HISTORY } from './globals';
+import { PLAYER_LEFT, PLAYER_RIGHT, MAX_HISTORY } from './globals';
 
 export const initialState = {
   points: initializeBoard(),
@@ -165,7 +165,7 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
   if (hasBarPlayer) {
     updatedCheckersOnBar[hasBarPlayer] = (state.checkersOnBar[hasBarPlayer] || 0) + 1;
   }
-  if (fromIndex === INVALID_INDEX) {
+  if (fromIndex === -1) {
     updatedCheckersOnBar[state.player] = (state.checkersOnBar[state.player] || 1) - 1;
   }
   if (toIndex === -1) {
