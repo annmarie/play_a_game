@@ -10,6 +10,7 @@ import * as gameLogic from './gameLogic';
 jest.mock('./gameLogic', () => ({
   ...jest.requireActual('./gameLogic'),
   rollDie: jest.fn(),
+  rollDiceLogic: jest.fn(),
 }));
 
 jest.mock('../TestBoardLoader', () => () => null);
@@ -53,7 +54,7 @@ describe('Backgammon Component Tests', () => {
   it('should have class selected on the point if selected for play', async () => {
     await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
-    gameLogic.rollDie.mockReturnValueOnce(3).mockReturnValueOnce(5);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [3, 5], player: PLAYER_RIGHT });
     await act(async () => fireEvent.click(rollButton));
     const points = screen.queryAllByRole('point');
     const selectCell = 4;
@@ -69,7 +70,7 @@ describe('Backgammon Component Tests', () => {
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
     const [leftDie, rightDie] = [5, 3]
-    gameLogic.rollDie.mockReturnValueOnce(leftDie).mockReturnValueOnce(rightDie);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [leftDie, rightDie], player: PLAYER_LEFT });
     await act(async () => fireEvent.click(rollButton));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toEqual(5);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toEqual(3);
@@ -94,7 +95,7 @@ describe('Backgammon Component Tests', () => {
     const points = screen.queryAllByRole('point');
     expect(points[0].getAttribute('aria-label')).toContain('5 left checkers')
     expect(points[14].getAttribute('aria-label')).toContain('0 checkers')
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYER_LEFT });
     await act(async () => fireEvent.click(rollButton));
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[14]));
@@ -118,7 +119,7 @@ describe('Backgammon Component Tests', () => {
   it('should move a right player to the checker bar', async () => {
     await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
     const points = screen.queryAllByRole('point');
-    gameLogic.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(6);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 6], player: PLAYER_RIGHT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(1);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
@@ -129,7 +130,7 @@ describe('Backgammon Component Tests', () => {
     await act(async () => fireEvent.click(points[17]));
     expect(points[17].getAttribute('aria-label')).toContain('1 right checkers')
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_LEFT)
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYER_LEFT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
@@ -146,7 +147,7 @@ describe('Backgammon Component Tests', () => {
   it('should move a left player to the checker bar', async () => {
     await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
     const points = screen.queryAllByRole('point');
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYER_LEFT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
@@ -157,7 +158,7 @@ describe('Backgammon Component Tests', () => {
     await act(async () => fireEvent.click(points[17]));
     expect(points[17].getAttribute('aria-label')).toContain('1 left checkers')
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_RIGHT)
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(1);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 1], player: PLAYER_RIGHT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(1);
@@ -173,7 +174,7 @@ describe('Backgammon Component Tests', () => {
     await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
     const points = screen.queryAllByRole('point');
     // first roll cannot be doubles
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYER_LEFT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
@@ -184,7 +185,7 @@ describe('Backgammon Component Tests', () => {
     await act(async () => fireEvent.click(points[17]));
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_RIGHT)
     // second move will be doubles
-    gameLogic.rollDie.mockReturnValueOnce(4).mockReturnValueOnce(4);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 4, 4, 4], player: PLAYER_RIGHT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(4);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(4);
@@ -200,7 +201,7 @@ describe('Backgammon Component Tests', () => {
     await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     expect(rollButton).toBeInTheDocument();
-    gameLogic.rollDie.mockReturnValueOnce(4).mockReturnValueOnce(6);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYER_RIGHT });
     await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(4);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
@@ -209,11 +210,9 @@ describe('Backgammon Component Tests', () => {
   it('should not roll the dice when the spacebar is pressed and diceValue is not null', async () => {
     await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
     expect(screen.getByRole('button', { name: ROLL_DICE })).toBeInTheDocument();
-    gameLogic.rollDie.mockReturnValueOnce(4);
-    gameLogic.rollDie.mockReturnValueOnce(6);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYER_RIGHT });
     await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }));
-    gameLogic.rollDie.mockReturnValueOnce(1);
-    gameLogic.rollDie.mockReturnValueOnce(3);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 3], player: PLAYER_LEFT });
     await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(4);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
@@ -222,7 +221,7 @@ describe('Backgammon Component Tests', () => {
   it('should undo the dice roll when the "u" key is pressed', async () => {
     await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
     expect(screen.getByRole('button', { name: ROLL_DICE })).toBeInTheDocument();
-    gameLogic.rollDie.mockReturnValueOnce(4).mockReturnValueOnce(6);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYER_RIGHT });
     await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }))
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(4);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);

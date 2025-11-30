@@ -91,11 +91,7 @@ describe('Move Validation', () => {
       points[22] = { id: 23, checkers: 1, player: PLAYER_LEFT }
 
       const result = findPotentialMoves(points, PLAYER_RIGHT, [4, 4, 4], { left: 0, right: 0 });
-      expect(result).toEqual({
-        '7': [11],     // Point 7 can move to point 11 (with dice 4: 7+4=11)
-        '8': [12],     // Point 8 can move to point 12 (with dice 4: 8+4=12)
-        '9': [-1, -1, -1]  // Point 9 can bear off three times (exact match: die 4 = required die 4, with three 4s)
-      });
+      expect(result).toEqual({ '7': [11], '8': [12], '9': [-1, -1, -1] });
     });
   });
 

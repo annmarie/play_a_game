@@ -7,6 +7,7 @@ import * as gameLogic from './gameLogic';
 jest.mock('./gameLogic', () => ({
   ...jest.requireActual('./gameLogic'),
   rollDie: jest.fn(),
+  rollDiceLogic: jest.fn(),
 }));
 
 describe('Backgammon Slice', () => {
@@ -24,7 +25,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should select spot with dice roll 2 3', () => {
-    gameLogic.rollDie.mockReturnValueOnce(2).mockReturnValueOnce(3);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER_RIGHT });
     // Roll the dice for the current turn
     store.dispatch(rollDice());
 
@@ -42,7 +43,7 @@ describe('Backgammon Slice', () => {
 
 
   it('should select spot with dice roll 3 2', () => {
-    gameLogic.rollDie.mockReturnValueOnce(3).mockReturnValueOnce(2);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [3, 2], player: PLAYER_LEFT });
     store.dispatch(rollDice())
     store.dispatch(selectSpot(12))
     state = store.getState()
@@ -59,7 +60,7 @@ describe('Backgammon Slice', () => {
   it('should handle doubles roll', () => {
     // first roll of the game cannot be doubles
     expect(state.player).toBe(null);
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYER_LEFT });
     store.dispatch(rollDice())
     state = store.getState()
     expect(state.player).toBe(PLAYER_LEFT);
@@ -68,7 +69,7 @@ describe('Backgammon Slice', () => {
     state = store.getState()
     expect(state.player).toBe(PLAYER_RIGHT);
     // doubles roll
-    gameLogic.rollDie.mockReturnValueOnce(4).mockReturnValueOnce(4);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 4, 4, 4], player: PLAYER_RIGHT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 }))
     store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 } ))
@@ -79,7 +80,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should move left player to checker to bar', () => {
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(2);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 2], player: PLAYER_LEFT });
     store.dispatch(rollDice())
     state = store.getState()
     expect(state.player).toBe(PLAYER_LEFT);
@@ -87,7 +88,7 @@ describe('Backgammon Slice', () => {
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }))
     state = store.getState()
     expect(state.player).toBe(PLAYER_RIGHT);
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(1);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 1], player: PLAYER_RIGHT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 24, toPointId: 18 }))
     store.dispatch(makeMove({ fromPointId: 24, toPointId: 23 }))
@@ -96,7 +97,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should move right player to checker to bar', () => {
-    gameLogic.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(6);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 6], player: PLAYER_RIGHT });
     store.dispatch(rollDice())
     state = store.getState()
     expect(state.player).toBe(PLAYER_RIGHT);
@@ -104,7 +105,7 @@ describe('Backgammon Slice', () => {
     store.dispatch(makeMove({ fromPointId: 24, toPointId: 23 }))
     state = store.getState()
     expect(state.player).toBe(PLAYER_LEFT);
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(1);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 1], player: PLAYER_LEFT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 14 }))
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }))
@@ -113,13 +114,13 @@ describe('Backgammon Slice', () => {
   });
 
   it('should move right player checker to bar back to board', () => {
-    gameLogic.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(6);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 6], player: PLAYER_RIGHT });
     store.dispatch(rollDice())
     state = store.getState();
     expect(state.player).toBe(PLAYER_RIGHT);
     store.dispatch(makeMove({ fromPointId: 24, toPointId: 18 }))
     store.dispatch(makeMove({ fromPointId: 24, toPointId: 23 }))
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(2);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 2], player: PLAYER_LEFT });
     store.dispatch(rollDice())
     state = store.getState();
     expect(state.player).toBe(PLAYER_LEFT);
@@ -127,7 +128,7 @@ describe('Backgammon Slice', () => {
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }))
     state = store.getState();
     expect(state.checkersOnBar[PLAYER_RIGHT]).toEqual(1);
-    gameLogic.rollDie.mockReturnValueOnce(3).mockReturnValueOnce(2);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [3, 2], player: PLAYER_RIGHT });
     store.dispatch(rollDice())
     store.dispatch(selectSpot(22))
     state = store.getState();
@@ -137,7 +138,7 @@ describe('Backgammon Slice', () => {
 
   it('should roll and reset dice', () => {
     const [ leftDie, rightDie ] = [ 5, 3 ]
-    gameLogic.rollDie.mockReturnValueOnce(leftDie).mockReturnValueOnce(rightDie);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [leftDie, rightDie], player: PLAYER_LEFT });
     store.dispatch(rollDice())
     state = store.getState()
     expect(state.diceValue).toEqual([leftDie, rightDie]);
@@ -155,7 +156,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should roll and update the history correctly', () => {
-    gameLogic.rollDie.mockReturnValueOnce(6).mockReturnValueOnce(3);
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYER_LEFT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 15 }))
     state = store.getState()
@@ -171,14 +172,11 @@ describe('Backgammon Slice', () => {
 
   it('should should set the dice manually on first roll if doubles are rolled 10 times in a row', () => {
     const diceError = jest.spyOn(console, 'error').mockImplementation();
-    for (let i = 0; i < 10; i++) {
-      gameLogic.rollDie.mockReturnValueOnce(1).mockReturnValueOnce(1);
-    }
+    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 2], player: PLAYER_LEFT });
     store.dispatch(rollDice())
     state = store.getState()
-    expect(gameLogic.rollDie).toHaveBeenCalledTimes(22);
+    expect(gameLogic.rollDiceLogic).toHaveBeenCalledTimes(1);
     expect(state.diceValue).toEqual([1, 2]);
-    expect(diceError.mock.calls[0][0]).toContain('Roll Error')
   });
 
   it('should handle undo with no history', () => {

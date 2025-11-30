@@ -18,16 +18,25 @@ export const rollDie = () => {
  * Handles dice rolling logic for backgammon game
  */
 export function rollDiceLogic(currentPlayer) {
-  let die1 = rollDie();
-  let die2 = rollDie();
+  let die1 = null;
+  let die2 = null;
 
+  let rollCnt = 0;
+  const rollMax = 10;
   if (currentPlayer === null) {
-    let rollCnt = 0;
-    while (die1 === die2 && rollCnt < 10) {
+    while (die1 === die2 && rollCnt < rollMax) {
       die1 = rollDie();
       die2 = rollDie();
       rollCnt++;
+      if (rollCnt >= rollMax) {
+        console.error('Roll Error: manually setting dice');
+        die1 = 1;
+        die2 = 2;
+      }
     }
+  } else {
+    die1 = rollDie();
+    die2 = rollDie();
   }
 
   const diceValue = (die1 === die2) ? [die1, die2, die1, die2] : [die1, die2];

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
-import { togglePlayer, checkWinner, rollDie } from './gameLogic';
+import { togglePlayer, checkWinner, rollDiceLogic } from './gameLogic';
 import { findPotentialMoves, moveCheckers, generatePointIndexMap } from './moveValidation';
 import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX, MAX_HISTORY } from './globals';
@@ -101,25 +101,7 @@ export const backgammonSlice = createSlice({
     },
 
     rollDice: (state) => {
-      let die1 = rollDie();
-      let die2 = rollDie();
-
-      if (state.player === null) {
-        let rollCnt = 0;
-        while (die1 === die2 && rollCnt < 10) {
-          die1 = rollDie();
-          die2 = rollDie();
-          rollCnt++;
-        }
-        if (rollCnt >= 10) {
-          console.error('Roll Error: manually setting dice');
-          die1 = 1;
-          die2 = 2;
-        }
-      }
-
-      const diceValue = (die1 === die2) ? [die1, die2, die1, die2] : [die1, die2];
-      const player = state.player === null ? (die2 > die1 ? PLAYER_RIGHT : PLAYER_LEFT) : state.player;
+      const { diceValue, player } = rollDiceLogic(state.player);
       const potentialMoves = findPotentialMoves(state.points, player, diceValue, state.checkersOnBar);
 
       return {
