@@ -30,7 +30,6 @@ export const slice = createSlice({
   reducers: {
     selectSpot: (state, action) => {
       const result = selectSpotLogic(state, action.payload);
-
       if (!result) return state;
 
       if (result.type === 'move') {
@@ -44,30 +43,7 @@ export const slice = createSlice({
       };
     },
 
-    makeMove: (state, { payload: { fromPointId, toPointId } }) => {
-      const { player, diceValue, points } = state;
-      if (!player || !diceValue || diceValue.length === 0) return state;
-
-      if (toPointId === -1) {
-        const fromIndex = points.findIndex((point) => point.id === fromPointId);
-        if (fromIndex === -1 || points[fromIndex].checkers < 1) return state;
-
-        const { isValid, usedDiceValue } = validateBearOffMove(player, fromPointId, diceValue, points);
-        if (!isValid) return state;
-        return updateMoveCheckerState(state, fromIndex, -1, usedDiceValue);
-      }
-
-      const fromIndex = points.findIndex((point) => point.id === fromPointId);
-      const toIndex = points.findIndex((point) => point.id === toPointId);
-      if (fromIndex === -1 || toIndex === -1 || points[fromIndex].checkers < 1) return state;
-
-      const pointKey = generatePointIndexMap(player, 'point');
-      const moveDistance = Math.abs(pointKey[toIndex] - pointKey[fromIndex]);
-      const isValidDiceValue = diceValue.includes(moveDistance);
-
-      if (!isValidDiceValue || !(pointKey[toIndex] > pointKey[fromIndex])) return state;
-      return updateMoveCheckerState(state, fromIndex, toIndex, moveDistance);
-    },
+    makeMove: (state, action) => reduceMakeMove(state, action),
 
     rollDice: (state) => {
       const { diceValue, player } = rollDiceLogic(state.player);
@@ -142,7 +118,33 @@ export const slice = createSlice({
   },
 });
 
-function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
+const reduceMakeMove = (state, { payload: { fromPointId, toPointId } }) => {
+  const { player, diceValue, points } = state;
+  if (!player || !diceValue?.length) return state;
+
+  const fromIndex = points.findIndex(point => point.id === fromPointId);
+  if (fromIndex === -1 || points[fromIndex].checkers < 1) return state;
+
+  // Bear off move
+  if (toPointId === -1) {
+    const { isValid, usedDiceValue } = validateBearOffMove(player, fromPointId, diceValue, points);
+    return isValid ? updateMoveCheckerState(state, fromIndex, -1, usedDiceValue) : state;
+  }
+
+  // point to point move
+  const toIndex = points.findIndex(point => point.id === toPointId);
+  if (toIndex === -1) return state;
+
+  const pointKey = generatePointIndexMap(player, 'point');
+  const moveDistance = Math.abs(pointKey[toIndex] - pointKey[fromIndex]);
+
+  if (!diceValue.includes(moveDistance) || pointKey[toIndex] <= pointKey[fromIndex]) {
+    return state;
+  }
+  return updateMoveCheckerState(state, fromIndex, toIndex, moveDistance);
+};
+
+const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
   const { updatedPoints, hasBarPlayer } = moveCheckers(
     state.points,
     toIndex, fromIndex,
