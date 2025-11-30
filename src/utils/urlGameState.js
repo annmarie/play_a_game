@@ -29,8 +29,9 @@ export const createSaveToURL = (historyFields = []) => (state) => {
   });
 
   const encoded = encodeBoardState(dataToSave);
-  const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
+  if (!encoded) return state;
 
+  const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
   navigator.clipboard.writeText(url).catch((err) => {
     console.error('Failed to copy URL to clipboard:', err);
   });

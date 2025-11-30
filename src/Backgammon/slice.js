@@ -26,7 +26,7 @@ export const initialState = {
 
 export const slice = createSlice({
   name: 'backgammon',
-  initialState: initialState,
+  initialState,
   reducers: {
     selectSpot: (state, action) => {
       const result = selectSpotLogic(state, action.payload);
@@ -87,14 +87,22 @@ export const slice = createSlice({
 
     resetGame: () => ({ ...initialState, points: initializeBoard() }),
 
-    loadTestBoard: (state, action) => ({
-      ...state,
-      ...action.payload,
-      potentialMoves: action.payload.diceValue ?
-        findPotentialMoves(action.payload.points, action.payload.player, action.payload.diceValue, action.payload.checkersOnBar) : {},
-      selectedSpot: null,
-      potentialSpots: []
-    }),
+    loadTestBoard: (state, action) => {
+      const { points, checkersOnBar, checkersBorneOff, diceValue, player, winner } = action.payload;
+      return {
+        ...state,
+        points: points || state.points,
+        checkersOnBar: checkersOnBar || state.checkersOnBar,
+        checkersBorneOff: checkersBorneOff || state.checkersBorneOff,
+        diceValue: diceValue || state.diceValue,
+        player: player || state.player,
+        winner: winner || state.winner,
+        potentialMoves: diceValue ?
+          findPotentialMoves(points, player, diceValue, checkersOnBar) : {},
+        selectedSpot: null,
+        potentialSpots: []
+      };
+    },
 
     setCustomDice: (state, action) => ({
       ...state,

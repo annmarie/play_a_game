@@ -5,7 +5,9 @@ import styles from './Board.module.css'
 
 const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
   const handleBearOffClick = () => {
-    handleSpotClick({ id: -1 });
+    if (handleSpotClick) {
+      handleSpotClick({ id: -1 });
+    }
   };
 
   return (

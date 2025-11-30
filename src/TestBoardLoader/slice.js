@@ -1,22 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const debugInitialState = {
+const initialState = {
   isDebugMode: false,
 };
 
-export const debugSlice = createSlice({
+const slice = createSlice({
   name: 'debug',
-  initialState: debugInitialState,
+  initialState,
   reducers: {
     setDebugMode: (state, action) => {
-      state.isDebugMode = action.payload;
+      state.isDebugMode = Boolean(action.payload);
     },
     initializeDebugMode: (state) => {
-      state.isDebugMode = new URLSearchParams(window.location.search).has('debug');
+      try {
+        state.isDebugMode = new URLSearchParams(window.location.search).has('debug');
+      } catch {
+        state.isDebugMode = false;
+      }
     },
   },
 });
 
-export const { setDebugMode, initializeDebugMode } = debugSlice.actions;
+export const { setDebugMode, initializeDebugMode } = slice.actions;
 
-export default debugSlice.reducer;
+export default slice.reducer;

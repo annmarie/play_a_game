@@ -58,7 +58,7 @@ const Backgammon = () => {
   const handleSaveGameLink = useCallback(async () => {
     try {
       const actionResult = dispatch(saveToURL());
-      if (actionResult && actionResult.error) {
+      if (actionResult?.error) {
         throw actionResult.error;
       }
       alert('Game link copied to clipboard!');

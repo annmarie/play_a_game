@@ -104,10 +104,9 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   }
 
   const canBearOffNow = canBearOff(points, player, checkersOnBar);
+  const uniqueDice = [...new Set(dice)];
 
   for (const point of points.filter(p => p.player === player)) {
-    const uniqueDice = [...new Set(dice)];
-
     for (const die of uniqueDice) {
       const movePointId = calculatePotentialMove(player, point.id - 1, die);
       const diceCount = dice.filter(d => d === die).length;
@@ -148,12 +147,13 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
       }
 
       // Handle point to point moves
-      if (movePointId >= 0) {
+      if (movePointId >= 0 && movePointId < points.length) {
         const targetPoint = points[movePointId];
         if (
-          targetPoint.checkers === 0 ||
+          targetPoint &&
+          (targetPoint.checkers === 0 ||
           targetPoint.player === player ||
-          (targetPoint.checkers === 1 && targetPoint.player !== player)
+          (targetPoint.checkers === 1 && targetPoint.player !== player))
         ) {
           potentialMoves[point.id] = potentialMoves[point.id] || [];
           potentialMoves[point.id].push(targetPoint.id);
@@ -206,7 +206,7 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
       checkers: 1,
       player: player,
     };
-  } else {
+  } else if (updatedPoints[toIndex]) {
     updatedPoints[toIndex] = {
       ...updatedPoints[toIndex],
       checkers: updatedPoints[toIndex].checkers + 1,

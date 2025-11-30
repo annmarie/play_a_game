@@ -10,12 +10,16 @@ import { PLAYER_ONE, PLAYER_TWO } from './globals';
  *                     { currentMove: { row, col }, newBoard: Array<Array<string|null>> }
  */
 export const dropChecker = (col, board, player) => {
+  if (!board || !board.length || col < 0 || col >= board[0]?.length) {
+    return { currentMove: null, newBoard: board, error: 'Invalid column' };
+  }
+  
   const newBoard = board.map(row => [...row]); // Create a deep copy of the board
   let currentMove = null;
 
   // Find the lowest empty row in the specified column
   for (let row = newBoard.length - 1; row >= 0; row--) {
-    if (!newBoard[row][col]) {
+    if (newBoard[row] && !newBoard[row][col]) {
       newBoard[row][col] = player;
       currentMove = { row, col };
       break;
