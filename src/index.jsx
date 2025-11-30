@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { store } from './store';
+import { store } from './store.js';
 import App from './App.jsx';
 
 const rootElement = document.getElementById('root');
