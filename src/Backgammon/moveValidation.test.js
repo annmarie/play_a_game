@@ -1,7 +1,7 @@
 /* globals describe, expect, it */
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 import { initializeBoard } from './boardUtils';
-import { calculatePotentialMove, findPotentialMoves, moveCheckers, canBearOff } from './moveValidation';
+import { calculatePotentialMove, findPotentialMoves, moveCheckers, canBearOff, validateBearOffMove } from './moveValidation';
 
 describe('Move Validation', () => {
   describe('calculatePotentialMove', () => {
@@ -291,6 +291,42 @@ describe('Bearing Off Logic', () => {
       const result = findPotentialMoves(points, PLAYER_LEFT, [6], { left: 0, right: 0 });
 
       expect(result[19]).toBeUndefined(); // No moves available since can't bear off
+    });
+  });
+
+  describe('validateBearOffMove', () => {
+    const mockPoints = Array.from({ length: 24 }, (_, i) => ({
+      id: i + 1,
+      checkers: 0,
+      player: null
+    }));
+
+    it('should validate left player bears off from point 21 with dice 4', () => {
+      const result = validateBearOffMove(PLAYER_LEFT, 21, [4], mockPoints);
+      expect(result.isValid).toBe(true);
+      expect(result.usedDiceValue).toBe(4);
+    });
+
+    it('should NOT validate right player bears off from point 4 (outside home board)', () => {
+      const result = validateBearOffMove(PLAYER_RIGHT, 4, [4], mockPoints);
+      expect(result.isValid).toBe(false);
+    });
+
+    it('should validate left player bears off from point 23 with dice 2', () => {
+      const result = validateBearOffMove(PLAYER_LEFT, 23, [2], mockPoints);
+      expect(result.isValid).toBe(true);
+      expect(result.usedDiceValue).toBe(2);
+    });
+
+    it('should validate right player bears off from point 7 with dice 1', () => {
+      const result = validateBearOffMove(PLAYER_RIGHT, 7, [1], mockPoints);
+      expect(result.isValid).toBe(true);
+      expect(result.usedDiceValue).toBe(1);
+    });
+
+    it('should NOT validate right player bears off from point 7 with dice 6 (needs higher dice rule)', () => {
+      const result = validateBearOffMove(PLAYER_RIGHT, 7, [6], mockPoints);
+      expect(result.isValid).toBe(false);
     });
   });
 });

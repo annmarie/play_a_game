@@ -10,8 +10,7 @@ import { getPointIdToIndexMap, getIndexToPointIdMap } from './boardUtils';
  * @returns {{isValid: boolean, usedDiceValue?: number}} Validation result with dice value used
  */
 export function validateBearOffMove(player, fromPointId, diceValue, points) {
-  const moveDistance = player === PLAYER_LEFT ?
-    (START_KEY_LEFT + 11) - fromPointId : (START_KEY_RIGHT - 11) - fromPointId;
+  const moveDistance = player === PLAYER_LEFT ? 25 - fromPointId : fromPointId - 6;
 
   if (diceValue.includes(moveDistance)) {
     return { isValid: true, usedDiceValue: moveDistance };
