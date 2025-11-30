@@ -256,6 +256,53 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
  * @param {string} player - The player making the move.
  * @returns {Object} An object containing updated points and checkers on the bar.
  */
+/**
+ * Handles dice rolling logic for backgammon game
+ * @param {string|null} currentPlayer - Current player or null for initial roll
+ * @param {Array} points - Current board state
+ * @param {Object} checkersOnBar - Checkers on bar state
+ * @returns {Object} Object containing diceValue, player, and potentialMoves
+ */
+export function rollDiceLogic(currentPlayer, points, checkersOnBar) {
+  let die1 = null;
+  let die2 = null;
+
+  let rollCnt = 0;
+  const rollMax = 10;
+  if (currentPlayer === null) {
+    while (die1 === die2 && rollCnt < rollMax) {
+      die1 = rollDie();
+      die2 = rollDie();
+      rollCnt++;
+      if (rollCnt >= rollMax) {
+        console.error('Roll Error: manually setting dice');
+        die1 = 1;
+        die2 = 2;
+      }
+    }
+  } else {
+    die1 = rollDie();
+    die2 = rollDie();
+  }
+
+  const diceValue = (die1 === die2)
+    ? [die1, die2, die1, die2]
+    : [die1, die2];
+
+  const player = currentPlayer === null
+    ? die2 > die1 ? PLAYER_RIGHT : PLAYER_LEFT
+    : currentPlayer;
+
+  const potentialMoves = findPotentialMoves(
+    points,
+    player,
+    diceValue,
+    checkersOnBar
+  );
+
+  return { diceValue, player, potentialMoves };
+}
+
 export function moveCheckers(points, toIndex, fromIndex, player) {
   let hasBarPlayer = '';
   const updatedPoints = [...points];

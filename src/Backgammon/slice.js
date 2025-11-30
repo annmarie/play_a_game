@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
-  initializeBoard, togglePlayer, rollDie, moveCheckers,
-  generatePointIndexMap, findPotentialMoves
+  initializeBoard, togglePlayer, moveCheckers,
+  generatePointIndexMap, findPotentialMoves, rollDiceLogic
 } from './utils';
 import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 
@@ -255,39 +255,9 @@ function updateHistoryState(state) {
 }
 
 function reduceRollDice(state) {
-  let die1 = null;
-  let die2 = null;
-
-  let rollCnt = 0;
-  const rollMax = 10;
-  if (state.player === null) {
-    while (die1 === die2 && rollCnt < rollMax) {
-      die1 = rollDie();
-      die2 = rollDie();
-      rollCnt++;
-      if (rollCnt >= rollMax) {
-        console.error('Roll Error: manually setting dice');
-        die1 = 1;
-        die2 = 2;
-      }
-    }
-  } else {
-    die1 = rollDie();
-    die2 = rollDie();
-  }
-
-  const diceValue = (die1 === die2)
-    ? [die1, die2, die1, die2]
-    : [die1, die2];
-
-  const player = state.player === null
-    ? die2 > die1 ? PLAYER_RIGHT : PLAYER_LEFT
-    : state.player;
-
-  const potentialMoves = findPotentialMoves(
+  const { diceValue, player, potentialMoves } = rollDiceLogic(
+    state.player,
     state.points,
-    player,
-    diceValue,
     state.checkersOnBar
   );
 
