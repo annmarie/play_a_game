@@ -27,7 +27,7 @@ const TestBoardLoader = ({ testBoards, onLoadTestBoard }) => {
   return (
     <div>
       <label>{LOAD_TEST_BOARD_LABEL}
-        <select aria-label={LOAD_TEST_BOARD_LABEL} onChange={(e) => handleLoadTestBoard(e.target.value)}>
+        <select onChange={(e) => handleLoadTestBoard(e.target.value)}>
           <option value="">Select...</option>
           {Object.keys(testBoards).map(key => (
             <option key={key} value={key}>{testBoards[key].name || key}</option>

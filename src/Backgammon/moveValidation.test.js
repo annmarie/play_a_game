@@ -286,11 +286,13 @@ describe('Bearing Off Logic', () => {
       }));
 
       points[18] = { id: 19, checkers: 2, player: PLAYER_LEFT };
-      points[6] = { id: 7, checkers: 1, player: PLAYER_LEFT }; // Outside home board
+      points[6] = { id: 7, checkers: 1, player: PLAYER_LEFT };
 
       const result = findPotentialMoves(points, PLAYER_LEFT, [6], { left: 0, right: 0 });
 
-      expect(result[19]).toBeUndefined(); // No moves available since can't bear off
+      // findPotentialMoves returns undefined for point 19,
+      // meaning no bearing off moves are available from that point.
+      expect(result[19]).toBeUndefined();
     });
   });
 

@@ -1,3 +1,4 @@
+/* Connect4 Board Styles */
 .connect4Board {
   display: grid;
   grid-template-rows: repeat(6, 3.125em);

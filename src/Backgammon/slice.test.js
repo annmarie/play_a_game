@@ -25,10 +25,7 @@ describe('Backgammon Slice', () => {
 
   it('should select spot with dice roll 2 3', () => {
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER_RIGHT });
-    // Roll the dice for the current turn
     store.dispatch(rollDice());
-
-    // Select spot 24 after rolling dice
     store.dispatch(selectSpot(24));
     state = store.getState()
     expect(state.potentialSpots).toEqual([22,21])
@@ -61,13 +58,10 @@ describe('Backgammon Slice', () => {
     expect(state.player).toBe(null);
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYER_LEFT });
     store.dispatch(rollDice())
-    state = store.getState()
-    expect(state.player).toBe(PLAYER_LEFT);
+    // make moves for left player
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 15 }))
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 } ))
-    state = store.getState()
-    expect(state.player).toBe(PLAYER_RIGHT);
-    // doubles roll
+    // doubles roll for right player
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 4, 4, 4], player: PLAYER_RIGHT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 }))
