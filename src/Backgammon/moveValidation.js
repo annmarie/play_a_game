@@ -155,7 +155,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
         }
       }
 
-      // Handle moving a point
+      // Handle moving checkers from a point
       if (movePointId >= 0 && movePointId < points.length) {
         const targetPoint = points[movePointId];
         if (
