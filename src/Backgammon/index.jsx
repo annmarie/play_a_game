@@ -1,3 +1,4 @@
+// Backgammon Main Component
 import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {

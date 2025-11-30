@@ -1,5 +1,7 @@
-import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
-import { RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER } from './globals';
+import {
+  PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT,
+  RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER
+} from './globals';
 
 /**
  * Initializes the game board.
