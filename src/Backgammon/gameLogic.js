@@ -51,3 +51,31 @@ export function rollDiceLogic(currentPlayer) {
 export const checkWinner = (checkersBorneOff, player) => {
   return checkersBorneOff[player] === 15 ? player : null;
 };
+
+/**
+ * Handles spot selection logic
+ */
+export const selectSpotLogic = (state, pointId) => {
+  if (!state.player || !state.diceValue || state.diceValue.length === 0) return null;
+
+  const selectedIndex = pointId - 1;
+
+  if (state.checkersOnBar[state.player]) {
+    const startKeyId = state.player === 'left' ? 12 : 24;
+    if (Object.keys(state.potentialMoves).includes(pointId.toString())) {
+      const moveDistance = (startKeyId + 1) - pointId;
+      return { type: 'move', fromIndex: -1, selectedIndex, moveDistance };
+    }
+    return null;
+  }
+
+  if (selectedIndex === -1 || state.points[selectedIndex].player !== state.player) {
+    return null;
+  }
+
+  return {
+    type: 'select',
+    selectedSpot: pointId,
+    potentialSpots: state.potentialMoves[pointId] || []
+  };
+};

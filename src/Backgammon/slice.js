@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
-import { togglePlayer, checkWinner, rollDiceLogic } from './gameLogic';
-import { findPotentialMoves, moveCheckers, generatePointIndexMap } from './moveValidation';
+import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gameLogic';
+import { findPotentialMoves, moveCheckers, generatePointIndexMap, validateBearOffMove } from './moveValidation';
 import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
-import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX, MAX_HISTORY } from './globals';
+import { PLAYER_LEFT, PLAYER_RIGHT, INVALID_INDEX, MAX_HISTORY } from './globals';
 
 export const backgammonInitialState = {
   points: initializeBoard(),
@@ -28,28 +28,18 @@ export const backgammonSlice = createSlice({
   initialState: backgammonInitialState,
   reducers: {
     selectSpot: (state, action) => {
-      if (!state.player || !state.diceValue || state.diceValue.length === 0) return state;
+      const result = selectSpotLogic(state, action.payload);
 
-      const pointId = action.payload;
-      const selectedIndex = pointId - 1;
+      if (!result) return state;
 
-      if (state.checkersOnBar[state.player]) {
-        const startKeyId = state.player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
-        if (Object.keys(state.potentialMoves).includes(pointId.toString())) {
-          const moveDistance = (startKeyId + 1) - pointId;
-          return updateMoveCheckerState(state, INVALID_INDEX, selectedIndex, moveDistance);
-        }
-        return state;
-      }
-
-      if (selectedIndex === INVALID_INDEX || state.points[selectedIndex].player !== state.player) {
-        return state;
+      if (result.type === 'move') {
+        return updateMoveCheckerState(state, result.fromIndex, result.selectedIndex, result.moveDistance);
       }
 
       return {
         ...state,
-        selectedSpot: pointId,
-        potentialSpots: state.potentialMoves[pointId] || []
+        selectedSpot: result.selectedSpot,
+        potentialSpots: result.potentialSpots
       };
     },
 
@@ -61,30 +51,8 @@ export const backgammonSlice = createSlice({
         const fromIndex = points.findIndex((point) => point.id === fromPointId);
         if (fromIndex === -1 || points[fromIndex].checkers < 1) return state;
 
-        const moveDistance = player === PLAYER_LEFT ?
-          (START_KEY_LEFT + 11) - fromPointId : (START_KEY_RIGHT - 11) - fromPointId;
-
-        let isValidDiceValue = diceValue.includes(moveDistance);
-        let usedDiceValue = moveDistance;
-
-        if (!isValidDiceValue) {
-          const higherDice = diceValue.filter(die => die > moveDistance);
-          if (higherDice.length > 0) {
-            const homeRange = player === PLAYER_LEFT ?
-              [(START_KEY_RIGHT - 5), START_KEY_RIGHT] : [(START_KEY_LEFT - 5), START_KEY_LEFT];
-            const occupiedPoints = points
-              .filter(p => p.player === player && homeRange[0] <= p.id && p.id <= homeRange[1])
-              .map(p => p.id);
-            const highestOccupied = Math.min(...occupiedPoints);
-
-            if (fromPointId === highestOccupied) {
-              isValidDiceValue = true;
-              usedDiceValue = higherDice[0];
-            }
-          }
-        }
-
-        if (!isValidDiceValue) return state;
+        const { isValid, usedDiceValue } = validateBearOffMove(player, fromPointId, diceValue, points);
+        if (!isValid) return state;
         return updateMoveCheckerState(state, fromIndex, -1, usedDiceValue);
       }
 

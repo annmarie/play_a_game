@@ -4,6 +4,31 @@ import { getPointIdToIndexMap, getIndexToPointIdMap, generatePointIndexMap } fro
 export { generatePointIndexMap };
 
 /**
+ * Validates a bear-off move and returns the dice value to use
+ */
+export function validateBearOffMove(player, fromPointId, diceValue, points) {
+  const moveDistance = player === PLAYER_LEFT ?
+    (START_KEY_LEFT + 11) - fromPointId : (START_KEY_RIGHT - 11) - fromPointId;
+
+  if (diceValue.includes(moveDistance)) {
+    return { isValid: true, usedDiceValue: moveDistance };
+  }
+
+  const higherDice = diceValue.filter(die => die > moveDistance);
+  if (higherDice.length === 0) return { isValid: false };
+
+  const homeRange = player === PLAYER_LEFT ?
+    [(START_KEY_RIGHT - 5), START_KEY_RIGHT] : [(START_KEY_LEFT - 5), START_KEY_LEFT];
+  const occupiedPoints = points
+    .filter(p => p.player === player && homeRange[0] <= p.id && p.id <= homeRange[1])
+    .map(p => p.id);
+  const highestOccupied = Math.min(...occupiedPoints);
+
+  return fromPointId === highestOccupied ?
+    { isValid: true, usedDiceValue: higherDice[0] } : { isValid: false };
+}
+
+/**
  * Calculates target point ID for a move
  */
 export const calculatePotentialMove = (player, selectedIndex, die) => {
