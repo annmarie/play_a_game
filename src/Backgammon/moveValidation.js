@@ -2,13 +2,24 @@ import { PLAYER_LEFT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
 import { getPointIdToIndexMap, getIndexToPointIdMap } from './boardUtils';
 
 /**
+ * Gets home board range for a player
+ * @param {string} player - The player
+ * @returns {number[]} [min, max] point IDs for home board
+ */
+function getHomeRange(player) {
+    return player === PLAYER_LEFT ?
+    [START_KEY_RIGHT - 5, START_KEY_RIGHT] :
+    [START_KEY_LEFT - 5, START_KEY_LEFT];
+}
+
+/**
  * Gets the furthest occupied point in home board for bear-off validation
  * @param {Object[]} points - Array of point objects representing the board state
  * @param {string} player - The player to check
  * @returns {number} The furthest occupied point ID
  */
 function getFurthestOccupiedPoint(points, player) {
-  const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+  const homeRange = getHomeRange(player);
   const occupiedPoints = points
     .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
     .map(p => p.id);
@@ -68,7 +79,7 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
 export const canBearOff = (points, player, checkersOnBar) => {
   if (checkersOnBar[player] > 0) return false;
 
-  const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+  const homeRange = getHomeRange(player);
 
   return points.every((point) => {
     if (point.player !== player) return true;
@@ -119,7 +130,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
 
       // Handle bearing off
       if (canBearOffNow) {
-        const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+        const homeRange = getHomeRange(player);
         const isInHomeBoard = point.id >= homeRange[0] && point.id <= homeRange[1];
 
         if (isInHomeBoard) {
@@ -144,7 +155,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
         }
       }
 
-      // Handle point to point moves
+      // Handle moving a point
       if (movePointId >= 0 && movePointId < points.length) {
         const targetPoint = points[movePointId];
         if (
