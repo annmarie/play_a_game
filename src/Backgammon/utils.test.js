@@ -1,18 +1,8 @@
 /* globals describe, expect, it */
 import { PLAYER_LEFT, PLAYER_RIGHT, RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER } from './globals';
-import {
-  initializeBoard,
-  rollDie,
-  togglePlayer,
-  generatePointIndexMap,
-  calculatePotentialMove,
-  findPotentialMoves,
-  getPointOrder,
-  getIndexToPointIdMap,
-  getPointIdToIndexMap,
-  moveCheckers,
-  canBearOff,
-} from './utils';
+import { initializeBoard, getPointOrder, getIndexToPointIdMap, getPointIdToIndexMap, generatePointIndexMap } from './boardUtils';
+import { rollDie, togglePlayer } from './gameLogic';
+import { calculatePotentialMove, findPotentialMoves, moveCheckers, canBearOff } from './moveValidation';
 
 describe('Utility Functions', () => {
   describe('initializeBoard', () => {
@@ -229,7 +219,7 @@ describe('Utility Functions', () => {
       expect(result).toEqual({
         '7': [11],     // Point 7 can move to point 11 (with dice 4: 7+4=11)
         '8': [12],     // Point 8 can move to point 12 (with dice 4: 8+4=12)
-        '9': [-1, -1]  // Point 9 can bear off twice (exact match: die 4 = required die 4)
+        '9': [-1, -1, -1]  // Point 9 can bear off three times (exact match: die 4 = required die 4, with three 4s)
       });
 
       const canBearOffResult = canBearOff(points, PLAYER_RIGHT, { left: 0, right: 0 });
