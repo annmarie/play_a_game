@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
   initializeBoard, togglePlayer, rollDie, moveCheckers,
-  generatePointIndexMap, findPotentialMoves, encodeBoardState, decodeBoardState
+  generatePointIndexMap, findPotentialMoves
 } from './utils';
+import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX, MAX_HISTORY } from './globals';
 
@@ -48,48 +49,17 @@ export const backgammonSlice = createSlice({
       potentialMoves: state.player ?
         findPotentialMoves(state.points, state.player, action.payload, state.checkersOnBar) : {}
     }),
-    loadFromURL: (state) => {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const encoded = params.get('board');
-        if (encoded) {
-          const boardState = decodeBoardState(encoded);
-          if (boardState) {
-            return {
-              ...state,
-              ...boardState,
-              potentialMoves: boardState.diceValue ?
-                findPotentialMoves(boardState.points, boardState.player, boardState.diceValue, boardState.checkersOnBar) : {},
-              selectedSpot: null,
-              potentialSpots: []
-            };
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to load board from URL:', error);
-      }
-      return state;
-    },
-    saveToURL: (state) => {
-      const getLastItem = (arr) => arr.length > 0 ? [arr[arr.length - 1]] : [];
-      const dataToSave = {
-        ...state,
-        pointsHistory: getLastItem(state.pointsHistory),
-        diceHistory: getLastItem(state.diceHistory),
-        playerHistory: getLastItem(state.playerHistory),
-        checkersOnBarHistory: getLastItem(state.checkersOnBarHistory),
-        checkersBorneOffHistory: getLastItem(state.checkersBorneOffHistory),
-        potentialMovesHistory: getLastItem(state.potentialMovesHistory)
-      };
-      const encoded = encodeBoardState(dataToSave);
-      const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
-      try {
-        navigator.clipboard.writeText(url);
-      } catch (error) {
-        console.warn('Failed to copy to clipboard:', error);
-      }
-      return state;
-    },
+    loadFromURL: createLoadFromURL((newState) => ({
+      ...newState,
+      potentialMoves: newState.diceValue ?
+        findPotentialMoves(newState.points, newState.player, newState.diceValue, newState.checkersOnBar) : {},
+      selectedSpot: null,
+      potentialSpots: []
+    })),
+    saveToURL: createSaveToURL([
+      'pointsHistory', 'diceHistory', 'playerHistory',
+      'checkersOnBarHistory', 'checkersBorneOffHistory', 'potentialMovesHistory'
+    ]),
   },
 });
 

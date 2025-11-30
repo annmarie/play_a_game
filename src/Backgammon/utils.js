@@ -1,12 +1,6 @@
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
 import { RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER } from './globals';
 
-import {
-  encodeBoardState as encode,
-  decodeBoardState as decode,
-  loadBoardFromURL as loadFromURL
-} from '../utils/boardEncoder.js';
-
 /**
  * Initializes the game board.
  * Right starts at point 12 and Left starts at point 24
@@ -314,27 +308,4 @@ export function moveCheckers(points, toIndex, fromIndex, player) {
   return { updatedPoints, hasBarPlayer };
 }
 
-/**
- * Encodes the current board state to a compact string.
- *
- * @param {Object} state - The current state of the board.
- * @returns {string} Encoded board state.
- */
-export const encodeBoardState = (state) => {
-  try {
-    const data = {
-      points: state.points.map(p => ({ id: p.id, checkers: p.checkers, player: p.player })),
-      checkersOnBar: state.checkersOnBar,
-      checkersBorneOff: state.checkersBorneOff,
-      player: state.player,
-      diceValue: state.diceValue
-    };
-    return encode(data);
-  } catch (error) {
-    console.warn('Failed to encode board state:', error);
-    return null;
-  }
-};
 
-export const decodeBoardState = decode;
-export const loadBoardFromURL = loadFromURL;

@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
   initializeBoard, dropChecker, checkWin, isBoardFull,
-  togglePlayer, encodeBoardState, decodeBoardState
+  togglePlayer
 } from './utils';
 import { PLAYER_ONE, MAX_HISTORY } from './globals';
+import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 
 export const initialState = {
   board: initializeBoard(),
@@ -25,30 +26,8 @@ export const slice = createSlice({
       ...state,
       ...action.payload
     }),
-    loadFromURL: (state) => {
-      const params = new URLSearchParams(window.location.search);
-      const encoded = params.get('board');
-      if (!encoded) return state;
-
-      const boardState = decodeBoardState(encoded);
-      if (!boardState) return state;
-
-      return { ...state, ...boardState };
-    },
-    saveToURL: (state) => {
-      const lastHistoryItem = state.history.length > 0 ? state.history[state.history.length - 1] : null;
-      const history = lastHistoryItem ? [lastHistoryItem] : [];
-      const dataToSave = {
-        ...state,
-        history
-      };
-      const encoded = encodeBoardState(dataToSave);
-      const url = `${window.location.origin}${window.location.pathname}?board=${encoded}`;
-      navigator.clipboard.writeText(url).catch((err) => {
-        console.error('Failed to copy URL to clipboard:', err);
-      });
-      return state;
-    },
+    loadFromURL: createLoadFromURL(),
+    saveToURL: createSaveToURL(['history']),
   },
 });
 
