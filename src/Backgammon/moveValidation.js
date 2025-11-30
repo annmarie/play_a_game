@@ -1,16 +1,5 @@
 import { PLAYER_LEFT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
-import { getPointIdToIndexMap, getIndexToPointIdMap } from './boardUtils';
-
-/**
- * Gets home board range for a player
- * @param {string} player - The player
- * @returns {number[]} [min, max] point IDs for home board
- */
-function getHomeRange(player) {
-    return player === PLAYER_LEFT ?
-    [START_KEY_RIGHT - 5, START_KEY_RIGHT] :
-    [START_KEY_LEFT - 5, START_KEY_LEFT];
-}
+import { getHomeRange, getPointIdToIndexMap, getIndexToPointIdMap } from './boardUtils';
 
 /**
  * Gets the furthest occupied point in home board for bear-off validation

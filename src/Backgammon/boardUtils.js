@@ -1,4 +1,7 @@
-import { PLAYER_LEFT, PLAYER_RIGHT, RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER } from './globals';
+import {
+  PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT,
+  RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER,
+} from './globals';
 
 /**
  * Initializes the game board with standard backgammon starting positions
@@ -58,3 +61,14 @@ export const generatePointIndexMap = (player, indexBy = 'point') => {
   if (indexBy === 'point') return getPointIdToIndexMap(player);
   return getIndexToPointIdMap(player);
 };
+
+/**
+ * Gets home board range for a player
+ * @param {string} player - The player
+ * @returns {number[]} [min, max] point IDs for home board
+ */
+export const getHomeRange = (player) => {
+    return player === PLAYER_LEFT ?
+    [START_KEY_RIGHT - 5, START_KEY_RIGHT] :
+    [START_KEY_LEFT - 5, START_KEY_LEFT];
+}
