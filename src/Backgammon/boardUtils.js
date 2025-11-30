@@ -52,17 +52,6 @@ export const getIndexToPointIdMap = (player) => (
 );
 
 /**
- * Generates point index mapping for a player
- * @param {string} player - The player (PLAYER_LEFT or PLAYER_RIGHT)
- * @param {string} [indexBy='point'] - Mapping direction ('point' or 'index')
- * @returns {Object} Point-to-index or index-to-point mapping based on indexBy parameter
- */
-export const generatePointIndexMap = (player, indexBy = 'point') => {
-  if (indexBy === 'point') return getPointIdToIndexMap(player);
-  return getIndexToPointIdMap(player);
-};
-
-/**
  * Gets home board range for a player
  * @param {string} player - The player
  * @returns {number[]} [min, max] point IDs for home board

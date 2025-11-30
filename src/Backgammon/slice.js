@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gameLogic';
 import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveValidation';
-import { generatePointIndexMap } from './boardUtils';
+import { getPointIdToIndexMap } from './boardUtils';
 import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 import { PLAYER_LEFT, PLAYER_RIGHT, MAX_HISTORY } from './globals';
 
@@ -146,7 +146,7 @@ const reduceMakeMove = (state, { payload: { fromPointId, toPointId } }) => {
   const toIndex = points.findIndex(point => point.id === toPointId);
   if (toIndex === -1) return state;
 
-  const pointKey = generatePointIndexMap(player, 'point');
+  const pointKey = getPointIdToIndexMap(player);
   const moveDistance = Math.abs(pointKey[toIndex] - pointKey[fromIndex]);
 
   if (!diceValue.includes(moveDistance) || pointKey[toIndex] <= pointKey[fromIndex]) {

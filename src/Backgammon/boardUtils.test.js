@@ -1,6 +1,6 @@
 /* globals describe, expect, it */
 import { PLAYER_LEFT, PLAYER_RIGHT, RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER } from './globals';
-import { initializeBoard, getPointOrder, getIndexToPointIdMap, getPointIdToIndexMap, generatePointIndexMap } from './boardUtils';
+import { initializeBoard, getPointOrder, getIndexToPointIdMap, getPointIdToIndexMap } from './boardUtils';
 
 describe('Board Utilities', () => {
   describe('initializeBoard', () => {
@@ -26,9 +26,9 @@ describe('Board Utilities', () => {
     });
   });
 
-  describe('generatePointIndexMap', () => {
+  describe('point to index map', () => {
     it('should return correct index point mapping for PLAYER_RIGHT', () => {
-      const pointIdToIndexMap = generatePointIndexMap(PLAYER_RIGHT, 'index');
+      const pointIdToIndexMap = getIndexToPointIdMap(PLAYER_RIGHT);
       expect(pointIdToIndexMap[0]).toBe(23);
       expect(pointIdToIndexMap[11]).toBe(12);
       expect(pointIdToIndexMap[12]).toBe(0);
@@ -36,7 +36,7 @@ describe('Board Utilities', () => {
     });
 
     it('should return correct index point mapping for PLAYER_LEFT', () => {
-      const pointIdToIndexMap = generatePointIndexMap(PLAYER_LEFT, 'index');
+      const pointIdToIndexMap = getIndexToPointIdMap(PLAYER_LEFT);
       expect(pointIdToIndexMap[0]).toBe(11);
       expect(pointIdToIndexMap[11]).toBe(0);
       expect(pointIdToIndexMap[12]).toBe(12);
@@ -44,7 +44,7 @@ describe('Board Utilities', () => {
     });
 
     it('should return correct point index mapping for PLAYER_RIGHT', () => {
-      const pointIdToIndexMap = generatePointIndexMap(PLAYER_RIGHT, 'point');
+      const pointIdToIndexMap = getPointIdToIndexMap(PLAYER_RIGHT);
       expect(pointIdToIndexMap[0]).toBe(12);
       expect(pointIdToIndexMap[11]).toBe(23);
       expect(pointIdToIndexMap[12]).toBe(11);
@@ -52,7 +52,7 @@ describe('Board Utilities', () => {
     });
 
     it('should return correct point index mapping for PLAYER_LEFT', () => {
-      const pointIdToIndexMap = generatePointIndexMap(PLAYER_LEFT, 'point');
+      const pointIdToIndexMap = getPointIdToIndexMap(PLAYER_LEFT);
       expect(pointIdToIndexMap[0]).toBe(11);
       expect(pointIdToIndexMap[11]).toBe(0);
       expect(pointIdToIndexMap[12]).toBe(12);
@@ -62,25 +62,6 @@ describe('Board Utilities', () => {
     it('getPointOrder returns the correct arrays for each player', () => {
       expect(getPointOrder(PLAYER_RIGHT)).toEqual(RIGHT_PLAYER_POINT_ORDER);
       expect(getPointOrder(PLAYER_LEFT)).toEqual(LEFT_PLAYER_POINT_ORDER);
-    });
-
-    it('getPointIdToIndexMap and getIndexToPointIdMap are consistent for PLAYER_RIGHT', () => {
-      const map = getPointIdToIndexMap(PLAYER_RIGHT);
-      const idx = getIndexToPointIdMap(PLAYER_RIGHT);
-
-      for (let i = 0; i < 24; i++) {
-        const pointIndex = idx[i];
-        expect(map[pointIndex]).toBe(i);
-      }
-    });
-
-    it('getPointIdToIndexMap and getIndexToPointIdMap are consistent for PLAYER_LEFT', () => {
-      const map = getPointIdToIndexMap(PLAYER_LEFT);
-      const idx = getIndexToPointIdMap(PLAYER_LEFT);
-      for (let i = 0; i < 24; i++) {
-        const pointIndex = idx[i];
-        expect(map[pointIndex]).toBe(i);
-      }
     });
   });
 });
