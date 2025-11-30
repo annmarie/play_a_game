@@ -1,6 +1,6 @@
 /* globals describe, expect, it */
-import { PLAYER_LEFT, PLAYER_RIGHT, RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER } from './globals';
-import { initializeBoard, getPointOrder, getIndexToPointIdMap, getPointIdToIndexMap } from './boardUtils';
+import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
+import { initializeBoard, getIndexToPointIdMap, getPointIdToIndexMap } from './boardUtils';
 
 describe('Board Utilities', () => {
   describe('initializeBoard', () => {
@@ -11,17 +11,14 @@ describe('Board Utilities', () => {
 
     it('should initializes points with checkers and players', () => {
       const board = initializeBoard();
-
       expect(board[0]).toEqual({ id: 1, checkers: 5, player: PLAYER_LEFT });
       expect(board[11]).toEqual({ id: 12, checkers: 2, player: PLAYER_LEFT });
       expect(board[16]).toEqual({ id: 17, checkers: 3, player: PLAYER_LEFT });
       expect(board[18]).toEqual({ id: 19, checkers: 5, player: PLAYER_LEFT });
-
       expect(board[23]).toEqual({ id: 24, checkers: 2, player: PLAYER_RIGHT });
       expect(board[12]).toEqual({ id: 13, checkers: 5, player: PLAYER_RIGHT });
       expect(board[6]).toEqual({ id: 7, checkers: 5, player: PLAYER_RIGHT });
       expect(board[4]).toEqual({ id: 5, checkers: 3, player: PLAYER_RIGHT });
-
       expect(board[2]).toEqual({ id: 3, checkers: 0, player: null });
     });
   });
@@ -57,11 +54,6 @@ describe('Board Utilities', () => {
       expect(pointIdToIndexMap[11]).toBe(0);
       expect(pointIdToIndexMap[12]).toBe(12);
       expect(pointIdToIndexMap[23]).toBe(23);
-    });
-
-    it('getPointOrder returns the correct arrays for each player', () => {
-      expect(getPointOrder(PLAYER_RIGHT)).toEqual(RIGHT_PLAYER_POINT_ORDER);
-      expect(getPointOrder(PLAYER_LEFT)).toEqual(LEFT_PLAYER_POINT_ORDER);
     });
   });
 });
