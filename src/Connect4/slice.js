@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { initializeBoard, dropChecker, checkWin, isBoardFull, togglePlayer } from './utils';
+import { initializeBoard, dropChecker, checkWin, isBoardFull, togglePlayer } from './gameLogic';
 import { PLAYER_ONE, MAX_HISTORY } from './globals';
 import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 
