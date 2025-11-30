@@ -80,7 +80,7 @@ export const selectSpotLogic = (state, pointId) => {
     return null;
   }
 
-  if (selectedIndex === -1 || state.points[selectedIndex].player !== state.player) {
+  if (selectedIndex === -1 || !state.points[selectedIndex] || state.points[selectedIndex].player !== state.player) {
     return null;
   }
 

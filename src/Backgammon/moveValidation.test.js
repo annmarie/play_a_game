@@ -318,14 +318,14 @@ describe('Bearing Off Logic', () => {
       expect(result.usedDiceValue).toBe(2);
     });
 
-    it('should validate right player bears off from point 7 with dice 1', () => {
-      const result = validateBearOffMove(PLAYER_RIGHT, 7, [1], mockPoints);
+    it('should validate right player bears off from point 7 with dice 6', () => {
+      const result = validateBearOffMove(PLAYER_RIGHT, 7, [6], mockPoints);
       expect(result.isValid).toBe(true);
-      expect(result.usedDiceValue).toBe(1);
+      expect(result.usedDiceValue).toBe(6);
     });
 
-    it('should NOT validate right player bears off from point 7 with dice 6 (needs higher dice rule)', () => {
-      const result = validateBearOffMove(PLAYER_RIGHT, 7, [6], mockPoints);
+    it('should NOT validate right player bears off from point 7 with dice 1 (needs higher dice rule)', () => {
+      const result = validateBearOffMove(PLAYER_RIGHT, 7, [1], mockPoints);
       expect(result.isValid).toBe(false);
     });
   });

@@ -1,5 +1,19 @@
-import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
+import { PLAYER_LEFT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
 import { getPointIdToIndexMap, getIndexToPointIdMap } from './boardUtils';
+
+/**
+ * Gets the furthest occupied point in home board for bear-off validation
+ * @param {Object[]} points - Array of point objects representing the board state
+ * @param {string} player - The player to check
+ * @returns {number} The furthest occupied point ID
+ */
+function getFurthestOccupiedPoint(points, player) {
+  const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+  const occupiedPoints = points
+    .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
+    .map(p => p.id);
+  return player === PLAYER_LEFT ? Math.min(...occupiedPoints) : Math.min(...occupiedPoints);
+}
 
 /**
  * Validates a bear-off move and returns the dice value to use
@@ -10,7 +24,7 @@ import { getPointIdToIndexMap, getIndexToPointIdMap } from './boardUtils';
  * @returns {{isValid: boolean, usedDiceValue?: number}} Validation result with dice value used
  */
 export function validateBearOffMove(player, fromPointId, diceValue, points) {
-  const moveDistance = player === PLAYER_LEFT ? 25 - fromPointId : fromPointId - 6;
+  const moveDistance = player === PLAYER_LEFT ? 25 - fromPointId : 13 - fromPointId;
 
   if (diceValue.includes(moveDistance)) {
     return { isValid: true, usedDiceValue: moveDistance };
@@ -19,14 +33,9 @@ export function validateBearOffMove(player, fromPointId, diceValue, points) {
   const higherDice = diceValue.filter(die => die > moveDistance);
   if (higherDice.length === 0) return { isValid: false };
 
-  const homeRange = player === PLAYER_LEFT ?
-    [(START_KEY_RIGHT - 5), START_KEY_RIGHT] : [(START_KEY_LEFT - 5), START_KEY_LEFT];
-  const occupiedPoints = points
-    .filter(p => p.player === player && homeRange[0] <= p.id && p.id <= homeRange[1])
-    .map(p => p.id);
-  const highestOccupied = Math.min(...occupiedPoints);
+  const furthestOccupied = getFurthestOccupiedPoint(points, player);
 
-  return fromPointId === highestOccupied ?
+  return fromPointId === furthestOccupied ?
     { isValid: true, usedDiceValue: higherDice[0] } : { isValid: false };
 }
 
@@ -59,9 +68,7 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
 export const canBearOff = (points, player, checkersOnBar) => {
   if (checkersOnBar[player] > 0) return false;
 
-  const homeRange = player === PLAYER_LEFT ?
-    [START_KEY_RIGHT - 5, START_KEY_RIGHT] :
-    [START_KEY_LEFT - 5, START_KEY_LEFT];
+  const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
 
   return points.every((point) => {
     if (point.player !== player) return true;
@@ -112,11 +119,11 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
 
       // Handle bearing off
       if (canBearOffNow) {
-        const isInHomeBoard = (player === PLAYER_LEFT && point.id >= START_KEY_RIGHT - 5 && point.id <= START_KEY_RIGHT) ||
-          (player === PLAYER_RIGHT && point.id >= START_KEY_LEFT - 5 && point.id <= START_KEY_LEFT);
+        const homeRange = player === PLAYER_LEFT ? [19, 24] : [7, 12];
+        const isInHomeBoard = point.id >= homeRange[0] && point.id <= homeRange[1];
 
         if (isInHomeBoard) {
-          const requiredDie = player === PLAYER_LEFT ? (START_KEY_RIGHT + 1) - point.id : (START_KEY_LEFT + 1) - point.id;
+          const requiredDie = player === PLAYER_LEFT ? 25 - point.id : 13 - point.id;
 
           if (die >= requiredDie) {
             if (die === requiredDie) {
@@ -125,15 +132,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
                 potentialMoves[point.id].push(-1);
               }
             } else {
-              // Check if this is the furthest occupied point
-              const homeRange = player === PLAYER_LEFT ?
-                [START_KEY_RIGHT - 5, START_KEY_RIGHT] :
-                [START_KEY_LEFT - 5, START_KEY_LEFT];
-              const occupiedPoints = points
-                .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
-                .map(p => p.id);
-              const furthestOccupied = player === PLAYER_LEFT ? Math.max(...occupiedPoints) : Math.min(...occupiedPoints);
-
+              const furthestOccupied = getFurthestOccupiedPoint(points, player);
               if (point.id === furthestOccupied) {
                 potentialMoves[point.id] = potentialMoves[point.id] || [];
                 for (let i = 0; i < diceCount; i++) {
