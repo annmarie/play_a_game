@@ -23,6 +23,11 @@ export const initialState = {
   checkersBorneOffHistory: [],
   potentialMovesHistory: [],
   gamesWon: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
+  doublingCube: {
+    value: 1,
+    owner: null,
+    pendingOffer: null
+  },
 };
 
 export const slice = createSlice({
@@ -126,6 +131,48 @@ export const slice = createSlice({
       'pointsHistory', 'diceHistory', 'playerHistory',
       'checkersOnBarHistory', 'checkersBorneOffHistory', 'potentialMovesHistory'
     ]),
+
+    offerDouble: (state) => {
+      if (state.doublingCube.owner === state.player || state.doublingCube.pendingOffer) return state;
+      return {
+        ...state,
+        player: togglePlayer(state.player),
+        doublingCube: {
+          ...state.doublingCube,
+          pendingOffer: state.player
+        }
+      };
+    },
+
+    acceptDouble: (state) => {
+      if (!state.doublingCube.pendingOffer) return state;
+      return {
+        ...state,
+        doublingCube: {
+          value: state.doublingCube.value * 2,
+          owner: state.doublingCube.pendingOffer,
+          pendingOffer: null
+        }
+      };
+    },
+
+    declineDouble: (state) => {
+      if (!state.doublingCube.pendingOffer) return state;
+      const offeringPlayer = state.doublingCube.pendingOffer;
+      return {
+        ...state,
+        winner: offeringPlayer,
+        gamesWon: {
+          ...state.gamesWon,
+          [offeringPlayer]: state.gamesWon[offeringPlayer] + state.doublingCube.value
+        },
+        doublingCube: {
+          value: 1,
+          owner: null,
+          pendingOffer: null
+        }
+      };
+    },
   },
 });
 
@@ -188,7 +235,8 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
 
   const moveInProcess = updatedDiceValue.length > 0;
   const winner = checkWinner(updatedCheckersBorneOff, state.player);
-  const updatedGamesWon = winner ? { ...state.gamesWon, [winner]: state.gamesWon[winner] + 1 } : state.gamesWon;
+  const gameValue = state.doublingCube.value;
+  const updatedGamesWon = winner ? { ...state.gamesWon, [winner]: state.gamesWon[winner] + gameValue } : state.gamesWon;
 
   return {
     ...state,
@@ -222,7 +270,10 @@ export const {
   setCustomDice,
   togglePlayerRoll,
   undoRoll,
-  saveToURL
+  saveToURL,
+  offerDouble,
+  acceptDouble,
+  declineDouble
 } = slice.actions;
 
 export default slice.reducer;

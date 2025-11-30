@@ -1,6 +1,6 @@
 /* globals jest, beforeEach, describe, expect, it */
 import { configureStore } from '@reduxjs/toolkit';
-import backgammonReducer, { initialState, selectSpot, rollDice, makeMove, resetGame, undoRoll } from './slice';
+import backgammonReducer, { initialState, selectSpot, rollDice, makeMove, resetGame, undoRoll, offerDouble, acceptDouble, declineDouble } from './slice';
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 import * as gameLogic from './gameLogic';
 
@@ -164,7 +164,6 @@ describe('Backgammon Slice', () => {
   });
 
   it('should should set the dice manually on first roll if doubles are rolled 10 times in a row', () => {
-    const diceError = jest.spyOn(console, 'error').mockImplementation();
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 2], player: PLAYER_LEFT });
     store.dispatch(rollDice())
     state = store.getState()
@@ -176,5 +175,42 @@ describe('Backgammon Slice', () => {
     store.dispatch(undoRoll())
     state = store.getState()
     expect(state).toEqual(initialState);
+  });
+
+  describe('Doubling Cube', () => {
+    it('should initialize with value 1 and no owner', () => {
+      expect(state.doublingCube.value).toBe(1);
+      expect(state.doublingCube.owner).toBeNull();
+      expect(state.doublingCube.pendingOffer).toBeNull();
+    });
+
+    it('should allow player to offer double', () => {
+      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER_LEFT });
+      store.dispatch(rollDice());
+      store.dispatch(offerDouble());
+      const newState = store.getState();
+      expect(newState.doublingCube.pendingOffer).toBe(PLAYER_LEFT);
+    });
+
+    it('should double the value when accepted', () => {
+      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER_LEFT });
+      store.dispatch(rollDice());
+      store.dispatch(offerDouble());
+      store.dispatch(acceptDouble());
+      const newState = store.getState();
+      expect(newState.doublingCube.value).toBe(2);
+      expect(newState.doublingCube.owner).toBe(PLAYER_LEFT);
+      expect(newState.doublingCube.pendingOffer).toBeNull();
+    });
+
+    it('should end game when double is declined', () => {
+      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER_LEFT });
+      store.dispatch(rollDice());
+      store.dispatch(offerDouble());
+      store.dispatch(declineDouble());
+      const newState = store.getState();
+      expect(newState.winner).toBe(PLAYER_LEFT);
+      expect(newState.gamesWon[PLAYER_LEFT]).toBe(1);
+    });
   });
 });

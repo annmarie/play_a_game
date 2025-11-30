@@ -13,6 +13,7 @@ import {
 import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
+import DoublesCube from './DoublesCube';
 import styles from './Backgammon.module.css';
 import Layout from '../Layout';
 import { useDispatch } from 'react-redux';
@@ -76,9 +77,19 @@ const Backgammon = () => {
     <Layout>
       <div className={styles.backgammonGame}>
         <div className={styles.gameScore}>
-          <div>Games Won:</div>
-          <div><Checker player={PLAYER_LEFT} /> {state.gamesWon?.[PLAYER_LEFT] || 0}</div>
-          <div><Checker player={PLAYER_RIGHT} /> {state.gamesWon?.[PLAYER_RIGHT] || 0}</div>
+          <div className={styles.gameScoreLeft}>
+            <div>Games Won:</div>
+            <div className={styles.scoreRow}>
+              <div><Checker player={PLAYER_LEFT} /> {state.gamesWon?.[PLAYER_LEFT] || 0}</div>
+              <div><Checker player={PLAYER_RIGHT} /> {state.gamesWon?.[PLAYER_RIGHT] || 0}</div>
+            </div>
+          </div>
+          <DoublesCube
+            doublingCube={state.doublingCube}
+            currentPlayer={state.player}
+            winner={state.winner}
+            diceValue={state.diceValue}
+          />
         </div>
 
         {state.winner && (
@@ -103,20 +114,35 @@ const Backgammon = () => {
         />
 
         <div className={styles.backgammonStatus}>
-
           <div>
             {state.diceValue ? (
               <Dice diceValue={state.diceValue} />
             ) : (
               <div className="dice-roll">
-                <button
-                  className={styles.diceButton}
-                  aria-label="Roll Dice"
-                  onClick={() => dispatch(rollDice())}
-                  disabled={state.winner}
-                >
-                  {ROLL_DICE_BUTTON_TEXT}
-                </button>
+                {state.player &&
+                 !state.winner &&
+                 !state.doublingCube.pendingOffer &&
+                 state.doublingCube.owner !== state.player &&
+                 state.doublingCube.value < 64 ? (
+                  <div className={styles.doubleOrRoll}>
+                    <button
+                      className={styles.passButton}
+                      aria-label="Pass and roll dice"
+                      onClick={() => dispatch(rollDice())}
+                    >
+                     End Turn and Roll Dice
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className={styles.diceButton}
+                    aria-label="Roll Dice"
+                    onClick={() => dispatch(rollDice())}
+                    disabled={state.winner || state.doublingCube.pendingOffer}
+                  >
+                    {ROLL_DICE_BUTTON_TEXT}
+                  </button>
+                )}
               </div>
             )}
           </div>

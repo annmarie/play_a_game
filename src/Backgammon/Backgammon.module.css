@@ -32,6 +32,8 @@
 .backgammonStatus {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
 }
 
 .backgammonBar,
@@ -53,9 +55,16 @@
 
 .gameScore {
   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+.scoreRow {
+  display: flex;
   gap: 1em;
   align-items: center;
-  font-weight: bold;
 }
 
 .playAgainButton {
@@ -71,4 +80,24 @@
 
 .playAgainButton:hover {
   background-color: #45a049;
+}
+
+.doubleOrRoll {
+  text-align: center;
+}
+
+.doubleOrRoll p {
+  margin: 0 0 0.5em 0;
+  font-weight: bold;
+}
+
+.passButton {
+  width: 100%;
+  border-radius: 0.5em;
+  border: 0.0625em solid transparent;
+  cursor: pointer;
+  height: fit-content;
+  transition: border-color 0.25s;
+  background-color: #f0f0f0;
+  padding: 0.5em;
 }

@@ -271,7 +271,13 @@ describe('Backgammon Component Tests', () => {
           diceHistory: [],
           playerHistory: [],
           checkersOnBarHistory: [],
-          potentialMovesHistory: []
+          potentialMovesHistory: [],
+          gamesWon: { left: 0, right: 0 },
+          doublingCube: {
+            value: 1,
+            owner: null,
+            pendingOffer: null
+          }
         }
       }
     });
@@ -309,7 +315,13 @@ describe('Backgammon Component Tests', () => {
           diceHistory: [],
           playerHistory: [],
           checkersOnBarHistory: [],
-          potentialMovesHistory: []
+          potentialMovesHistory: [],
+          gamesWon: { left: 0, right: 0 },
+          doublingCube: {
+            value: 1,
+            owner: null,
+            pendingOffer: null
+          }
         }
       }
     });
@@ -347,7 +359,13 @@ describe('Backgammon Component Tests', () => {
           playerHistory: [PLAYER_LEFT],
           checkersOnBarHistory: [{ left: 0, right: 0 }],
           checkersBorneOffHistory: [{ left: 2, right: 0 }],
-          potentialMovesHistory: [{ '24': [-1, -1] }]
+          potentialMovesHistory: [{ '24': [-1, -1] }],
+          gamesWon: { left: 0, right: 0 },
+          doublingCube: {
+            value: 1,
+            owner: null,
+            pendingOffer: null
+          }
         }
       }
     });
