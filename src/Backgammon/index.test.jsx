@@ -237,7 +237,18 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should not display bear off when clicking on point 11 with specific board', async () => {
-    const customPoints = createCustomBoardState();
+    const customPoints = Array.from({ length: 24 }, (_, i) => {
+      const id = i + 1;
+      if (id === 7 || id === 8) return { id, checkers: 5, player: PLAYER_RIGHT };
+      if (id === 9 || id === 10) return { id, checkers: 2, player: PLAYER_RIGHT };
+      if (id === 11) return { id, checkers: 1, player: PLAYER_RIGHT };
+      if (id === 19) return { id, checkers: 5, player: PLAYER_LEFT };
+      if (id === 20) return { id, checkers: 3, player: PLAYER_LEFT };
+      if (id === 21) return { id, checkers: 2, player: PLAYER_LEFT };
+      if (id === 22) return { id, checkers: 3, player: PLAYER_LEFT };
+      if (id === 23) return { id, checkers: 1, player: PLAYER_LEFT };
+      return { id, checkers: 0, player: null };
+    });
 
     const checkersOnBar = { left: 0, right: 0 };
     const diceValue = [4, 4, 4];
@@ -322,12 +333,16 @@ describe('Backgammon Component Tests', () => {
           checkersOnBar: { left: 0, right: 0 },
           checkersBorneOff: { left: 3, right: 0 },
           diceValue: [6, 4],
-          player: PLAYER_LEFT, // Current game player
+          player: PLAYER_LEFT,
           winner: null,
           selectedSpot: null,
           potentialSpots: [-1],
           potentialMoves: { '24': [-1] },
-          pointsHistory: [createBoardStateWithPoint24()],
+          pointsHistory: [Array.from({ length: 24 }, (_, i) => {
+            const id = i + 1;
+            if (id === 24) return { id, checkers: 2, player: PLAYER_LEFT };
+            return { id, checkers: 0, player: null };
+          })],
           diceHistory: [[6, 4, 4]],
           playerHistory: [PLAYER_LEFT],
           checkersOnBarHistory: [{ left: 0, right: 0 }],
@@ -345,43 +360,6 @@ describe('Backgammon Component Tests', () => {
     expect(undoButton).toHaveAttribute('disabled');
   });
 });
-
-function createCustomBoardState() {
-  return [
-    { id: 1, checkers: 0, player: null },
-    { id: 2, checkers: 0, player: null },
-    { id: 3, checkers: 0, player: null },
-    { id: 4, checkers: 0, player: null },
-    { id: 5, checkers: 0, player: null },
-    { id: 6, checkers: 0, player: null },
-    { id: 7, checkers: 5, player: PLAYER_RIGHT },
-    { id: 8, checkers: 5, player: PLAYER_RIGHT },
-    { id: 9, checkers: 2, player: PLAYER_RIGHT },
-    { id: 10, checkers: 2, player: PLAYER_RIGHT },
-    { id: 11, checkers: 1, player: PLAYER_RIGHT },
-    { id: 12, checkers: 0, player: null },
-    { id: 13, checkers: 0, player: null },
-    { id: 14, checkers: 0, player: null },
-    { id: 15, checkers: 0, player: null },
-    { id: 16, checkers: 0, player: null },
-    { id: 17, checkers: 0, player: null },
-    { id: 18, checkers: 0, player: null },
-    { id: 19, checkers: 5, player: PLAYER_LEFT },
-    { id: 20, checkers: 3, player: PLAYER_LEFT },
-    { id: 21, checkers: 2, player: PLAYER_LEFT },
-    { id: 22, checkers: 3, player: PLAYER_LEFT },
-    { id: 23, checkers: 1, player: PLAYER_LEFT },
-    { id: 24, checkers: 0, player: null }
-  ];
-}
-
-function createBoardStateWithPoint24() {
-  return Array.from({ length: 24 }, (_, i) => {
-    const id = i + 1;
-    if (id === 24) return { id, checkers: 2, player: PLAYER_LEFT };
-    return { id, checkers: 0, player: null };
-  });
-}
 
 function validateInitialBoardState(points) {
   points.forEach((point, index) => {

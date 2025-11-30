@@ -3,6 +3,11 @@ import { getPointIdToIndexMap, getIndexToPointIdMap } from './boardUtils';
 
 /**
  * Validates a bear-off move and returns the dice value to use
+ * @param {string} player - The player making the move (PLAYER_LEFT or PLAYER_RIGHT)
+ * @param {number} fromPointId - The point ID where the checker is being moved from
+ * @param {number[]} diceValue - Array of available dice values
+ * @param {Object[]} points - Array of point objects representing the board state
+ * @returns {{isValid: boolean, usedDiceValue?: number}} Validation result with dice value used
  */
 export function validateBearOffMove(player, fromPointId, diceValue, points) {
   const moveDistance = player === PLAYER_LEFT ?
@@ -28,6 +33,10 @@ export function validateBearOffMove(player, fromPointId, diceValue, points) {
 
 /**
  * Calculates target point ID for a move
+ * @param {string} player - The player making the move
+ * @param {number} selectedIndex - The index of the selected point
+ * @param {number} die - The dice value to use for the move
+ * @returns {number} Target point ID (-2 for bearing off, -1 for invalid move)
  */
 export const calculatePotentialMove = (player, selectedIndex, die) => {
   const pointIdToIndexMap = getPointIdToIndexMap(player);
@@ -43,6 +52,10 @@ export const calculatePotentialMove = (player, selectedIndex, die) => {
 
 /**
  * Checks if all player's checkers are in home board
+ * @param {Object[]} points - Array of point objects representing the board state
+ * @param {string} player - The player to check
+ * @param {Object} checkersOnBar - Object tracking checkers on the bar for each player
+ * @returns {boolean} True if player can bear off checkers
  */
 export const canBearOff = (points, player, checkersOnBar) => {
   if (checkersOnBar[player] > 0) return false;
@@ -59,6 +72,11 @@ export const canBearOff = (points, player, checkersOnBar) => {
 
 /**
  * Finds all potential moves for a player
+ * @param {Object[]} points - Array of point objects representing the board state
+ * @param {string} player - The player to find moves for
+ * @param {number[]} diceValue - Array of available dice values
+ * @param {Object} checkersOnBar - Object tracking checkers on the bar for each player
+ * @returns {Object} Object mapping point IDs to arrays of possible target points
  */
 export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   const dice = diceValue; // Don't use Set to preserve duplicates
@@ -129,7 +147,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
         }
       }
 
-      // Handle regular moves
+      // Handle point to point moves
       if (movePointId >= 0) {
         const targetPoint = points[movePointId];
         if (
@@ -149,6 +167,11 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
 
 /**
  * Moves checkers on the board
+ * @param {Object[]} points - Array of point objects representing the board state
+ * @param {number} toIndex - Target point index (-1 for bearing off)
+ * @param {number} fromIndex - Source point index
+ * @param {string} player - The player making the move
+ * @returns {{updatedPoints: Object[], hasBarPlayer: string}} Updated board state and any captured player
  */
 export function moveCheckers(points, toIndex, fromIndex, player) {
   let hasBarPlayer = '';

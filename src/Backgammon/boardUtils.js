@@ -1,7 +1,8 @@
 import { PLAYER_LEFT, PLAYER_RIGHT, RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER } from './globals';
 
 /**
- * Initializes the game board
+ * Initializes the game board with standard backgammon starting positions
+ * @returns {Object[]} Array of 24 point objects with id, checkers count, and player
  */
 export const initializeBoard = () => {
   return Array.from({ length: 24 }, (_, i) => {
@@ -22,6 +23,8 @@ export const initializeBoard = () => {
 
 /**
  * Gets point order array for the given player
+ * @param {string} player - The player (PLAYER_LEFT or PLAYER_RIGHT)
+ * @returns {number[]} Array of point IDs in player's travel order
  */
 export const getPointOrder = (player) => (
   player === PLAYER_RIGHT ? RIGHT_PLAYER_POINT_ORDER : LEFT_PLAYER_POINT_ORDER
@@ -29,6 +32,8 @@ export const getPointOrder = (player) => (
 
 /**
  * Creates mapping from pointId to index in player's travel order
+ * @param {string} player - The player (PLAYER_LEFT or PLAYER_RIGHT)
+ * @returns {Object} Map where keys are pointId-1 and values are travel order indices
  */
 export const getPointIdToIndexMap = (player) => (
   getPointOrder(player).reduce((map, pointId, index) => { map[pointId - 1] = index; return map; }, {})
@@ -36,6 +41,8 @@ export const getPointIdToIndexMap = (player) => (
 
 /**
  * Creates mapping from index to pointId in player's travel order
+ * @param {string} player - The player (PLAYER_LEFT or PLAYER_RIGHT)
+ * @returns {Object} Map where keys are travel order indices and values are pointId-1
  */
 export const getIndexToPointIdMap = (player) => (
   getPointOrder(player).reduce((map, pointId, index) => { map[index] = pointId - 1; return map; }, {})
@@ -43,6 +50,9 @@ export const getIndexToPointIdMap = (player) => (
 
 /**
  * Generates point index mapping for a player
+ * @param {string} player - The player (PLAYER_LEFT or PLAYER_RIGHT)
+ * @param {string} [indexBy='point'] - Mapping direction ('point' or 'index')
+ * @returns {Object} Point-to-index or index-to-point mapping based on indexBy parameter
  */
 export const generatePointIndexMap = (player, indexBy = 'point') => {
   if (indexBy === 'point') return getPointIdToIndexMap(player);

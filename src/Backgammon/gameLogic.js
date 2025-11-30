@@ -2,6 +2,8 @@ import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './gl
 
 /**
  * Toggles the current player
+ * @param {string} player - Current player (PLAYER_LEFT or PLAYER_RIGHT)
+ * @returns {string} The opposite player
  */
 export const togglePlayer = (player) => {
   return player === PLAYER_RIGHT ? PLAYER_LEFT : PLAYER_RIGHT;
@@ -9,6 +11,7 @@ export const togglePlayer = (player) => {
 
 /**
  * Simulates rolling a six-sided die
+ * @returns {number} Random number between 1 and 6
  */
 export const rollDie = () => {
   return Math.floor(Math.random() * 6) + 1;
@@ -16,6 +19,8 @@ export const rollDie = () => {
 
 /**
  * Handles dice rolling logic for backgammon game
+ * @param {string|null} currentPlayer - Current player or null for game start
+ * @returns {{diceValue: number[], player: string}} Object with dice values and active player
  */
 export function rollDiceLogic(currentPlayer) {
   let die1 = null;
@@ -47,6 +52,9 @@ export function rollDiceLogic(currentPlayer) {
 
 /**
  * Checks if a player has won
+ * @param {Object} checkersBorneOff - Object tracking borne off checkers for each player
+ * @param {string} player - Player to check for win condition
+ * @returns {string|null} Winning player or null if no winner
  */
 export const checkWinner = (checkersBorneOff, player) => {
   return checkersBorneOff[player] === 15 ? player : null;
@@ -54,6 +62,9 @@ export const checkWinner = (checkersBorneOff, player) => {
 
 /**
  * Handles spot selection logic
+ * @param {Object} state - Current game state
+ * @param {number} pointId - ID of the selected point
+ * @returns {Object|null} Selection result with type and relevant data, or null if invalid
  */
 export const selectSpotLogic = (state, pointId) => {
   if (!state.player || !state.diceValue || state.diceValue.length === 0) return null;
