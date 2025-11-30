@@ -1,12 +1,11 @@
 /* globals jest, beforeEach, describe, expect, it */
 import { configureStore } from '@reduxjs/toolkit';
-import backgammonReducer, { backgammonInitialState, selectSpot, rollDice, makeMove, resetGame, undoRoll } from './slice';
+import backgammonReducer, { initialState, selectSpot, rollDice, makeMove, resetGame, undoRoll } from './slice';
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 import * as gameLogic from './gameLogic';
 
 jest.mock('./gameLogic', () => ({
   ...jest.requireActual('./gameLogic'),
-  rollDie: jest.fn(),
   rollDiceLogic: jest.fn(),
 }));
 
@@ -21,7 +20,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should initialize with the correct state', () => {
-    expect(state).toEqual(backgammonInitialState);
+    expect(state).toEqual(initialState);
   });
 
   it('should select spot with dice roll 2 3', () => {
@@ -182,6 +181,6 @@ describe('Backgammon Slice', () => {
   it('should handle undo with no history', () => {
     store.dispatch(undoRoll())
     state = store.getState()
-    expect(state).toEqual(backgammonInitialState);
+    expect(state).toEqual(initialState);
   });
 });

@@ -1,4 +1,4 @@
-import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
+import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
 
 /**
  * Toggles the current player
@@ -61,7 +61,7 @@ export const selectSpotLogic = (state, pointId) => {
   const selectedIndex = pointId - 1;
 
   if (state.checkersOnBar[state.player]) {
-    const startKeyId = state.player === 'left' ? 12 : 24;
+    const startKeyId = state.player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
     if (Object.keys(state.potentialMoves).includes(pointId.toString())) {
       const moveDistance = (startKeyId + 1) - pointId;
       return { type: 'move', fromIndex: -1, selectedIndex, moveDistance };

@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gameLogic';
-import { findPotentialMoves, moveCheckers, generatePointIndexMap, validateBearOffMove } from './moveValidation';
+import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveValidation';
+import { generatePointIndexMap } from './boardUtils';
 import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 import { PLAYER_LEFT, PLAYER_RIGHT, INVALID_INDEX, MAX_HISTORY } from './globals';
 
-export const backgammonInitialState = {
+export const initialState = {
   points: initializeBoard(),
   checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
   checkersBorneOff: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
@@ -23,9 +24,9 @@ export const backgammonInitialState = {
   potentialMovesHistory: [],
 };
 
-export const backgammonSlice = createSlice({
+export const slice = createSlice({
   name: 'backgammon',
-  initialState: backgammonInitialState,
+  initialState: initialState,
   reducers: {
     selectSpot: (state, action) => {
       const result = selectSpotLogic(state, action.payload);
@@ -84,12 +85,12 @@ export const backgammonSlice = createSlice({
 
     undoRoll: (state) => {
       const previousActionState = {
-        points: state.pointsHistory[state.pointsHistory.length - 1] || backgammonInitialState.points,
-        diceValue: state.diceHistory[state.diceHistory.length - 1] || backgammonInitialState.diceValue,
-        player: state.playerHistory[state.playerHistory.length - 1] || backgammonInitialState.player,
-        potentialMoves: state.potentialMovesHistory[state.potentialMovesHistory.length - 1] || backgammonInitialState.potentialMoves,
-        checkersOnBar: state.checkersOnBarHistory[state.checkersOnBarHistory.length - 1] || backgammonInitialState.checkersOnBar,
-        checkersBorneOff: state.checkersBorneOffHistory[state.checkersBorneOffHistory.length - 1] || backgammonInitialState.checkersBorneOff,
+        points: state.pointsHistory[state.pointsHistory.length - 1] || initialState.points,
+        diceValue: state.diceHistory[state.diceHistory.length - 1] || initialState.diceValue,
+        player: state.playerHistory[state.playerHistory.length - 1] || initialState.player,
+        potentialMoves: state.potentialMovesHistory[state.potentialMovesHistory.length - 1] || initialState.potentialMoves,
+        checkersOnBar: state.checkersOnBarHistory[state.checkersOnBarHistory.length - 1] || initialState.checkersOnBar,
+        checkersBorneOff: state.checkersBorneOffHistory[state.checkersBorneOffHistory.length - 1] || initialState.checkersBorneOff,
       };
 
       return {
@@ -107,7 +108,9 @@ export const backgammonSlice = createSlice({
     },
 
     togglePlayerRoll: (state) => ({ ...state, player: togglePlayer(state.player), diceValue: null }),
-    resetGame: () => ({ ...backgammonInitialState, points: initializeBoard() }),
+
+    resetGame: () => ({ ...initialState, points: initializeBoard() }),
+
     loadTestBoard: (state, action) => ({
       ...state,
       ...action.payload,
@@ -116,12 +119,14 @@ export const backgammonSlice = createSlice({
       selectedSpot: null,
       potentialSpots: []
     }),
+
     setCustomDice: (state, action) => ({
       ...state,
       diceValue: action.payload,
       potentialMoves: state.player ?
         findPotentialMoves(state.points, state.player, action.payload, state.checkersOnBar) : {}
     }),
+
     loadFromURL: createLoadFromURL((newState) => ({
       ...newState,
       potentialMoves: newState.diceValue ?
@@ -129,6 +134,7 @@ export const backgammonSlice = createSlice({
       selectedSpot: null,
       potentialSpots: []
     })),
+
     saveToURL: createSaveToURL([
       'pointsHistory', 'diceHistory', 'playerHistory',
       'checkersOnBarHistory', 'checkersBorneOffHistory', 'potentialMovesHistory'
@@ -190,6 +196,17 @@ function updateMoveCheckerState(state, fromIndex, toIndex, moveDistance) {
   };
 }
 
-export const { makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame, selectSpot, loadTestBoard, setCustomDice, loadFromURL, saveToURL } = backgammonSlice.actions;
+export const {
+  loadFromURL,
+  loadTestBoard,
+  makeMove,
+  resetGame,
+  rollDice,
+  selectSpot,
+  setCustomDice,
+  togglePlayerRoll,
+  undoRoll,
+  saveToURL
+} = slice.actions;
 
-export default backgammonSlice.reducer;
+export default slice.reducer;

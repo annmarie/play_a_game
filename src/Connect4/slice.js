@@ -19,10 +19,7 @@ export const slice = createSlice({
     makeMove: (state, action) => reduceMakeMove(state, action),
     undoMove: (state, action) => reduceUndoMove(state, action),
     resetGame: () => ({ ...initialState, board: initializeBoard() }),
-    loadTestBoard: (state, action) => ({
-      ...state,
-      ...action.payload
-    }),
+    loadTestBoard: (state, action) => ({ ...state, ...action.payload }),
     loadFromURL: createLoadFromURL(),
     saveToURL: createSaveToURL(['history']),
   },

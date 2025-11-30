@@ -1,7 +1,5 @@
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
-import { getPointIdToIndexMap, getIndexToPointIdMap, generatePointIndexMap } from './boardUtils';
-
-export { generatePointIndexMap };
+import { getPointIdToIndexMap, getIndexToPointIdMap } from './boardUtils';
 
 /**
  * Validates a bear-off move and returns the dice value to use
@@ -91,7 +89,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
 
   for (const point of points.filter(p => p.player === player)) {
     const uniqueDice = [...new Set(dice)];
-    
+
     for (const die of uniqueDice) {
       const movePointId = calculatePotentialMove(player, point.id - 1, die);
       const diceCount = dice.filter(d => d === die).length;
@@ -100,10 +98,10 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
       if (canBearOffNow) {
         const isInHomeBoard = (player === PLAYER_LEFT && point.id >= START_KEY_RIGHT - 5 && point.id <= START_KEY_RIGHT) ||
           (player === PLAYER_RIGHT && point.id >= START_KEY_LEFT - 5 && point.id <= START_KEY_LEFT);
-        
+
         if (isInHomeBoard) {
           const requiredDie = player === PLAYER_LEFT ? (START_KEY_RIGHT + 1) - point.id : (START_KEY_LEFT + 1) - point.id;
-          
+
           if (die >= requiredDie) {
             if (die === requiredDie) {
               potentialMoves[point.id] = potentialMoves[point.id] || [];
@@ -119,7 +117,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
                 .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
                 .map(p => p.id);
               const furthestOccupied = player === PLAYER_LEFT ? Math.max(...occupiedPoints) : Math.min(...occupiedPoints);
-              
+
               if (point.id === furthestOccupied) {
                 potentialMoves[point.id] = potentialMoves[point.id] || [];
                 for (let i = 0; i < diceCount; i++) {

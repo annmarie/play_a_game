@@ -9,7 +9,6 @@ import * as gameLogic from './gameLogic';
 
 jest.mock('./gameLogic', () => ({
   ...jest.requireActual('./gameLogic'),
-  rollDie: jest.fn(),
   rollDiceLogic: jest.fn(),
 }));
 
