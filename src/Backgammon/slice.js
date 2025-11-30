@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
-import { togglePlayer, checkWinner } from './gameLogic';
-import { rollDie } from './gameLogic';
+import { togglePlayer, checkWinner, rollDie } from './gameLogic';
 import { findPotentialMoves, moveCheckers, generatePointIndexMap } from './moveValidation';
 import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT, INVALID_INDEX, MAX_HISTORY } from './globals';
