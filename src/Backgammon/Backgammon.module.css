@@ -50,3 +50,25 @@
   gap: 0.625em;
   align-items: center;
 }
+
+.gameScore {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+  font-weight: bold;
+}
+
+.playAgainButton {
+  margin-left: 1em;
+  padding: 0.5em 1em;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.25em;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.playAgainButton:hover {
+  background-color: #45a049;
+}

@@ -39,3 +39,12 @@
   padding: 0.5em;
   border-top: 1px solid #ccc;
 }
+
+/* Score display */
+.gameScore {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 1em;
+}

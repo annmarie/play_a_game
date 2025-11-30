@@ -8,7 +8,7 @@ import {
 } from './globals';
 import {
   makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame,
-  selectSpot, loadTestBoard, loadFromURL, saveToURL
+  playAgain, selectSpot, loadTestBoard, loadFromURL, saveToURL
 } from './slice';
 import Dice from './Dice';
 import Board from './Board';
@@ -75,6 +75,24 @@ const Backgammon = () => {
   return (
     <Layout>
       <div className={styles.backgammonGame}>
+        <div className={styles.gameScore}>
+          <div>Games Won:</div>
+          <div><Checker player={PLAYER_LEFT} /> {state.gamesWon?.[PLAYER_LEFT] || 0}</div>
+          <div><Checker player={PLAYER_RIGHT} /> {state.gamesWon?.[PLAYER_RIGHT] || 0}</div>
+        </div>
+
+        {state.winner && (
+          <div className="winner-announcement">
+            🎉 Winner: <Checker player={state.winner} />
+            <button
+              className={styles.playAgainButton}
+              onClick={() => dispatch(playAgain())}
+              aria-label="Play another game"
+            >
+              Play Again
+            </button>
+          </div>
+        )}
 
         <Board
           points={state.points}
@@ -85,11 +103,6 @@ const Backgammon = () => {
         />
 
         <div className={styles.backgammonStatus}>
-          {state.winner && (
-            <div className="winner-announcement">
-              🎉 Winner: <Checker player={state.winner} />
-            </div>
-          )}
 
           <div>
             {state.diceValue ? (

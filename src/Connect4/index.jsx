@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
-import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT } from './globals';
+import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT, PLAYER_ONE, PLAYER_TWO } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, undoMove, resetGame, loadTestBoard, loadFromURL, saveToURL } from './slice';
+import { makeMove, undoMove, resetGame, playAgain, loadTestBoard, loadFromURL, saveToURL } from './slice';
 import StatusBox from './StatusBox';
 import Board from './Board';
 import styles from './Connect4.module.css';
@@ -37,11 +37,18 @@ const Connect4 = () => {
       <div className={styles.connect4Game}>
         <h2 className={styles.connect4Title}>Connect Four</h2>
 
+        <div className={styles.gameScore}>
+          <div>Games Won:</div>
+          <div style={{color: 'red'}}>{PLAYER_ONE}: {state.gamesWon?.[PLAYER_ONE] || 0}</div>
+          <div style={{color: 'gold'}}>{PLAYER_TWO}: {state.gamesWon?.[PLAYER_TWO] || 0}</div>
+        </div>
+
         <StatusBox
           player={state.player}
           winner={state.winner}
           winnerDesc={state.winnerDesc}
           boardFull={state.boardFull}
+          onPlayAgain={() => dispatch(playAgain())}
         />
 
         <Board

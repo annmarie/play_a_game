@@ -22,6 +22,7 @@ export const initialState = {
   checkersOnBarHistory: [],
   checkersBorneOffHistory: [],
   potentialMovesHistory: [],
+  gamesWon: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
 };
 
 export const slice = createSlice({
@@ -85,7 +86,9 @@ export const slice = createSlice({
 
     togglePlayerRoll: (state) => ({ ...state, player: togglePlayer(state.player), diceValue: null }),
 
-    resetGame: () => ({ ...initialState, points: initializeBoard() }),
+    resetGame: (state) => ({ ...initialState, points: initializeBoard(), gamesWon: state.gamesWon }),
+
+    playAgain: (state) => ({ ...initialState, points: initializeBoard(), gamesWon: state.gamesWon }),
 
     loadTestBoard: (state, action) => {
       const { points, checkersOnBar, checkersBorneOff, diceValue, player, winner } = action.payload;
@@ -185,6 +188,7 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
 
   const moveInProcess = updatedDiceValue.length > 0;
   const winner = checkWinner(updatedCheckersBorneOff, state.player);
+  const updatedGamesWon = winner ? { ...state.gamesWon, [winner]: state.gamesWon[winner] + 1 } : state.gamesWon;
 
   return {
     ...state,
@@ -192,6 +196,7 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
     checkersOnBar: updatedCheckersOnBar,
     checkersBorneOff: updatedCheckersBorneOff,
     winner,
+    gamesWon: updatedGamesWon,
     diceValue: moveInProcess && !winner ? updatedDiceValue : null,
     player: moveInProcess && !winner ? state.player : winner ? null : togglePlayer(state.player),
     potentialMoves: moveInProcess && !winner ? updatedPotentialMoves : {},
@@ -210,6 +215,7 @@ export const {
   loadFromURL,
   loadTestBoard,
   makeMove,
+  playAgain,
   resetGame,
   rollDice,
   selectSpot,

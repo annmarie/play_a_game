@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard, dropChecker, checkWin, isBoardFull, togglePlayer } from './gameLogic';
-import { PLAYER_ONE, MAX_HISTORY } from './globals';
+import { PLAYER_ONE, PLAYER_TWO, MAX_HISTORY } from './globals';
 import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 
 export const initialState = {
@@ -10,6 +10,7 @@ export const initialState = {
   winnerDesc: '',
   boardFull: false,
   history: [],
+  gamesWon: { [PLAYER_ONE]: 0, [PLAYER_TWO]: 0 },
 };
 
 export const slice = createSlice({
@@ -18,7 +19,8 @@ export const slice = createSlice({
   reducers: {
     makeMove: (state, action) => reduceMakeMove(state, action),
     undoMove: (state, action) => reduceUndoMove(state, action),
-    resetGame: () => ({ ...initialState, board: initializeBoard() }),
+    resetGame: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
+    playAgain: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
     loadTestBoard: (state, action) => {
       const { board, player, winner, winnerDesc, boardFull } = action.payload;
       return {
@@ -47,6 +49,7 @@ const reduceMakeMove = (state, action) => {
 
   const { haveWinner, desc } = checkWin(newBoard, currentMove);
   const boardFull = isBoardFull(newBoard);
+  const updatedGamesWon = haveWinner ? { ...state.gamesWon, [player]: state.gamesWon[player] + 1 } : state.gamesWon;
 
   const newHistory = [...state.history, state.board];
   if (newHistory.length > MAX_HISTORY) {
@@ -61,6 +64,7 @@ const reduceMakeMove = (state, action) => {
     boardFull,
     player: togglePlayer(player),
     history: newHistory,
+    gamesWon: updatedGamesWon,
   };
 };
 
@@ -79,6 +83,6 @@ const reduceUndoMove = (state) => {
   };
 };
 
-export const { makeMove, undoMove, resetGame, loadTestBoard, loadFromURL, saveToURL } = slice.actions;
+export const { makeMove, undoMove, resetGame, playAgain, loadTestBoard, loadFromURL, saveToURL } = slice.actions;
 
 export default slice.reducer;

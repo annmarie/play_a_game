@@ -2,3 +2,18 @@
   margin: 1em;
   font-size: 1.125em;
 }
+
+.playAgainButton {
+  margin-left: 1em;
+  padding: 0.5em 1em;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.25em;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.playAgainButton:hover {
+  background-color: #45a049;
+}
