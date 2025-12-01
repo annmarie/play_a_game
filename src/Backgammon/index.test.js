@@ -213,18 +213,6 @@ describe('Backgammon Component Tests', () => {
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
   });
 
-  it('should undo the dice roll when the "u" key is pressed', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
-    expect(screen.getByRole('button', { name: ROLL_DICE })).toBeInTheDocument();
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYER_RIGHT });
-    await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }))
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(4);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
-    await act(async () => fireEvent.keyDown(window, { key: UNDO_KEY }))
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(0);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(0);
-  });
-
   it('should clean up the event listener on unmount', async () => {
     const { unmount } = await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
     const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
@@ -310,22 +298,22 @@ describe('Backgammon Component Tests', () => {
 
   it('should end turn when end turn button is clicked', async () => {
     await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
-    
+
     const points = screen.queryAllByRole('point');
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYER_LEFT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    
+
     // Make moves to use all dice
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[14]));
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[17]));
-    
+
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_LEFT);
-    
+
     const endTurnButton = screen.getByRole('button', { name: END_TURN });
     await act(async () => fireEvent.click(endTurnButton));
-    
+
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYER_RIGHT);
   });
 
@@ -472,7 +460,7 @@ describe('Backgammon Component Tests', () => {
 
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
     expect(undoButton).toHaveAttribute('disabled');
-    
+
     // Test passes - undo button is properly disabled
   });
 });

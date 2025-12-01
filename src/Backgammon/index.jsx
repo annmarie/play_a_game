@@ -31,18 +31,17 @@ const Backgammon = () => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === ' ') {
-        if (state.diceValue === null) {
+        if (state.turnEnding) {
+          dispatch(endTurn());
+        } else if (state.diceValue === null) {
           dispatch(rollDice());
         }
-      }
-      if (e.key === 'u') {
-        dispatch(undoRoll());
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [state.diceValue, dispatch]);
+  }, [state.diceValue, state.turnEnding, dispatch]);
 
   const handleSpotClick = useCallback(
     (point) => {
