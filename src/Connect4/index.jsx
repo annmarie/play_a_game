@@ -40,7 +40,7 @@ const Connect4 = () => {
         <div className={styles.gameScore}>
           <div>Games Won:</div>
           <div style={{color: 'red'}}>{PLAYER_ONE}: {state.gamesWon?.[PLAYER_ONE] || 0}</div>
-          <div style={{color: 'gold'}}>{PLAYER_TWO}: {state.gamesWon?.[PLAYER_TWO] || 0}</div>
+          <div style={{color: 'yellow'}}>{PLAYER_TWO}: {state.gamesWon?.[PLAYER_TWO] || 0}</div>
         </div>
 
         <StatusBox
