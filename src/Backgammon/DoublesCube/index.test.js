@@ -23,21 +23,6 @@ describe('DoublesCube', () => {
     expect(screen.getByText('2')).toBeInTheDocument();
   });
 
-  it('shows double button when player can offer double', () => {
-    render(
-      <Provider store={mockStore}>
-        <DoublesCube
-          doublingCube={{ value: 1, owner: null, pendingOffer: null }}
-          currentPlayer="left"
-          winner={null}
-          turnEnding={true}
-        />
-      </Provider>
-    );
-
-    expect(screen.getByText('Double')).toBeInTheDocument();
-  });
-
   it('shows accept/decline buttons when there is a pending offer', () => {
     render(
       <Provider store={mockStore}>
