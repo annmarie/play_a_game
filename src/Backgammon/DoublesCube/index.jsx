@@ -4,14 +4,15 @@ import { offerDouble, acceptDouble, declineDouble } from '../slice';
 import styles from './DoublesCube.module.css';
 import Checker from '../Checker';
 
-const DoublesCube = ({ doublingCube, currentPlayer, winner }) => {
+const DoublesCube = ({ doublingCube, currentPlayer, winner, turnEnding }) => {
   const dispatch = useDispatch();
 
   const canOfferDouble = currentPlayer &&
     !winner &&
     !doublingCube.pendingOffer &&
     doublingCube.owner !== currentPlayer &&
-    doublingCube.value < 64;
+    doublingCube.value < 64 &&
+    turnEnding;
 
   const hasPendingOffer = doublingCube.pendingOffer &&
     doublingCube.pendingOffer !== currentPlayer &&
@@ -78,7 +79,8 @@ DoublesCube.propTypes = {
   }).isRequired,
   currentPlayer: PropTypes.string,
   winner: PropTypes.string,
-  diceValue: PropTypes.array
+  diceValue: PropTypes.array,
+  turnEnding: PropTypes.bool
 };
 
 export default DoublesCube;

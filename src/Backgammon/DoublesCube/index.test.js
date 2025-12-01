@@ -30,7 +30,7 @@ describe('DoublesCube', () => {
           doublingCube={{ value: 1, owner: null, pendingOffer: null }}
           currentPlayer="left"
           winner={null}
-          diceValue={null}
+          turnEnding={true}
         />
       </Provider>
     );

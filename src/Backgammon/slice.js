@@ -28,6 +28,7 @@ export const initialState = {
     owner: null,
     pendingOffer: null
   },
+  turnEnding: false,
 };
 
 export const slice = createSlice({
@@ -136,11 +137,11 @@ export const slice = createSlice({
       if (state.doublingCube.owner === state.player || state.doublingCube.pendingOffer) return state;
       return {
         ...state,
-        player: togglePlayer(state.player),
         doublingCube: {
           ...state.doublingCube,
           pendingOffer: state.player
-        }
+        },
+        turnEnding: false
       };
     },
 
@@ -150,9 +151,14 @@ export const slice = createSlice({
         ...state,
         doublingCube: {
           value: state.doublingCube.value * 2,
-          owner: state.doublingCube.pendingOffer,
+          owner: state.player,
           pendingOffer: null
-        }
+        },
+        player: togglePlayer(state.player),
+        diceValue: null,
+        selectedSpot: null,
+        potentialSpots: [],
+        potentialMoves: {}
       };
     },
 
@@ -170,7 +176,20 @@ export const slice = createSlice({
           value: 1,
           owner: null,
           pendingOffer: null
-        }
+        },
+        turnEnding: false
+      };
+    },
+
+    endTurn: (state) => {
+      return {
+        ...state,
+        player: togglePlayer(state.player),
+        diceValue: null,
+        turnEnding: false,
+        selectedSpot: null,
+        potentialSpots: [],
+        potentialMoves: {}
       };
     },
   },
@@ -237,6 +256,7 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
   const winner = checkWinner(updatedCheckersBorneOff, state.player);
   const gameValue = state.doublingCube.value;
   const updatedGamesWon = winner ? { ...state.gamesWon, [winner]: state.gamesWon[winner] + gameValue } : state.gamesWon;
+  const turnShouldEnd = !moveInProcess && !winner;
 
   return {
     ...state,
@@ -246,8 +266,9 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
     winner,
     gamesWon: updatedGamesWon,
     diceValue: moveInProcess && !winner ? updatedDiceValue : null,
-    player: moveInProcess && !winner ? state.player : winner ? null : togglePlayer(state.player),
+    player: winner ? null : state.player,
     potentialMoves: moveInProcess && !winner ? updatedPotentialMoves : {},
+    turnEnding: turnShouldEnd,
     selectedSpot: null,
     potentialSpots: [],
     pointsHistory: [...state.pointsHistory, state.points].slice(-MAX_HISTORY),
@@ -273,7 +294,8 @@ export const {
   saveToURL,
   offerDouble,
   acceptDouble,
-  declineDouble
+  declineDouble,
+  endTurn
 } = slice.actions;
 
 export default slice.reducer;

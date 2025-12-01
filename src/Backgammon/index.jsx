@@ -3,12 +3,12 @@ import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
   UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT,
-  ROLL_DICE_BUTTON_TEXT,
+  ROLL_DICE_BUTTON_TEXT, END_TURN_BUTTON_TEXT,
   PLAYER_LEFT, PLAYER_RIGHT
 } from './globals';
 import {
   makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame,
-  playAgain, selectSpot, loadTestBoard, loadFromURL, saveToURL
+  playAgain, selectSpot, loadTestBoard, loadFromURL, saveToURL, endTurn
 } from './slice';
 import Dice from './Dice';
 import Board from './Board';
@@ -89,6 +89,7 @@ const Backgammon = () => {
             currentPlayer={state.player}
             winner={state.winner}
             diceValue={state.diceValue}
+            turnEnding={state.turnEnding}
           />
         </div>
 
@@ -116,31 +117,37 @@ const Backgammon = () => {
         <div className={styles.backgammonStatus}>
           <div>
             {state.diceValue ? (
-              <Dice diceValue={state.diceValue} />
+              <div>
+                <Dice diceValue={state.diceValue} />
+                {((Object.keys(state.potentialMoves || {}).length < 1 &&
+                  state.diceValue !== null &&
+                  state.diceValue.length > 0) || state.turnEnding) && (
+                  <button
+                    className="end-turn-button"
+                    aria-label="End turn"
+                    onClick={() => dispatch(state.turnEnding ? endTurn() : togglePlayerRoll())}
+                  >
+                    {END_TURN_BUTTON_TEXT}
+                  </button>
+                )}
+              </div>
             ) : (
               <div className="dice-roll">
-                {state.player &&
-                 !state.winner &&
-                 !state.doublingCube.pendingOffer &&
-                 state.doublingCube.owner !== state.player &&
-                 state.doublingCube.value < 64 ? (
-                  <div className={styles.doubleOrRoll}>
-                    <button
-                      className={styles.passButton}
-                      aria-label="Pass and roll dice"
-                      onClick={() => dispatch(rollDice())}
-                    >
-                     End Turn and Roll Dice
-                    </button>
-                  </div>
-                ) : (
+                <button
+                  className={styles.diceButton}
+                  aria-label="Roll Dice"
+                  onClick={() => dispatch(rollDice())}
+                  disabled={state.winner || state.doublingCube.pendingOffer || state.turnEnding}
+                >
+                  {ROLL_DICE_BUTTON_TEXT}
+                </button>
+                {state.turnEnding && (
                   <button
-                    className={styles.diceButton}
-                    aria-label="Roll Dice"
-                    onClick={() => dispatch(rollDice())}
-                    disabled={state.winner || state.doublingCube.pendingOffer}
+                    className="end-turn-button"
+                    aria-label="End turn"
+                    onClick={() => dispatch(endTurn())}
                   >
-                    {ROLL_DICE_BUTTON_TEXT}
+                    {END_TURN_BUTTON_TEXT}
                   </button>
                 )}
               </div>
@@ -152,20 +159,6 @@ const Backgammon = () => {
               <div>
                 Current Player <Checker player={state.player} />
               </div>
-              {Object.keys(state.potentialMoves || {}).length < 1 &&
-                state.diceValue !== null &&
-                state.diceValue.length > 0 && (
-                  <div className="toggle-player">
-                    <p>no moves available move to next player</p>
-                    <button
-                      className="toggle-button"
-                      aria-label="No moves found release move to next player."
-                      onClick={() => dispatch(togglePlayerRoll())}
-                    >
-                      Release Move To Next Player
-                    </button>
-                  </div>
-                )}
             </div>
           )}
 
