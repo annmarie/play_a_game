@@ -498,7 +498,7 @@ function validateInitialBoardState(points) {
           selectedSpot: null,
           potentialSpots: [],
           potentialMoves: {},
-          turnEnding: false,
+          turnEnding: true,
           pointsHistory: [],
           diceHistory: [],
           playerHistory: [],
@@ -523,6 +523,6 @@ function validateInitialBoardState(points) {
     // Check that the owner is displayed
     expect(screen.getByText('Owned by:')).toBeInTheDocument();
 
-    // Check that the Double button appears when conditions are met (player doesn't own cube and turn is not ending)
+    // Check that the Double button appears when conditions are met (player doesn't own cube and turn is ending)
     expect(screen.getByRole('button', { name: /offer to double/i })).toBeInTheDocument();
   });
