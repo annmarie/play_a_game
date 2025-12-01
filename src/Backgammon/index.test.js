@@ -255,7 +255,6 @@ describe('Backgammon Component Tests', () => {
 
     const endTurnButton = screen.getByRole('button', { name: END_TURN });
     expect(endTurnButton).toBeInTheDocument();
-    // expect(screen.getByText('no moves available move to next player')).toBeInTheDocument();
   });
 
   it('should show end turn button when turn is ending', async () => {
