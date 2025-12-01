@@ -140,13 +140,13 @@ export const slice = createSlice({
         doublingCube: {
           ...state.doublingCube,
           pendingOffer: state.player
-        },
-        turnEnding: false
+        }
       };
     },
 
     acceptDouble: (state) => {
       if (!state.doublingCube.pendingOffer) return state;
+      const offeringPlayer = state.doublingCube.pendingOffer;
       return {
         ...state,
         doublingCube: {
@@ -154,7 +154,7 @@ export const slice = createSlice({
           owner: state.player,
           pendingOffer: null
         },
-        player: togglePlayer(state.player),
+        player: offeringPlayer,
         diceValue: null,
         selectedSpot: null,
         potentialSpots: [],

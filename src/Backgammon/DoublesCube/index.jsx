@@ -12,7 +12,7 @@ const DoublesCube = ({ doublingCube, currentPlayer, winner, turnEnding }) => {
     !doublingCube.pendingOffer &&
     doublingCube.owner !== currentPlayer &&
     doublingCube.value < 64 &&
-    turnEnding;
+    !turnEnding;
 
   const hasPendingOffer = doublingCube.pendingOffer &&
     doublingCube.pendingOffer !== currentPlayer &&

@@ -484,3 +484,45 @@ function validateInitialBoardState(points) {
     }
   });
 };
+  it('should render DoublesCube with correct props', async () => {
+    const customStore = configureStore({
+      reducer,
+      preloadedState: {
+        backgammon: {
+          points: Array.from({ length: 24 }, (_, i) => ({ id: i + 1, checkers: 0, player: null })),
+          checkersOnBar: { left: 0, right: 0 },
+          checkersBorneOff: { left: 0, right: 0 },
+          diceValue: null,
+          player: PLAYER_RIGHT,
+          winner: null,
+          selectedSpot: null,
+          potentialSpots: [],
+          potentialMoves: {},
+          turnEnding: false,
+          pointsHistory: [],
+          diceHistory: [],
+          playerHistory: [],
+          checkersOnBarHistory: [],
+          checkersBorneOffHistory: [],
+          potentialMovesHistory: [],
+          gamesWon: { left: 0, right: 0 },
+          doublingCube: {
+            value: 2,
+            owner: PLAYER_LEFT,
+            pendingOffer: null
+          }
+        }
+      }
+    });
+
+    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
+
+    // Check that the doubles cube displays the correct value
+    expect(screen.getByText('2')).toBeInTheDocument();
+
+    // Check that the owner is displayed
+    expect(screen.getByText('Owned by:')).toBeInTheDocument();
+
+    // Check that the Double button appears when conditions are met (player doesn't own cube and turn is not ending)
+    expect(screen.getByRole('button', { name: /offer to double/i })).toBeInTheDocument();
+  });
