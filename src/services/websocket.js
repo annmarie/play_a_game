@@ -6,8 +6,14 @@ class WebSocketService {
     this.maxReconnectAttempts = 5;
   }
 
-  connect(url = 'ws://localhost:8080') {
+  connect(url = 'wss://localhost:8080') {
     try {
+      // Validate URL to prevent SSRF
+      const allowedHosts = ['localhost', '127.0.0.1'];
+      const urlObj = new URL(url);
+      if (!allowedHosts.includes(urlObj.hostname)) {
+        throw new Error('Connection to this host is not allowed');
+      }
       this.ws = new WebSocket(url);
 
       this.ws.onopen = () => {
@@ -17,8 +23,22 @@ class WebSocketService {
       };
 
       this.ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        this.emit(data.type, data.payload);
+        try {
+          // Validate data before parsing
+          if (typeof event.data !== 'string' || event.data.length > 10000) {
+            console.error('Invalid message format or size');
+            return;
+          }
+          const data = JSON.parse(event.data);
+          // Validate parsed data structure
+          if (!data || typeof data.type !== 'string' || !data.payload) {
+            console.error('Invalid message structure');
+            return;
+          }
+          this.emit(data.type, data.payload);
+        } catch (error) {
+          console.error('Failed to parse message:', error);
+        }
       };
 
       this.ws.onclose = () => {
@@ -41,7 +61,6 @@ class WebSocketService {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       setTimeout(() => {
-        console.log(`Reconnecting... Attempt ${this.reconnectAttempts}`);
         this.connect();
       }, 2000 * this.reconnectAttempts);
     }

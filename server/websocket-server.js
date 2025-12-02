@@ -2,8 +2,19 @@ const WebSocket = require('ws');
 const http = require('http');
 const { MESSAGE_TYPES, ERROR_MESSAGES, DEFAULT_PORT, ROOM_ID_LENGTH } = require('./globals');
 
+const ALLOWED_ORIGINS = ['http://localhost:5173', 'http://localhost:3000'];
+
+function isOriginAllowed(origin) {
+  return ALLOWED_ORIGINS.includes(origin);
+}
+
 const server = http.createServer();
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({
+  server,
+  verifyClient: (info) => {
+    return isOriginAllowed(info.origin);
+  }
+});
 
 const rooms = new Map();
 const players = new Map();
@@ -12,12 +23,20 @@ function generateRoomId() {
   return Math.random().toString(36).substr(2, ROOM_ID_LENGTH).toUpperCase();
 }
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
   console.log('New client connected');
+
+  // Store origin for additional verification
+  ws.origin = req.headers.origin;
 
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
+      // Verify origin for each message
+      if (!isOriginAllowed(ws.origin)) {
+        ws.close(1008, 'Origin not allowed');
+        return;
+      }
       handleMessage(ws, data);
     } catch (error) {
       console.error('Error parsing message:', error);
@@ -37,6 +56,12 @@ wss.on('connection', (ws) => {
 
 function handleMessage(ws, data) {
   const { type, payload } = data;
+
+  // CSRF protection: validate message structure
+  if (!type || !payload || typeof type !== 'string') {
+    ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
+    return;
+  }
 
   switch (type) {
     case MESSAGE_TYPES.CREATE_ROOM:
