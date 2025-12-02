@@ -6,7 +6,7 @@ class WebSocketService {
     this.maxReconnectAttempts = 5;
   }
 
-  connect(url = 'wss://localhost:8080') {
+  connect(url = 'ws://localhost:8080') {
     try {
       // Validate URL to prevent SSRF
       const allowedHosts = ['localhost', '127.0.0.1'];
