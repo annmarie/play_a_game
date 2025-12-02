@@ -8,12 +8,16 @@
     "build": "NODE_ENV=production vite build",
     "lint": "eslint .",
     "preview": "NODE_ENV=production vite preview",
-    "test": "NODE_ENV=test jest -u"
+    "test": "NODE_ENV=test jest -u",
+    "server": "cd server && npm start",
+    "server:dev": "cd server && npm run dev",
+    "dev:full": "concurrently \"npm run server:dev\" \"npm run dev\""
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.0",
     "axios": "^1.7.9",
     "form-data": "^4.0.5",
+    "prop-types": "^15.8.1",
     "proxy-from-env": "^1.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -28,6 +32,7 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react-swc": "^3.8.0",
+    "concurrently": "^8.2.2",
     "eslint": "^9.21.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",

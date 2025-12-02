@@ -1,0 +1,38 @@
+// WebSocket Message Types
+const MESSAGE_TYPES = {
+  CREATE_ROOM: 'createRoom',
+  JOIN_ROOM: 'joinRoom',
+  LEAVE_ROOM: 'leaveRoom',
+  GAME_MOVE: 'gameMove',
+  ROOM_CREATED: 'roomCreated',
+  ROOM_JOINED: 'roomJoined',
+  OPPONENT_JOINED: 'opponentJoined',
+  OPPONENT_LEFT: 'opponentLeft',
+  ERROR: 'error'
+};
+
+// Error Messages
+const ERROR_MESSAGES = {
+  INVALID_FORMAT: 'Invalid message format',
+  UNKNOWN_TYPE: 'Unknown message type',
+  ROOM_NOT_FOUND: 'Room not found',
+  ROOM_FULL: 'Room is full'
+};
+
+// Server Configuration
+const DEFAULT_PORT = 8080;
+const ROOM_ID_LENGTH = 6;
+
+// Game Types
+const GAME_TYPES = {
+  CONNECT4: 'connect4',
+  BACKGAMMON: 'backgammon'
+};
+
+module.exports = {
+  MESSAGE_TYPES,
+  ERROR_MESSAGES,
+  DEFAULT_PORT,
+  ROOM_ID_LENGTH,
+  GAME_TYPES
+};
