@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { PLAYER_RIGHT } from '../globals';
+import { PLAYER_RIGHT } from '../../globals';
 import Point from '.';
 
 describe('Point Component', () => {

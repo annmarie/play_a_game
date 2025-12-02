@@ -5,8 +5,7 @@ import RoomManager from './index';
 import multiplayerReducer from './slice';
 import { wsService } from '../services/websocket';
 
-// Mock the websocket service
-jest.mock('../services/websocket');
+
 
 const createMockStore = (initialState = {}) => {
   return configureStore({

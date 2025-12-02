@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PLAYER_RIGHT, PLAYER_LEFT } from '../globals';
+import { PLAYER_RIGHT, PLAYER_LEFT } from '../../globals';
 import Checker from '.';
 
 describe('Checker Component', () => {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useMemo } from 'react'
 import Checker from '../Checker'
 import styles from './Point.module.css'
-import { START_KEY_LEFT } from '../globals';
+import { START_KEY_LEFT } from '../../globals';
 
 const Point = ({ point, onClick, selected, potential }) => {
   const pointClasses = useMemo(() => {
