@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { wsService } from '../services/websocket';
 import { setPlayerInfo, setError, leaveRoom } from './slice';
+import { BUTTON_TEXT, LABELS, PLACEHOLDERS, ERROR_MESSAGES } from './globals';
 import styles from './RoomManager.module.css';
 
 const RoomManager = ({ gameType }) => {
@@ -13,7 +14,7 @@ const RoomManager = ({ gameType }) => {
 
   const handleCreateRoom = () => {
     if (!inputName.trim()) {
-      dispatch(setError('Please enter your name'));
+      dispatch(setError(ERROR_MESSAGES.ENTER_NAME));
       return;
     }
 
@@ -29,7 +30,7 @@ const RoomManager = ({ gameType }) => {
 
   const handleJoinRoom = () => {
     if (!inputName.trim() || !inputRoomId.trim()) {
-      dispatch(setError('Please enter your name and room ID'));
+      dispatch(setError(ERROR_MESSAGES.ENTER_NAME_AND_ROOM));
       return;
     }
 
@@ -47,25 +48,25 @@ const RoomManager = ({ gameType }) => {
     return (
       <div className={styles.roomInfo}>
         <h3>Room: {roomId}</h3>
-        <p>Waiting for opponent...</p>
-        <button onClick={() => dispatch(leaveRoom())}>Leave Room</button>
+        <p>{LABELS.WAITING_FOR_OPPONENT}</p>
+        <button onClick={() => dispatch(leaveRoom())}>{BUTTON_TEXT.LEAVE_ROOM}</button>
       </div>
     );
   }
 
   return (
     <div className={styles.roomManager}>
-      <h3>Multiplayer Setup</h3>
+      <h3>{LABELS.MULTIPLAYER_SETUP}</h3>
 
       {error && <div className={styles.error}>{error}</div>}
 
       <div className={styles.inputGroup}>
-        <label>Your Name:</label>
+        <label>{LABELS.YOUR_NAME}</label>
         <input
           type="text"
           value={inputName}
           onChange={(e) => setInputName(e.target.value)}
-          placeholder="Enter your name"
+          placeholder={PLACEHOLDERS.ENTER_NAME}
         />
       </div>
 
@@ -74,7 +75,7 @@ const RoomManager = ({ gameType }) => {
           onClick={handleCreateRoom}
           disabled={!isConnected}
         >
-          Create Room
+          {BUTTON_TEXT.CREATE_ROOM}
         </button>
 
         <div className={styles.joinSection}>
@@ -82,20 +83,20 @@ const RoomManager = ({ gameType }) => {
             type="text"
             value={inputRoomId}
             onChange={(e) => setInputRoomId(e.target.value)}
-            placeholder="Room ID"
+            placeholder={PLACEHOLDERS.ROOM_ID}
           />
           <button
             onClick={handleJoinRoom}
             disabled={!isConnected}
           >
-            Join Room
+            {BUTTON_TEXT.JOIN_ROOM}
           </button>
         </div>
       </div>
 
       {!isConnected && (
         <p className={styles.connectionStatus}>
-          Connecting to server...
+          {LABELS.CONNECTING}
         </p>
       )}
     </div>
