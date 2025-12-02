@@ -49,21 +49,25 @@
   border-radius: 0.25em;
 }
 
-button {
+.roomManager button,
+.roomInfo button {
   padding: 0.625em 1.25em;
-  background: #007bff;
-  color: white;
+  background: #007bff !important;
+  color: white !important;
   border: none;
   border-radius: 0.25em;
   cursor: pointer;
 }
 
-button:hover {
-  background: #0056b3;
+.roomManager button:hover,
+.roomInfo button:hover {
+  background: #0056b3 !important;
 }
 
-button:disabled {
-  background: #ccc;
+.roomManager button:disabled,
+.roomInfo button:disabled {
+  background: #ccc !important;
+  color: #5c5c5c!important;
   cursor: not-allowed;
 }
 
@@ -76,7 +80,7 @@ button:disabled {
 }
 
 .connectionStatus {
-  color: #666;
+  color: #5c5c5c;
   font-style: italic;
   text-align: center;
   margin-top: 0.625em;

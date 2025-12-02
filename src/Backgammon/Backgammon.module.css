@@ -101,3 +101,53 @@
   background-color: #f0f0f0;
   padding: 0.5em;
 }
+
+/* Multiplayer styles */
+.gameModeSelector {
+  margin: 1.25em 0;
+  padding: 0.9375em;
+  border: 0.0625em solid #ddd;
+  border-radius: 0.5em;
+  background: #f9f9f9;
+}
+
+.gameModeSelector button {
+  margin-right: 0.625em;
+  padding: 0.5em 1em;
+  border: 0.0625em solid #ccc;
+  background: white;
+  border-radius: 0.25em;
+  cursor: pointer;
+}
+
+.gameModeSelector button.activeMode {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.multiplayerInfo {
+  background: #e8f5e8;
+  padding: 0.9375em;
+  border-radius: 0.5em;
+  margin: 0.9375em 0;
+  text-align: center;
+}
+
+.multiplayerInfo p {
+  margin: 0.3125em 0;
+}
+
+.multiplayerInfo button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 0.25em;
+  cursor: pointer;
+  margin-top: 0.625em;
+}
+
+.multiplayerInfo button:hover {
+  background: #c82333;
+}

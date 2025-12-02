@@ -29,6 +29,9 @@ export const initialState = {
     pendingOffer: null
   },
   turnEnding: false,
+  isMultiplayer: false,
+  myPlayer: null,
+  isMyTurn: false,
 };
 
 export const slice = createSlice({
@@ -189,7 +192,32 @@ export const slice = createSlice({
         turnEnding: false,
         selectedSpot: null,
         potentialSpots: [],
-        potentialMoves: {}
+        potentialMoves: {},
+        isMyTurn: state.isMultiplayer ? state.myPlayer === togglePlayer(state.player) : true
+      };
+    },
+
+    setMultiplayerMode: (state, action) => {
+      const { isMultiplayer, myPlayer } = action.payload;
+      return {
+        ...state,
+        isMultiplayer,
+        myPlayer,
+        isMyTurn: isMultiplayer ? myPlayer === PLAYER_LEFT : true
+      };
+    },
+
+    makeMultiplayerMove: (state) => {
+      // Handle moves from other players
+      return state;
+    },
+
+    syncGameState: (state, action) => {
+      const syncedState = action.payload;
+      return {
+        ...state,
+        ...syncedState,
+        isMyTurn: state.isMultiplayer ? state.myPlayer === syncedState.player : true
       };
     },
   },
@@ -295,7 +323,10 @@ export const {
   offerDouble,
   acceptDouble,
   declineDouble,
-  endTurn
+  endTurn,
+  setMultiplayerMode,
+  makeMultiplayerMove,
+  syncGameState
 } = slice.actions;
 
 export default slice.reducer;

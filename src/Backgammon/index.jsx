@@ -8,23 +8,92 @@ import {
 import {
   makeMove, rollDice, undoRoll, togglePlayerRoll, resetGame,
   playAgain, selectSpot, loadTestBoard, loadFromURL, saveToURL, endTurn,
-  acceptDouble, declineDouble
+  acceptDouble, declineDouble, makeMultiplayerMove, syncGameState, setMultiplayerMode
 } from './slice';
 import { testBoards } from './testBoards';
+import { setConnectionStatus, joinRoom, setOpponent, leaveRoom, setError } from '../RoomManager/slice';
+import { wsService } from '../services/websocket';
 import Dice from './Dice';
 import Board from './Board';
 import Checker from './Checker';
 import DoublesCube from './DoublesCube';
 import TestBoardLoader from '../TestBoardLoader';
+import RoomManager from '../RoomManager';
 import Layout from '../Layout';
 import styles from './Backgammon.module.css';
 
 const Backgammon = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.backgammon);
+  const multiplayer = useSelector((state) => state.multiplayer);
 
   useEffect(() => {
     dispatch(loadFromURL());
+
+    wsService.connect();
+
+    const handleConnected = () => {
+      dispatch(setConnectionStatus('connected'));
+    };
+
+    const handleDisconnected = () => {
+      dispatch(setConnectionStatus('disconnected'));
+    };
+
+    const handleRoomCreated = (data) => {
+      dispatch(joinRoom({ roomId: data.roomId, isHost: true }));
+    };
+
+    const handleRoomJoined = (data) => {
+      dispatch(joinRoom({ roomId: data.roomId, isHost: false }));
+      if (data.opponent) {
+        dispatch(setOpponent(data.opponent));
+        dispatch(setMultiplayerMode({
+          isMultiplayer: true,
+          myPlayer: data.isHost ? PLAYER_LEFT : PLAYER_RIGHT
+        }));
+      }
+    };
+
+    const handleOpponentJoined = (data) => {
+      dispatch(setOpponent(data.opponent));
+      dispatch(setMultiplayerMode({
+        isMultiplayer: true,
+        myPlayer: PLAYER_LEFT
+      }));
+    };
+
+    const handleGameMove = (data) => {
+      dispatch(makeMultiplayerMove(data));
+    };
+
+    const handleGameSync = (data) => {
+      dispatch(syncGameState(data.gameState));
+    };
+
+    const handleError = (error) => {
+      dispatch(setError(error.message || 'Connection error'));
+    };
+
+    wsService.on('connected', handleConnected);
+    wsService.on('disconnected', handleDisconnected);
+    wsService.on('roomCreated', handleRoomCreated);
+    wsService.on('roomJoined', handleRoomJoined);
+    wsService.on('opponentJoined', handleOpponentJoined);
+    wsService.on('gameMove', handleGameMove);
+    wsService.on('gameSync', handleGameSync);
+    wsService.on('error', handleError);
+
+    return () => {
+      wsService.off('connected', handleConnected);
+      wsService.off('disconnected', handleDisconnected);
+      wsService.off('roomCreated', handleRoomCreated);
+      wsService.off('roomJoined', handleRoomJoined);
+      wsService.off('opponentJoined', handleOpponentJoined);
+      wsService.off('gameMove', handleGameMove);
+      wsService.off('gameSync', handleGameSync);
+      wsService.off('error', handleError);
+    };
   }, [dispatch]);
 
   useEffect(() => {
@@ -68,9 +137,41 @@ const Backgammon = () => {
     dispatch(loadTestBoard(testBoard));
   }, [dispatch]);
 
+  const handleLeaveRoom = () => {
+    dispatch(leaveRoom());
+    dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }));
+    wsService.send('leaveRoom', { roomId: multiplayer.roomId });
+  };
+
   return (
     <Layout>
       <div className={styles.backgammonGame}>
+        <h2>Backgammon</h2>
+
+        {!multiplayer.roomId && (
+          <div className={styles.gameModeSelector}>
+            <button
+              onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }))}
+              className={!state.isMultiplayer ? styles.activeMode : ''}
+            >
+              Local Game
+            </button>
+            <RoomManager gameType="backgammon" />
+          </div>
+        )}
+
+        {multiplayer.roomId && (
+          <div className={styles.multiplayerInfo}>
+            <p>Room: {multiplayer.roomId}</p>
+            <p>You: {multiplayer.playerName} ({state.myPlayer})</p>
+            {multiplayer.opponent ? (
+              <p>Opponent: {multiplayer.opponent.name} ({state.myPlayer === PLAYER_LEFT ? PLAYER_RIGHT : PLAYER_LEFT})</p>
+            ) : (
+              <p>Waiting for opponent...</p>
+            )}
+            <button onClick={handleLeaveRoom}>Leave Room</button>
+          </div>
+        )}
         <div className={styles.gameScore}>
           <div className={styles.gameScoreLeft}>
             <div>Games Won:</div>
@@ -179,25 +280,27 @@ const Backgammon = () => {
           <div>
             <button
               onClick={() => dispatch(undoRoll())}
-              disabled={!state.player || state.pointsHistory.length <= 1 || state.winner}
+              disabled={!state.player || state.pointsHistory.length <= 1 || state.winner || state.isMultiplayer}
               aria-label="Undo last move"
             >
               {UNDO_BUTTON_TEXT}
             </button>
             <button
               onClick={() => dispatch(resetGame())}
-              disabled={!state.player || state.winner}
+              disabled={!state.player || state.winner || state.isMultiplayer}
               aria-label="Reset the game"
             >
               {RESET_BUTTON_TEXT}
             </button>
-            <button
-              onClick={handleSaveGameLink}
-              disabled={!state.player || state.winner}
-              aria-label="Save game link"
-            >
-              Save Game Link
-            </button>
+            {!multiplayer.roomId && (
+              <button
+                onClick={handleSaveGameLink}
+                disabled={!state.player || state.winner}
+                aria-label="Save game link"
+              >
+                Save Game Link
+              </button>
+            )}
           </div>
         </div>
 
@@ -221,10 +324,12 @@ const Backgammon = () => {
           )}
         </div>
 
-        <TestBoardLoader
-          testBoards={testBoards}
-          onLoadTestBoard={handleLoadTestBoard}
-        />
+        {!state.isMultiplayer && (
+          <TestBoardLoader
+            testBoards={testBoards}
+            onLoadTestBoard={handleLoadTestBoard}
+          />
+        )}
       </div>
     </Layout>
   );
