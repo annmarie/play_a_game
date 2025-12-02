@@ -2,56 +2,56 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 15px;
-  border: 2px solid #8B4513;
-  border-radius: 8px;
+  gap: 0.625em;
+  padding: 0.9375em;
+  border: 0.125em solid #8B4513;
+  border-radius: 0.5em;
   background-color: #F5DEB3;
-  min-width: 120px;
+  min-width: 7.5em;
 }
 
 .cubeDisplay {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 0.3125em;
 }
 
 .cube {
-  width: 40px;
-  height: 40px;
+  width: 2.5em;
+  height: 2.5em;
   background: linear-gradient(45deg, #FFD700, #FFA500);
-  border: 2px solid #8B4513;
-  border-radius: 6px;
+  border: 0.125em solid #8B4513;
+  border-radius: 0.375em;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 1.125em;
   color: #8B4513;
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0.125em 0.125em 0.25em rgba(0,0,0,0.3);
 }
 
 .owner {
-  font-size: 12px;
+  font-size: 0.75em;
   color: #8B4513;
   text-align: center;
 }
 
 .pendingOffer {
   background-color: #FFE4B5;
-  padding: 8px;
-  border-radius: 4px;
+  padding: 0.5em;
+  border-radius: 0.25em;
   font-weight: bold;
   color: #8B4513;
   text-align: center;
-  border: 1px solid #DEB887;
+  border: 0.0625em solid #DEB887;
 }
 
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5em;
   width: 100%;
 }
 
@@ -59,8 +59,8 @@
   background-color: #32CD32;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 0.5em 1em;
+  border-radius: 0.25em;
   cursor: pointer;
   font-weight: bold;
 }
@@ -71,15 +71,15 @@
 
 .responseButtons {
   display: flex;
-  gap: 8px;
+  gap: 0.5em;
 }
 
 .acceptButton {
   background-color: #32CD32;
   color: white;
   border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 0.5em 0.75em;
+  border-radius: 0.25em;
   cursor: pointer;
   flex: 1;
 }
@@ -92,8 +92,8 @@
   background-color: #DC143C;
   color: white;
   border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 0.5em 0.75em;
+  border-radius: 0.25em;
   cursor: pointer;
   flex: 1;
 }

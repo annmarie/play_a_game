@@ -37,7 +37,7 @@
 .connect4Debug {
   margin-top: 1em;
   padding: 0.5em;
-  border-top: 1px solid #ccc;
+  border-top: 0.0625em solid #ccc;
 }
 
 /* Score display */
@@ -51,19 +51,19 @@
 
 /* Multiplayer styles */
 .gameModeSelector {
-  margin: 20px 0;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  margin: 1.25em 0;
+  padding: 0.9375em;
+  border: 0.0625em solid #ddd;
+  border-radius: 0.5em;
   background: #f9f9f9;
 }
 
 .gameModeSelector button {
-  margin-right: 10px;
-  padding: 8px 16px;
-  border: 1px solid #ccc;
+  margin-right: 0.625em;
+  padding: 0.5em 1em;
+  border: 0.0625em solid #ccc;
   background: white;
-  border-radius: 4px;
+  border-radius: 0.25em;
   cursor: pointer;
 }
 
@@ -75,24 +75,24 @@
 
 .multiplayerInfo {
   background: #e8f5e8;
-  padding: 15px;
-  border-radius: 8px;
-  margin: 15px 0;
+  padding: 0.9375em;
+  border-radius: 0.5em;
+  margin: 0.9375em 0;
   text-align: center;
 }
 
 .multiplayerInfo p {
-  margin: 5px 0;
+  margin: 0.3125em 0;
 }
 
 .multiplayerInfo button {
   background: #dc3545;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 0.5em 1em;
+  border-radius: 0.25em;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 0.625em;
 }
 
 .multiplayerInfo button:hover {
