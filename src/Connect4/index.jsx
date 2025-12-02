@@ -108,7 +108,7 @@ const Connect4 = () => {
   };
 
   return (
-    <Layout>
+    <Layout showHeader={false}>
       <div className={styles.connect4Game}>
         <h2 className={styles.connect4Title}>Connect Four</h2>
 

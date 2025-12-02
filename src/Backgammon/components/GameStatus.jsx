@@ -5,14 +5,14 @@ import { undoRoll, resetGame, saveToURL } from '../slice';
 import Checker from './Checker';
 import styles from '../Backgammon.module.css';
 
-const GameStatus = ({ 
-  player, 
-  winner, 
-  pointsHistory, 
-  isMultiplayer, 
-  checkersBorneOff, 
+const GameStatus = ({
+  player,
+  winner,
+  pointsHistory,
+  isMultiplayer,
+  checkersBorneOff,
   checkersOnBar,
-  roomId 
+  roomId
 }) => {
   const dispatch = useDispatch();
 

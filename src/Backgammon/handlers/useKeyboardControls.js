@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { rollDice, endTurn } from './slice';
+import { rollDice, endTurn } from '../slice';
 
 export const useKeyboardControls = (diceValue, turnEnding) => {
   const dispatch = useDispatch();

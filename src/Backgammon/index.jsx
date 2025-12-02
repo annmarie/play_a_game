@@ -2,8 +2,8 @@ import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, selectSpot, loadFromURL, loadTestBoard } from './slice';
 import { testBoards } from './testBoards';
-import { useWebSocketHandlers } from './useWebSocketHandlers';
-import { useKeyboardControls } from './useKeyboardControls';
+import { useWebSocketHandlers } from './handlers/useWebSocketHandlers';
+import { useKeyboardControls } from './handlers/useKeyboardControls';
 import GameModeSelector from './components/GameModeSelector';
 import MultiplayerInfo from './components/MultiplayerInfo';
 import GameScore from './components/GameScore';
@@ -45,7 +45,7 @@ const Backgammon = () => {
   }, [dispatch]);
 
   return (
-    <Layout>
+    <Layout showHeader={false}>
       <div className={styles.backgammonGame}>
         <h2>Backgammon</h2>
 
