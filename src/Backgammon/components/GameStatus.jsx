@@ -11,7 +11,8 @@ const GameStatus = ({
   pointsHistory,
   isMultiplayer,
   checkersBorneOff,
-  checkersOnBar
+  checkersOnBar,
+  roomId
 }) => {
   const dispatch = useDispatch();
 
@@ -31,13 +32,13 @@ const GameStatus = ({
         >
           {UNDO_BUTTON_TEXT}
         </button>
-        <button
+        {!roomId && <button
           onClick={() => dispatch(resetGame())}
           disabled={!player || winner || isMultiplayer}
           aria-label="Reset the game"
         >
           {RESET_BUTTON_TEXT}
-        </button>
+        </button>}
       </div>
 
       <div className={styles.backgammonBorneOff}>

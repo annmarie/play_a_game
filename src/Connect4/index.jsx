@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT, PLAYER_ONE, PLAYER_TWO } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, makeMultiplayerMove, undoMove, resetGame, playAgain, syncGameState, setMultiplayerMode } from './slice';
-import { setConnectionStatus, joinRoom, setOpponent, leaveRoom, setError } from '../RoomManager/slice';
+import { makeMove, undoMove, resetGame, playAgain, setMultiplayerMode } from './slice';
+import { leaveRoom } from '../RoomManager/slice';
 import { wsService } from '../services/websocket';
+import { useWebSocketHandlers } from './useWebSocketHandlers';
 import StatusBox from './StatusBox';
 import Board from './Board';
 import styles from './Connect4.module.css';
@@ -16,72 +16,7 @@ const Connect4 = () => {
   const multiplayer = useSelector((state) => state.multiplayer);
   const handleCellClick = (col) => dispatch(makeMove({ col }));
 
-  useEffect(() => {
-    wsService.connect();
-
-    const handleConnected = () => {
-      dispatch(setConnectionStatus('connected'));
-    };
-
-    const handleDisconnected = () => {
-      dispatch(setConnectionStatus('disconnected'));
-    };
-
-    const handleRoomCreated = (data) => {
-      dispatch(joinRoom({ roomId: data.roomId, isHost: true }));
-    };
-
-    const handleRoomJoined = (data) => {
-      dispatch(joinRoom({ roomId: data.roomId, isHost: false }));
-      if (data.opponent) {
-        dispatch(setOpponent(data.opponent));
-        dispatch(setMultiplayerMode({
-          isMultiplayer: true,
-          myPlayer: data.isHost ? PLAYER_ONE : PLAYER_TWO
-        }));
-      }
-    };
-
-    const handleOpponentJoined = (data) => {
-      dispatch(setOpponent(data.opponent));
-      dispatch(setMultiplayerMode({
-        isMultiplayer: true,
-        myPlayer: PLAYER_ONE
-      }));
-    };
-
-    const handleGameMove = (data) => {
-      dispatch(makeMultiplayerMove(data));
-    };
-
-    const handleGameSync = (data) => {
-      dispatch(syncGameState(data.gameState));
-    };
-
-    const handleError = (error) => {
-      dispatch(setError(error.message || 'Connection error'));
-    };
-
-    wsService.on('connected', handleConnected);
-    wsService.on('disconnected', handleDisconnected);
-    wsService.on('roomCreated', handleRoomCreated);
-    wsService.on('roomJoined', handleRoomJoined);
-    wsService.on('opponentJoined', handleOpponentJoined);
-    wsService.on('gameMove', handleGameMove);
-    wsService.on('gameSync', handleGameSync);
-    wsService.on('error', handleError);
-
-    return () => {
-      wsService.off('connected', handleConnected);
-      wsService.off('disconnected', handleDisconnected);
-      wsService.off('roomCreated', handleRoomCreated);
-      wsService.off('roomJoined', handleRoomJoined);
-      wsService.off('opponentJoined', handleOpponentJoined);
-      wsService.off('gameMove', handleGameMove);
-      wsService.off('gameSync', handleGameSync);
-      wsService.off('error', handleError);
-    };
-  }, [dispatch]);
+  useWebSocketHandlers();
 
   const handleLeaveRoom = () => {
     dispatch(leaveRoom());
@@ -150,13 +85,15 @@ const Connect4 = () => {
           >
             {UNDO_BUTTON_TEXT}
           </button>
-          <button
-            aria-label="Reset Game"
-            onClick={() => dispatch(resetGame())}
-            disabled={state.history.length === 0 || state.isMultiplayer}
-          >
-            {RESET_BUTTON_TEXT}
-          </button>
+          {!state.isMultiplayer && (
+            <button
+              aria-label="Reset Game"
+              onClick={() => dispatch(resetGame())}
+              disabled={state.history.length === 0}
+            >
+              {RESET_BUTTON_TEXT}
+            </button>
+          )}
         </div>
       </div>
     </Layout>
