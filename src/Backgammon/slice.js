@@ -3,7 +3,6 @@ import { initializeBoard } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gameLogic';
 import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveValidation';
 import { getPointIdToIndexMap } from './boardUtils';
-import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 import { PLAYER_LEFT, PLAYER_RIGHT, MAX_HISTORY } from './globals';
 
 export const initialState = {
@@ -99,42 +98,12 @@ export const slice = createSlice({
 
     playAgain: (state) => ({ ...initialState, points: initializeBoard(), gamesWon: state.gamesWon }),
 
-    loadTestBoard: (state, action) => {
-      const { points, checkersOnBar, checkersBorneOff, diceValue, player, winner } = action.payload;
-      return {
-        ...state,
-        points: points || state.points,
-        checkersOnBar: checkersOnBar || state.checkersOnBar,
-        checkersBorneOff: checkersBorneOff || state.checkersBorneOff,
-        diceValue: diceValue || state.diceValue,
-        player: player || state.player,
-        winner: winner || state.winner,
-        potentialMoves: diceValue ?
-          findPotentialMoves(points, player, diceValue, checkersOnBar) : {},
-        selectedSpot: null,
-        potentialSpots: []
-      };
-    },
-
     setCustomDice: (state, action) => ({
       ...state,
       diceValue: action.payload,
       potentialMoves: state.player ?
         findPotentialMoves(state.points, state.player, action.payload, state.checkersOnBar) : {}
     }),
-
-    loadFromURL: createLoadFromURL((newState) => ({
-      ...newState,
-      potentialMoves: newState.diceValue ?
-        findPotentialMoves(newState.points, newState.player, newState.diceValue, newState.checkersOnBar) : {},
-      selectedSpot: null,
-      potentialSpots: []
-    })),
-
-    saveToURL: createSaveToURL([
-      'pointsHistory', 'diceHistory', 'playerHistory',
-      'checkersOnBarHistory', 'checkersBorneOffHistory', 'potentialMovesHistory'
-    ]),
 
     offerDouble: (state) => {
       if (state.doublingCube.owner === state.player || state.doublingCube.pendingOffer) return state;
@@ -309,8 +278,6 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
 }
 
 export const {
-  loadFromURL,
-  loadTestBoard,
   makeMove,
   playAgain,
   resetGame,
@@ -319,7 +286,6 @@ export const {
   setCustomDice,
   togglePlayerRoll,
   undoRoll,
-  saveToURL,
   offerDouble,
   acceptDouble,
   declineDouble,

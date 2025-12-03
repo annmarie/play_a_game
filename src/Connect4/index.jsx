@@ -1,16 +1,14 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT, PLAYER_ONE, PLAYER_TWO } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, makeMultiplayerMove, undoMove, resetGame, playAgain, loadTestBoard, loadFromURL, saveToURL, syncGameState, setMultiplayerMode } from './slice';
+import { makeMove, makeMultiplayerMove, undoMove, resetGame, playAgain, syncGameState, setMultiplayerMode } from './slice';
 import { setConnectionStatus, joinRoom, setOpponent, leaveRoom, setError } from '../RoomManager/slice';
 import { wsService } from '../services/websocket';
 import StatusBox from './StatusBox';
 import Board from './Board';
 import styles from './Connect4.module.css';
 import Layout from '../Layout';
-import TestBoardLoader from '../TestBoardLoader';
 import RoomManager from '../RoomManager';
-import { testBoards } from './testBoards';
 
 const Connect4 = () => {
   const dispatch = useDispatch();
@@ -19,8 +17,6 @@ const Connect4 = () => {
   const handleCellClick = (col) => dispatch(makeMove({ col }));
 
   useEffect(() => {
-    dispatch(loadFromURL());
-
     wsService.connect();
 
     const handleConnected = () => {
@@ -85,20 +81,6 @@ const Connect4 = () => {
       wsService.off('gameSync', handleGameSync);
       wsService.off('error', handleError);
     };
-  }, [dispatch]);
-
-  const handleSaveGameLink = useCallback(() => {
-    try {
-      dispatch(saveToURL());
-      alert('Game link copied to clipboard!');
-    } catch (error) {
-      alert('Failed to save game link. Please try again.');
-      console.error('Error saving game link:', error);
-    }
-  }, [dispatch]);
-
-  const handleLoadTestBoard = useCallback((testBoard) => {
-    dispatch(loadTestBoard(testBoard));
   }, [dispatch]);
 
   const handleLeaveRoom = () => {
@@ -175,26 +157,7 @@ const Connect4 = () => {
           >
             {RESET_BUTTON_TEXT}
           </button>
-          {!state.isMultiplayer && (
-            <button
-              onClick={handleSaveGameLink}
-              disabled={state.history.length === 0 || state.winner}
-              aria-label="Save game link"
-            >
-              Save Game Link
-            </button>
-          )}
         </div>
-
-        {!state.isMultiplayer && (
-          <div className={styles.connect4Debug}>
-            <TestBoardLoader
-              testBoards={testBoards}
-              onLoadTestBoard={handleLoadTestBoard}
-            />
-          </div>
-        )}
-
       </div>
     </Layout>
   );

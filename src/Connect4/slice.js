@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard, dropChecker, checkWin, isBoardFull, togglePlayer } from './gameLogic';
 import { PLAYER_ONE, PLAYER_TWO, MAX_HISTORY } from './globals';
-import { createSaveToURL, createLoadFromURL } from '../utils/urlGameState';
 import { wsService } from '../services/websocket';
 
 export const initialState = {
@@ -46,19 +45,6 @@ export const slice = createSlice({
     undoMove: (state, action) => reduceUndoMove(state, action),
     resetGame: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
     playAgain: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
-    loadTestBoard: (state, action) => {
-      const { board, player, winner, winnerDesc, boardFull } = action.payload;
-      return {
-        ...state,
-        board: board || state.board,
-        player: player || state.player,
-        winner: winner !== undefined ? winner : state.winner,
-        winnerDesc: winnerDesc !== undefined ? winnerDesc : state.winnerDesc,
-        boardFull: boardFull !== undefined ? boardFull : state.boardFull
-      };
-    },
-    loadFromURL: createLoadFromURL(),
-    saveToURL: createSaveToURL(['history']),
   },
 });
 
@@ -138,9 +124,6 @@ export const {
   undoMove,
   resetGame,
   playAgain,
-  loadTestBoard,
-  loadFromURL,
-  saveToURL,
   syncGameState,
   setMultiplayerMode
 } = slice.actions;

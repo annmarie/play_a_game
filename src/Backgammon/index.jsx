@@ -1,7 +1,6 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, selectSpot, loadFromURL, loadTestBoard } from './slice';
-import { testBoards } from './testBoards';
+import { makeMove, selectSpot } from './slice';
 import { useWebSocketHandlers } from './handlers/useWebSocketHandlers';
 import { useKeyboardControls } from './handlers/useKeyboardControls';
 import GameModeSelector from './components/GameModeSelector';
@@ -12,7 +11,6 @@ import DoubleOffer from './components/DoubleOffer';
 import GameControls from './components/GameControls';
 import GameStatus from './components/GameStatus';
 import Board from './components/Board';
-import TestBoardLoader from '../TestBoardLoader';
 import Layout from '../Layout';
 import styles from './Backgammon.module.css';
 
@@ -23,10 +21,6 @@ const Backgammon = () => {
 
   useWebSocketHandlers();
   useKeyboardControls(state.diceValue, state.turnEnding);
-
-  useEffect(() => {
-    dispatch(loadFromURL());
-  }, [dispatch]);
 
   const handleSpotClick = useCallback(
     (point) => {
@@ -39,10 +33,6 @@ const Backgammon = () => {
     },
     [state.selectedSpot, dispatch]
   );
-
-  const handleLoadTestBoard = useCallback((testBoard) => {
-    dispatch(loadTestBoard(testBoard));
-  }, [dispatch]);
 
   return (
     <Layout showHeader={false}>
@@ -98,13 +88,6 @@ const Backgammon = () => {
             roomId={multiplayer.roomId}
           />
         </div>
-
-        {!state.isMultiplayer && (
-          <TestBoardLoader
-            testBoards={testBoards}
-            onLoadTestBoard={handleLoadTestBoard}
-          />
-        )}
       </div>
     </Layout>
   );

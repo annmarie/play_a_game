@@ -1,1 +1,0 @@
-export const LOAD_TEST_BOARD_LABEL = 'Load Test Board:';

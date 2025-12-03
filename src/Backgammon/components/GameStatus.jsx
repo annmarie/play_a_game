@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT, PLAYER_LEFT, PLAYER_RIGHT } from '../globals';
-import { undoRoll, resetGame, saveToURL } from '../slice';
+import { undoRoll, resetGame } from '../slice';
 import Checker from './Checker';
 import styles from '../Backgammon.module.css';
 
@@ -11,20 +11,9 @@ const GameStatus = ({
   pointsHistory,
   isMultiplayer,
   checkersBorneOff,
-  checkersOnBar,
-  roomId
+  checkersOnBar
 }) => {
   const dispatch = useDispatch();
-
-  const handleSaveGameLink = () => {
-    try {
-      dispatch(saveToURL());
-      alert('Game link copied to clipboard!');
-    } catch (err) {
-      console.error('Failed to save game link:', err);
-      alert('Failed to copy game link to clipboard.');
-    }
-  };
 
   return (
     <>
@@ -49,15 +38,6 @@ const GameStatus = ({
         >
           {RESET_BUTTON_TEXT}
         </button>
-        {!roomId && (
-          <button
-            onClick={handleSaveGameLink}
-            disabled={!player || winner}
-            aria-label="Save game link"
-          >
-            Save Game Link
-          </button>
-        )}
       </div>
 
       <div className={styles.backgammonBorneOff}>
