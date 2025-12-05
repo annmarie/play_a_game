@@ -6,12 +6,34 @@ import { reducer } from '../store';
 import { PLAYER_ONE, PLAYER_TWO, DRAW_MESSAGE } from './globals';
 import Connect4 from '.';
 
-const BOARD_LENGTH = 6 * 7; // 6 rows * 7 columns
+const BOARD_LENGTH = 6 * 7;
 const CURRENT_PLAYER_ONE = new RegExp(`Current Player: ${PLAYER_ONE}`, 'i');
 const CURRENT_PLAYER_TWO = new RegExp(`Current Player: ${PLAYER_TWO}`, 'i');
 const WINNER_PLAYER_ONE = new RegExp(`Winner: ${PLAYER_ONE}`, 'i');
 const RESET_GAME = /reset game/i;
 const UNDO_MOVE = /undo move/i;
+
+function validateInitialBoardState(cells) {
+  cells.forEach((cell) => {
+    expect(cell).toBeEmptyDOMElement();
+  });
+}
+
+function simulateMoves(cells, moves) {
+  return act(async () => {
+    moves.forEach((index) => fireEvent.click(cells[index]));
+  });
+}
+
+function renderGame(store) {
+  return render(
+    <BrowserRouter>
+      <Provider store={store}>
+        <Connect4 />
+      </Provider>
+    </BrowserRouter>
+  );
+}
 
 describe('Connect4 Component', () => {
   let store;
@@ -21,7 +43,7 @@ describe('Connect4 Component', () => {
   });
 
   it('should render the initial board setup', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Connect4 /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
     expect(cells).toHaveLength(BOARD_LENGTH);
     validateInitialBoardState(cells);
@@ -32,7 +54,7 @@ describe('Connect4 Component', () => {
 
   it('should allow players to take turns', async () => {
     let spotRex;
-    await act(async () => render(<BrowserRouter><Provider store={store}><Connect4 /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
 
     await act(async () => fireEvent.click(cells[4])); // Player One
@@ -52,24 +74,24 @@ describe('Connect4 Component', () => {
   });
 
   it('should declare a winner', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Connect4 /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
-    await simulateMoves(cells, [1, 2, 1, 2, 1, 2, 1])
+    await simulateMoves(cells, [1, 2, 1, 2, 1, 2, 1]);
     expect(screen.getByText(WINNER_PLAYER_ONE)).toBeInTheDocument();
   });
 
   it('should declare a draw', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Connect4 /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
     for (let i = 0; i < 6; i++) {
-      await simulateMoves(cells, [6, 0, 5, 1, 2, 4, 3])
+      await simulateMoves(cells, [6, 0, 5, 1, 2, 4, 3]);
     }
     expect(screen.getByText(DRAW_MESSAGE)).toBeInTheDocument();
   });
 
   it('should reset the game', async () => {
     let spotRex;
-    await act(async () => render(<BrowserRouter><Provider store={store}><Connect4 /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
 
@@ -93,7 +115,7 @@ describe('Connect4 Component', () => {
 
   it('should undo last move', async () => {
     let spotRex;
-    await act(async () => render(<BrowserRouter><Provider store={store}><Connect4 /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
 
@@ -104,15 +126,3 @@ describe('Connect4 Component', () => {
     expect(undoButton).toHaveAttribute('disabled');
   });
 });
-
-const validateInitialBoardState = (cells) => {
-  cells.forEach((cell) => {
-    expect(cell).toBeEmptyDOMElement();
-  });
-};
-
-const simulateMoves = async (cells, moves) => {
-  await act(async () => {
-    moves.forEach((index) => fireEvent.click(cells[index]));
-  });
-};
