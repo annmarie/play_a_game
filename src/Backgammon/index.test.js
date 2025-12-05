@@ -12,7 +12,7 @@ jest.mock('./gameLogic', () => ({
   rollDiceLogic: jest.fn(),
 }));
 
-const PLAYER_LABEL = /current player [left|right]/i
+const PLAYER_LABEL = /current player [left|right]/i;
 const DICE_DOT_LEFT_TEST_ID = /die-dot-left/i;
 const DICE_DOT_EXTRA_LEFT_TEST_ID = /die-dot-doubles-left/i;
 const DICE_DOT_RIGHT_TEST_ID = /die-dot-right/i;
@@ -21,8 +21,38 @@ const ROLL_DICE = /roll dice/i;
 const END_TURN = /end turn/i;
 const RESET_GAME = /reset the game/i;
 const UNDO_MOVE = /undo last move/i;
-const BEAR_OFF = /bear off/i;
 const SPACEBAR_KEY = ' ';
+
+function validateInitialBoardState(points) {
+  points.forEach((point, index) => {
+    const ariaLabel = point.getAttribute('aria-label');
+    if ([0, 18].includes(index)) {
+      expect(ariaLabel).toContain('5 left checkers');
+    } else if ([6, 12].includes(index)) {
+      expect(ariaLabel).toContain('5 right checkers');
+    } else if ([4].includes(index)) {
+      expect(ariaLabel).toContain('3 right checkers');
+    } else if ([16].includes(index)) {
+      expect(ariaLabel).toContain('3 left checkers');
+    } else if ([11].includes(index)) {
+      expect(ariaLabel).toContain('2 left checkers');
+    } else if ([23].includes(index)) {
+      expect(ariaLabel).toContain('2 right checkers');
+    } else {
+      expect(ariaLabel).toContain('0 checkers');
+    }
+  });
+}
+
+function renderGame(store) {
+  return render(
+    <BrowserRouter>
+      <Provider store={store}>
+        <Backgammon />
+      </Provider>
+    </BrowserRouter>
+  );
+}
 
 describe('Backgammon Component Tests', () => {
   let store;
@@ -33,7 +63,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should render the initial board', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     expect(rollButton).toBeInTheDocument();
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
@@ -49,7 +79,7 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should have class selected on the point if selected for play', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [3, 5], player: PLAYERS.RIGHT });
     await act(async () => fireEvent.click(rollButton));
@@ -62,17 +92,17 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should roll the dice and render the dots for each die', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
-    const [leftDie, rightDie] = [5, 3]
+    const [leftDie, rightDie] = [5, 3];
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [leftDie, rightDie], player: PLAYERS.LEFT });
     await act(async () => fireEvent.click(rollButton));
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toEqual(5);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toEqual(3);
-    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_RIGHT_TEST_ID).length).toEqual(0);
-    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_LEFT_TEST_ID).length).toEqual(0);
+    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(5);
+    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
+    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_RIGHT_TEST_ID).length).toBe(0);
+    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_LEFT_TEST_ID).length).toBe(0);
     await act(async () => fireEvent.click(resetButton));
     expect(resetButton).toHaveAttribute('disabled');
     expect(undoButton).toHaveAttribute('disabled');
@@ -85,29 +115,28 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should be able roll dice, make a move and reset board', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
     const points = screen.queryAllByRole('point');
-    expect(points[0].getAttribute('aria-label')).toContain('5 left checkers')
-    expect(points[14].getAttribute('aria-label')).toContain('0 checkers')
+    expect(points[0].getAttribute('aria-label')).toContain('5 left checkers');
+    expect(points[14].getAttribute('aria-label')).toContain('0 checkers');
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
     await act(async () => fireEvent.click(rollButton));
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[14]));
-    expect(points[0].getAttribute('aria-label')).toContain('4 left checkers')
-    expect(points[14].getAttribute('aria-label')).toContain('1 left checkers')
-    expect(points[17].getAttribute('aria-label')).toContain('0 checkers')
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain('left')
+    expect(points[0].getAttribute('aria-label')).toContain('4 left checkers');
+    expect(points[14].getAttribute('aria-label')).toContain('1 left checkers');
+    expect(points[17].getAttribute('aria-label')).toContain('0 checkers');
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain('left');
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[17]));
-    expect(points[17].getAttribute('aria-label')).toContain('1 left checkers')
+    expect(points[17].getAttribute('aria-label')).toContain('1 left checkers');
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(0);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(0);
     expect(screen.queryAllByTestId(DICE_DOT_EXTRA_RIGHT_TEST_ID).length).toBe(0);
     expect(screen.queryAllByTestId(DICE_DOT_EXTRA_LEFT_TEST_ID).length).toBe(0);
-    // Should show end turn button when all dice are used (turnEnding should be true)
     const endTurnButton = screen.getByRole('button', { name: END_TURN });
     expect(endTurnButton).toBeInTheDocument();
     await act(async () => fireEvent.click(endTurnButton));
@@ -119,68 +148,66 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should move a right player to the checker bar', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const points = screen.queryAllByRole('point');
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 6], player: PLAYERS.RIGHT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(1);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.RIGHT)
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.RIGHT);
     await act(async () => fireEvent.click(points[23]));
     await act(async () => fireEvent.click(points[22]));
     await act(async () => fireEvent.click(points[23]));
     await act(async () => fireEvent.click(points[17]));
-    expect(points[17].getAttribute('aria-label')).toContain('1 right checkers')
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.RIGHT)
+    expect(points[17].getAttribute('aria-label')).toContain('1 right checkers');
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.RIGHT);
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    expect(points[0].getAttribute('aria-label')).toContain('5 left checkers')
+    expect(points[0].getAttribute('aria-label')).toContain('5 left checkers');
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[14]));
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[17]));
-    expect(points[17].getAttribute('aria-label')).toContain('1 right checkers')
+    expect(points[17].getAttribute('aria-label')).toContain('1 right checkers');
   });
 
   it('should move a left player to the checker bar', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+    await act(async () => renderGame(store));
     const points = screen.queryAllByRole('point');
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT)
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[14]));
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[17]));
-    expect(points[17].getAttribute('aria-label')).toContain('1 left checkers')
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT)
+    expect(points[17].getAttribute('aria-label')).toContain('1 left checkers');
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 1], player: PLAYERS.RIGHT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    expect(points[23].getAttribute('aria-label')).toContain('2 right checkers')
+    expect(points[23].getAttribute('aria-label')).toContain('2 right checkers');
     await act(async () => fireEvent.click(points[23]));
     await act(async () => fireEvent.click(points[22]));
     await act(async () => fireEvent.click(points[23]));
     await act(async () => fireEvent.click(points[17]));
-    expect(points[17].getAttribute('aria-label')).toContain('1 left checkers')
+    expect(points[17].getAttribute('aria-label')).toContain('1 left checkers');
   });
 
-  it('should be able display four sets of die when doubles are rolled', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+  it('should display four sets of die when doubles are rolled', async () => {
+    await act(async () => renderGame(store));
     const points = screen.queryAllByRole('point');
-    // first roll cannot be doubles
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT)
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[14]));
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[17]));
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT)
-    // second move will be doubles
+    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 4, 4, 4], player: PLAYERS.RIGHT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
     await act(async () => fireEvent.click(screen.getByRole('button', { name: RESET_GAME })));
@@ -189,8 +216,8 @@ describe('Backgammon Component Tests', () => {
     validateInitialBoardState(points);
   });
 
-  it('should roll the dice when the spacebar is pressed and diceValue is null', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+  it('should roll the dice when spacebar is pressed and diceValue is null', async () => {
+    await act(async () => renderGame(store));
     const rollButton = screen.getByRole('button', { name: ROLL_DICE });
     expect(rollButton).toBeInTheDocument();
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
@@ -199,8 +226,8 @@ describe('Backgammon Component Tests', () => {
     expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
   });
 
-  it('should not roll the dice when the spacebar is pressed and diceValue is not null', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+  it('should not roll the dice when spacebar is pressed and diceValue is not null', async () => {
+    await act(async () => renderGame(store));
     expect(screen.getByRole('button', { name: ROLL_DICE })).toBeInTheDocument();
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
     await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }));
@@ -211,13 +238,13 @@ describe('Backgammon Component Tests', () => {
   });
 
   it('should clean up the event listener on unmount', async () => {
-    const { unmount } = await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
+    const { unmount } = await act(async () => renderGame(store));
     const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
     unmount();
     expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
   });
 
-  it('should show release move to next player button when no moves available', async () => {
+  it('should show end turn button when no moves available', async () => {
     const customStore = configureStore({
       reducer,
       preloadedState: {
@@ -230,7 +257,7 @@ describe('Backgammon Component Tests', () => {
           winner: null,
           selectedSpot: null,
           potentialSpots: [],
-          potentialMoves: {}, // No moves available
+          potentialMoves: {},
           turnEnding: false,
           pointsHistory: [Array.from({ length: 24 }, (_, i) => ({ id: i + 1, checkers: 0, player: null }))],
           diceHistory: [],
@@ -248,8 +275,7 @@ describe('Backgammon Component Tests', () => {
       }
     });
 
-    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
-
+    await act(async () => renderGame(customStore));
     const endTurnButton = screen.getByRole('button', { name: END_TURN });
     expect(endTurnButton).toBeInTheDocument();
   });
@@ -285,31 +311,24 @@ describe('Backgammon Component Tests', () => {
       }
     });
 
-    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
-
+    await act(async () => renderGame(customStore));
     const endTurnButton = screen.getByRole('button', { name: END_TURN });
     expect(endTurnButton).toBeInTheDocument();
     expect(screen.getByRole('button', { name: ROLL_DICE })).toHaveAttribute('disabled');
   });
 
   it('should end turn when end turn button is clicked', async () => {
-    await act(async () => render(<BrowserRouter><Provider store={store}><Backgammon /></Provider></BrowserRouter>));
-
+    await act(async () => renderGame(store));
     const points = screen.queryAllByRole('point');
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
     await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-
-    // Make moves to use all dice
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[14]));
     await act(async () => fireEvent.click(points[0]));
     await act(async () => fireEvent.click(points[17]));
-
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
-
     const endTurnButton = screen.getByRole('button', { name: END_TURN });
     await act(async () => fireEvent.click(endTurnButton));
-
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.RIGHT);
   });
 
@@ -327,23 +346,19 @@ describe('Backgammon Component Tests', () => {
       return { id, checkers: 0, player: null };
     });
 
-    const checkersOnBar = { left: 0, right: 0 };
-    const diceValue = [4, 4, 4];
-    const potentialMoves = { '7': [11], '8': [12], '9': [-1, -1] };
-
     const customStore = configureStore({
       reducer,
       preloadedState: {
         backgammon: {
           points: customPoints,
-          checkersOnBar,
+          checkersOnBar: { left: 0, right: 0 },
           checkersBorneOff: { left: 1, right: 4 },
-          diceValue,
+          diceValue: [4, 4, 4],
           player: PLAYERS.RIGHT,
           winner: null,
           selectedSpot: null,
           potentialSpots: [],
-          potentialMoves,
+          potentialMoves: { '7': [11], '8': [12], '9': [-1, -1] },
           turnEnding: false,
           pointsHistory: [],
           diceHistory: [],
@@ -360,18 +375,14 @@ describe('Backgammon Component Tests', () => {
       }
     });
 
-    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
-
+    await act(async () => renderGame(customStore));
     expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.RIGHT);
-
     const point11 = screen.getByTestId(/point-11/);
     expect(point11).toBeInTheDocument();
     expect(point11.getAttribute('aria-label')).toContain('Point 11 with 1 right checkers');
-
     await act(async () => fireEvent.click(point11));
     expect(point11).toHaveAttribute('data-testid', expect.stringContaining('selected'));
-
-    const bearOffButton = screen.queryByText(BEAR_OFF);
+    const bearOffButton = screen.queryByText(/bear off/i);
     expect(bearOffButton).not.toBeInTheDocument();
   });
 
@@ -405,8 +416,7 @@ describe('Backgammon Component Tests', () => {
       }
     });
 
-    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
-
+    await act(async () => renderGame(customStore));
     const bearOffButton = screen.getByText('Bear Off');
     expect(bearOffButton).toBeInTheDocument();
   });
@@ -450,37 +460,12 @@ describe('Backgammon Component Tests', () => {
       }
     });
 
-    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
-
+    await act(async () => renderGame(customStore));
     expect(screen.getByText('Borne Off: 3')).toBeInTheDocument();
-
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
     expect(undoButton).toHaveAttribute('disabled');
-
-    // Test passes - undo button is properly disabled
   });
-});
 
-function validateInitialBoardState(points) {
-  points.forEach((point, index) => {
-    const ariaLabel = point.getAttribute('aria-label');
-    if ([0, 18].includes(index)) {
-      expect(ariaLabel).toContain('5 left checkers');
-    } else if ([6, 12].includes(index)) {
-      expect(ariaLabel).toContain('5 right checkers');
-    } else if ([4].includes(index)) {
-      expect(ariaLabel).toContain('3 right checkers');
-    } else if ([16].includes(index)) {
-      expect(ariaLabel).toContain('3 left checkers');
-    } else if ([11].includes(index)) {
-      expect(ariaLabel).toContain('2 left checkers');
-    } else if ([23].includes(index)) {
-      expect(ariaLabel).toContain('2 right checkers');
-    } else {
-      expect(ariaLabel).toContain('0 checkers');
-    }
-  });
-};
   it('should render DoublesCube with correct props', async () => {
     const customStore = configureStore({
       reducer,
@@ -512,14 +497,9 @@ function validateInitialBoardState(points) {
       }
     });
 
-    await act(async () => render(<BrowserRouter><Provider store={customStore}><Backgammon /></Provider></BrowserRouter>));
-
-    // Check that the doubles cube displays the correct value
+    await act(async () => renderGame(customStore));
     expect(screen.getByText('2')).toBeInTheDocument();
-
-    // Check that the owner is displayed
     expect(screen.getByText('Owned by:')).toBeInTheDocument();
-
-    // Check that the Double button appears when conditions are met (player doesn't own cube and turn is ending)
     expect(screen.getByRole('button', { name: /offer to double/i })).toBeInTheDocument();
   });
+});
