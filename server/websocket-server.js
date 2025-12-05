@@ -1,8 +1,12 @@
 const WebSocket = require('ws');
 const http = require('http');
+const crypto = require('crypto');
 const { MESSAGE_TYPES, ERROR_MESSAGES, DEFAULT_PORT, ROOM_ID_LENGTH } = require('./globals');
+const CSRFProtection = require('./csrf-protection');
 
-const ALLOWED_ORIGINS = ['http://localhost:5173', 'http://localhost:3000'];
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+  : ['http://localhost:5173', 'http://localhost:3000'];
 
 function isOriginAllowed(origin) {
   return ALLOWED_ORIGINS.includes(origin);
@@ -18,25 +22,66 @@ const wss = new WebSocket.Server({
 
 const rooms = new Map();
 const players = new Map();
+const csrfProtection = new CSRFProtection();
+const sessions = new Map(); // Track WebSocket sessions
 
 function generateRoomId() {
-  return Math.random().toString(36).substr(2, ROOM_ID_LENGTH).toUpperCase();
+  let roomId;
+  do {
+    roomId = Math.random().toString(36).substr(2, ROOM_ID_LENGTH).toUpperCase();
+  } while (rooms.has(roomId));
+  return roomId;
 }
 
 wss.on('connection', (ws, req) => {
   console.log('New client connected');
 
-  // Store origin for additional verification
+  // Verify origin before proceeding
+  if (!isOriginAllowed(req.headers.origin)) {
+    ws.close(1008, 'Origin not allowed');
+    return;
+  }
+
+  // Generate session ID and CSRF token
+  const sessionId = crypto.randomUUID();
+  const csrfToken = csrfProtection.generateToken(sessionId);
+  
+  // Store session info
+  ws.sessionId = sessionId;
   ws.origin = req.headers.origin;
+  sessions.set(sessionId, { ws, authenticated: false });
+  
+  // Send CSRF token to client with additional security headers
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({
+      type: 'CSRF_TOKEN',
+      payload: { token: csrfToken, sessionId },
+      timestamp: Date.now()
+    }));
+  }
 
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
-      // Verify origin for each message
+      
+      // Verify origin
       if (!isOriginAllowed(ws.origin)) {
         ws.close(1008, 'Origin not allowed');
         return;
       }
+      
+      // Skip CSRF validation for initial handshake
+      if (data.type === 'HANDSHAKE') {
+        handleHandshake(ws, data);
+        return;
+      }
+      
+      // Validate CSRF token for all other messages
+      if (!data.csrfToken || !csrfProtection.validateToken(ws.sessionId, data.csrfToken)) {
+        ws.close(1008, 'Invalid CSRF token');
+        return;
+      }
+      
       handleMessage(ws, data);
     } catch (error) {
       console.error('Error parsing message:', error);
@@ -47,6 +92,11 @@ wss.on('connection', (ws, req) => {
   ws.on('close', () => {
     console.log('Client disconnected');
     handleDisconnect(ws);
+    // Clean up session
+    if (ws.sessionId) {
+      sessions.delete(ws.sessionId);
+      csrfProtection.revokeToken(ws.sessionId);
+    }
   });
 
   ws.on('error', (error) => {
@@ -54,11 +104,26 @@ wss.on('connection', (ws, req) => {
   });
 });
 
+function handleHandshake(ws, data) {
+  const session = sessions.get(ws.sessionId);
+  if (session) {
+    session.authenticated = true;
+    ws.send(JSON.stringify({ type: 'HANDSHAKE_ACK', payload: { success: true } }));
+  }
+}
+
 function handleMessage(ws, data) {
   const { type, payload } = data;
+  const session = sessions.get(ws.sessionId);
+  
+  // Check if session is authenticated
+  if (!session || !session.authenticated) {
+    ws.close(1008, 'Session not authenticated');
+    return;
+  }
 
-  // CSRF protection: validate message structure
-  if (!type || !payload || typeof type !== 'string') {
+  // Validate message structure
+  if (!type || payload === undefined || typeof type !== 'string') {
     ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
     return;
   }
@@ -82,6 +147,11 @@ function handleMessage(ws, data) {
 }
 
 function handleCreateRoom(ws, payload) {
+  if (!payload.gameType || !payload.playerId || !payload.playerName) {
+    ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
+    return;
+  }
+  
   const { gameType, playerId, playerName } = payload;
   const roomId = generateRoomId();
 
@@ -96,10 +166,12 @@ function handleCreateRoom(ws, payload) {
   rooms.set(roomId, room);
   players.set(ws, { playerId, roomId, isHost: true });
 
-  ws.send(JSON.stringify({
-    type: MESSAGE_TYPES.ROOM_CREATED,
-    payload: { roomId, isHost: true }
-  }));
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({
+      type: MESSAGE_TYPES.ROOM_CREATED,
+      payload: { roomId, isHost: true }
+    }));
+  }
 
   console.log(`Room ${roomId} created by ${playerName}`);
 }
@@ -138,12 +210,14 @@ function handleJoinRoom(ws, payload) {
   }));
 
   // Notify host
-  room.host.ws.send(JSON.stringify({
-    type: MESSAGE_TYPES.OPPONENT_JOINED,
-    payload: {
-      opponent: { name: playerName, id: playerId }
-    }
-  }));
+  if (room.host.ws.readyState === WebSocket.OPEN) {
+    room.host.ws.send(JSON.stringify({
+      type: MESSAGE_TYPES.OPPONENT_JOINED,
+      payload: {
+        opponent: { name: playerName, id: playerId }
+      }
+    }));
+  }
 
   console.log(`${playerName} joined room ${roomId}`);
 }
