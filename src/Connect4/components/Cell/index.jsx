@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { PLAYER_ONE, PLAYER_TWO } from '../globals';
+import { PLAYER_ONE, PLAYER_TWO } from '../../globals';
 import styles from './Cell.module.css'
 
 const Cell = ({ cell, rowIndex, colIndex, onCellClick }) => {

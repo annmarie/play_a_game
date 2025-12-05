@@ -1,5 +1,5 @@
-import { dropChecker, isBoardFull, checkWin, togglePlayer } from './gameLogic';
-import { PLAYER_ONE, PLAYER_TWO } from './globals';
+import { dropChecker, isBoardFull, checkWin, togglePlayer } from '.';
+import { PLAYER_ONE, PLAYER_TWO } from '../globals';
 
 describe('dropChecker', () => {
   it('should drop a checker into the correct column and return the updated board', () => {

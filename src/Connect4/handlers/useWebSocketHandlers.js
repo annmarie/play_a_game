@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeMultiplayerMove, syncGameState, setMultiplayerMode } from './slice';
-import { setConnectionStatus, joinRoom, setOpponent, setError } from '../RoomManager/slice';
-import { wsService } from '../services/websocket';
-import { PLAYER_ONE, PLAYER_TWO } from './globals';
+import { makeMultiplayerMove, syncGameState, setMultiplayerMode } from '../slice';
+import { setConnectionStatus, joinRoom, setOpponent, setError } from '../../RoomManager/slice';
+import { wsService } from '../../services/websocket';
+import { PLAYER_ONE, PLAYER_TWO } from '../globals';
 
 export const useWebSocketHandlers = () => {
   const dispatch = useDispatch();

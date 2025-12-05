@@ -1,4 +1,4 @@
-import { PLAYER_ONE, PLAYER_TWO } from './globals';
+import { PLAYERS } from '../globals';
 
 /**
  * Drops a checker into the specified column of the board.
@@ -124,20 +124,51 @@ export const checkWin = (board, move) => {
 };
 
 /**
- * Toggles the current player.
- *
- * @param {string} player - The current player (e.g., PLAYER_ONE or PLAYER_TWO).
- * @returns {string} - The next player.
+ * Toggles the current player
+ * @param {string} player - Current player (PLAYER_ONE or PLAYER_TWO)
+ * @returns {string} The opposite player
  */
 export const togglePlayer = (player) => {
-  return player === PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE;
+  return player === PLAYERS.ONE ? PLAYERS.TWO : PLAYERS.ONE;
 };
 
 /**
- * Initializes an empty game board.
- *
- * @returns {Array} - A 6x7 game board filled with null values.
+ * Initializes an empty game board
+ * @returns {Array} A 6x7 game board filled with null values
  */
 export const initializeBoard = () => Array.from({ length: 6 }, () => Array(7).fill(null));
+
+/**
+ * Handles move logic for Connect4
+ * @param {Object} state - Current game state
+ * @param {number} col - Column to drop checker
+ * @returns {Object|null} Move result or null if invalid
+ */
+export const makeMoveLogic = (state, col) => {
+  if (state.winner || (state.isMultiplayer && !state.isMyTurn)) {
+    return null;
+  }
+
+  const { board, player } = state;
+  const { currentMove, newBoard, error } = dropChecker(col, board, player);
+
+  if (!currentMove) {
+    return { error };
+  }
+
+  const { haveWinner, desc } = checkWin(newBoard, currentMove);
+  const boardFull = isBoardFull(newBoard);
+  const nextPlayer = togglePlayer(player);
+
+  return {
+    board: newBoard,
+    currentMove,
+    winner: haveWinner ? player : null,
+    winnerDesc: haveWinner ? desc : '',
+    boardFull,
+    player: nextPlayer,
+    haveWinner
+  };
+};
 
 

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { initializeBoard, dropChecker, checkWin, isBoardFull, togglePlayer } from './gameLogic';
+import { initializeBoard, makeMoveLogic, togglePlayer } from './gameLogic';
 import { PLAYER_ONE, PLAYER_TWO, MAX_HISTORY } from './globals';
 import { wsService } from '../services/websocket';
 
@@ -50,18 +50,12 @@ export const slice = createSlice({
 
 const reduceMakeMove = (state, action) => {
   const { col } = action.payload;
+  
+  const moveResult = makeMoveLogic(state, col);
+  if (!moveResult || moveResult.error) return state;
 
-  if (state.winner) return state;
-  if (state.isMultiplayer && !state.isMyTurn) return state;
-
-  const { board, player } = state;
-  const { currentMove, newBoard } = dropChecker(col, board, player);
-
-  if (!currentMove) return state;
-
-  const { haveWinner, desc } = checkWin(newBoard, currentMove);
-  const boardFull = isBoardFull(newBoard);
-  const updatedGamesWon = haveWinner ? { ...state.gamesWon, [player]: state.gamesWon[player] + 1 } : state.gamesWon;
+  const { board, winner, winnerDesc, boardFull, player } = moveResult;
+  const updatedGamesWon = winner ? { ...state.gamesWon, [state.player]: state.gamesWon[state.player] + 1 } : state.gamesWon;
 
   const newHistory = [...state.history, state.board];
   if (newHistory.length > MAX_HISTORY) {
@@ -70,17 +64,16 @@ const reduceMakeMove = (state, action) => {
 
   const newState = {
     ...state,
-    board: newBoard,
-    winner: haveWinner ? player : null,
-    winnerDesc: haveWinner ? desc : '',
+    board,
+    winner,
+    winnerDesc,
     boardFull,
-    player: togglePlayer(player),
+    player,
     history: newHistory,
     gamesWon: updatedGamesWon,
     isMyTurn: state.isMultiplayer ? !state.isMyTurn : state.isMyTurn,
   };
 
-  // Send move to opponent in multiplayer mode
   if (state.isMultiplayer) {
     wsService.send('gameMove', {
       gameType: 'connect4',
@@ -104,7 +97,6 @@ const reduceMultiplayerMove = (state, action) => {
 };
 
 const reduceUndoMove = (state) => {
-  // If there's no history or the game has a winner, undo is not allowed.
   if (state.history.length === 0 || state.winner) return state;
 
   const previousBoard = state.history[state.history.length - 1];
@@ -114,6 +106,8 @@ const reduceUndoMove = (state) => {
     board: previousBoard,
     player: togglePlayer(state.player),
     winner: null,
+    winnerDesc: '',
+    boardFull: false,
     history: state.history.slice(0, -1),
   };
 };

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import StatusBox from '../StatusBox';
-import { DRAW_MESSAGE } from '../globals';
+import { DRAW_MESSAGE } from '../../globals';
 
 describe('StatusBox Component', () => {
   it('should render the winner message when a winner exists', () => {

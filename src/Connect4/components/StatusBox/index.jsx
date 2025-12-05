@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { DRAW_MESSAGE } from '../globals';
+import { DRAW_MESSAGE } from '../../globals';
 import styles from './StatusBox.module.css';
 
 const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player = 'Unknown', onPlayAgain }) => {
