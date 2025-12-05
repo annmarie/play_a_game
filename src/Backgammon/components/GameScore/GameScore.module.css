@@ -1,0 +1,33 @@
+.gameScore {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #e9ecef !important;
+  border-radius: 0.5rem;
+  border: 1px solid #dee2e6;
+}
+
+.gameScoreLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.scoreRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.playerScore {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  background-color: white;
+  border-radius: 0.25rem;
+  border: 1px solid #dee2e6;
+}

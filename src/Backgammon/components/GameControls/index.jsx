@@ -1,21 +1,21 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { ROLL_DICE_BUTTON_TEXT, END_TURN_BUTTON_TEXT } from '../globals';
-import { rollDice, endTurn, togglePlayerRoll } from '../slice';
-import Dice from './Dice';
-import styles from '../Backgammon.module.css';
+import { ROLL_DICE_BUTTON_TEXT, END_TURN_BUTTON_TEXT } from '../../globals';
+import { rollDice, endTurn, togglePlayerRoll } from '../../slice';
+import Dice from '../Dice';
+import styles from './GameControls.module.css';
 
 const GameControls = ({ diceValue, potentialMoves, turnEnding, winner, doublingCube }) => {
   const dispatch = useDispatch();
 
   return (
-    <div>
+    <div className={styles.gameControls}>
       {diceValue ? (
         <div>
           <Dice diceValue={diceValue} />
           {(Object.keys(potentialMoves || {}).length < 1 || turnEnding) && (
             <button
-              className="end-turn-button"
+              className={styles.endTurnButton}
               aria-label="End turn"
               onClick={() => dispatch(turnEnding ? endTurn() : togglePlayerRoll())}
             >
@@ -35,7 +35,7 @@ const GameControls = ({ diceValue, potentialMoves, turnEnding, winner, doublingC
       )}
       {turnEnding && !diceValue && (
         <button
-          className="end-turn-button"
+          className={styles.endTurnButton}
           aria-label="End turn"
           onClick={() => dispatch(endTurn())}
         >

@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT, PLAYER_LEFT, PLAYER_RIGHT } from '../globals';
-import { undoRoll, resetGame } from '../slice';
-import Checker from './Checker';
-import styles from '../Backgammon.module.css';
+import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT, PLAYER_LEFT, PLAYER_RIGHT } from '../../globals';
+import { undoRoll, resetGame } from '../../slice';
+import Checker from '../Checker';
+import styles from './GameStatus.module.css';
 
 const GameStatus = ({
   player,
@@ -17,15 +17,16 @@ const GameStatus = ({
   const dispatch = useDispatch();
 
   return (
-    <>
+    <div className={styles.gameStatus}>
       {player && !winner && (
-        <div aria-label={`Current player ${player}`}>
+        <div className={styles.currentPlayer} aria-label={`Current player ${player}`}>
           Current Player <Checker player={player} />
         </div>
       )}
 
-      <div>
+      <div className={styles.gameButtons}>
         <button
+          className={styles.actionButton}
           onClick={() => dispatch(undoRoll())}
           disabled={!player || pointsHistory.length <= 1 || winner || isMultiplayer}
           aria-label="Undo last move"
@@ -33,6 +34,7 @@ const GameStatus = ({
           {UNDO_BUTTON_TEXT}
         </button>
         {!roomId && <button
+          className={styles.actionButton}
           onClick={() => dispatch(resetGame())}
           disabled={!player || winner || isMultiplayer}
           aria-label="Reset the game"
@@ -41,26 +43,26 @@ const GameStatus = ({
         </button>}
       </div>
 
-      <div className={styles.backgammonBorneOff}>
+      <div className={styles.borneOff}>
         {[PLAYER_LEFT, PLAYER_RIGHT].map(player =>
           checkersBorneOff[player] > 0 && (
-            <div key={player} aria-label={`Borne Off for ${player}`}>
+            <div key={player} className={styles.statusItem} aria-label={`Borne Off for ${player}`}>
               <Checker player={player} /> Borne Off: {checkersBorneOff[player]}
             </div>
           )
         )}
       </div>
 
-      <div className={styles.backgammonBar}>
+      <div className={styles.bar}>
         {[PLAYER_LEFT, PLAYER_RIGHT].map(player =>
           checkersOnBar[player] > 0 && (
-            <div key={player} aria-label={`Checkers Bar for ${player}`}>
+            <div key={player} className={styles.statusItem} aria-label={`Checkers Bar for ${player}`}>
               <Checker player={player} /> Bar: {checkersOnBar[player]}
             </div>
           )
         )}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,8 +1,8 @@
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { offerDouble, acceptDouble, declineDouble } from '../slice';
-import styles from '../Backgammon.module.css';
-import Checker from './Checker';
+import { offerDouble, acceptDouble, declineDouble } from '../../slice';
+import styles from './DoublesCube.module.css';
+import Checker from '../Checker';
 
 const DoublesCube = ({ doublingCube, currentPlayer, winner, turnEnding }) => {
   const dispatch = useDispatch();

@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { setMultiplayerMode } from '../slice';
-import RoomManager from '../../RoomManager';
-import styles from '../Backgammon.module.css';
+import { setMultiplayerMode } from '../../slice';
+import RoomManager from '../../../RoomManager';
+import styles from './GameModeSelector.module.css';
 
 const GameModeSelector = ({ isMultiplayer }) => {
   const dispatch = useDispatch();
@@ -11,14 +11,14 @@ const GameModeSelector = ({ isMultiplayer }) => {
     <div className={styles.gameModeSelector}>
       <button
         onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }))}
-        style={{ backgroundColor: '#6c757d', color: 'white' }}
+        className={styles.modeButton}
       >
         Local Game
       </button>
       {!isMultiplayer && (
         <button
           onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: true, myPlayer: null }))}
-          style={{ backgroundColor: '#6c757d', color: 'white' }}
+          className={styles.modeButton}
         >
           Multiplayer Game
         </button>

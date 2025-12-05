@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { PLAYER_LEFT, PLAYER_RIGHT } from '../globals';
-import { setMultiplayerMode } from '../slice';
-import { leaveRoom } from '../../RoomManager/slice';
-import { wsService } from '../../services/websocket';
-import styles from '../Backgammon.module.css';
+import { PLAYER_LEFT, PLAYER_RIGHT } from '../../globals';
+import { setMultiplayerMode } from '../../slice';
+import { leaveRoom } from '../../../RoomManager/slice';
+import { wsService } from '../../../services/websocket';
+import styles from './MultiplayerInfo.module.css';
 
 const MultiplayerInfo = ({ multiplayer, myPlayer }) => {
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ const MultiplayerInfo = ({ multiplayer, myPlayer }) => {
       ) : (
         <p>Waiting for opponent...</p>
       )}
-      <button onClick={handleLeaveRoom}>Leave Room</button>
+      <button onClick={handleLeaveRoom} className={styles.leaveButton}>Leave Room</button>
     </div>
   );
 };

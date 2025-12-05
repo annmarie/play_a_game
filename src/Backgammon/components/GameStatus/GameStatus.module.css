@@ -1,0 +1,56 @@
+.gameStatus {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.currentPlayer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  background-color: #e9ecef;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.gameButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionButton {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.actionButton:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.actionButton:disabled {
+  background-color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.borneOff,
+.bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}

@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { PLAYER_LEFT, PLAYER_RIGHT } from '../globals';
-import { acceptDouble, declineDouble } from '../slice';
-import Checker from './Checker';
-import styles from '../Backgammon.module.css';
+import { PLAYER_LEFT, PLAYER_RIGHT } from '../../globals';
+import { acceptDouble, declineDouble } from '../../slice';
+import Checker from '../Checker';
+import styles from './DoubleOffer.module.css';
 
 const DoubleOffer = ({ pendingOffer }) => {
   const dispatch = useDispatch();
