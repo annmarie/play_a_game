@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { PLAYER_LEFT, PLAYER_RIGHT } from '../../globals';
+import { PLAYERS } from '../../globals';
 import Checker from '../Checker';
 import DoublesCube from '../DoublesCube';
 import styles from './GameScore.module.css';
@@ -10,8 +10,8 @@ const GameScore = ({ gamesWon, doublingCube, currentPlayer, winner, turnEnding }
       <div className={styles.gameScoreLeft}>
         <div>Games Won:</div>
         <div className={styles.scoreRow}>
-          <div className={styles.playerScore}><Checker player={PLAYER_LEFT} /> {gamesWon?.[PLAYER_LEFT] || 0}</div>
-          <div className={styles.playerScore}><Checker player={PLAYER_RIGHT} /> {gamesWon?.[PLAYER_RIGHT] || 0}</div>
+          <div className={styles.playerScore}><Checker player={PLAYERS.LEFT} /> {gamesWon?.[PLAYERS.LEFT] || 0}</div>
+          <div className={styles.playerScore}><Checker player={PLAYERS.RIGHT} /> {gamesWon?.[PLAYERS.RIGHT] || 0}</div>
         </div>
       </div>
       <DoublesCube

@@ -1,4 +1,4 @@
-import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from '../globals';
+import { PLAYERS, BOARD_CONFIG } from '../globals';
 
 /**
  * Toggles the current player
@@ -6,7 +6,7 @@ import { PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT } from '../g
  * @returns {string} The opposite player
  */
 export const togglePlayer = (player) => {
-  return player === PLAYER_RIGHT ? PLAYER_LEFT : PLAYER_RIGHT;
+  return player === PLAYERS.RIGHT ? PLAYERS.LEFT : PLAYERS.RIGHT;
 };
 
 /**
@@ -45,7 +45,7 @@ export function rollDiceLogic(currentPlayer) {
   }
 
   const diceValue = (die1 === die2) ? [die1, die2, die1, die2] : [die1, die2];
-  const player = currentPlayer === null ? (die2 > die1 ? PLAYER_RIGHT : PLAYER_LEFT) : currentPlayer;
+  const player = currentPlayer === null ? (die2 > die1 ? PLAYERS.RIGHT : PLAYERS.LEFT) : currentPlayer;
 
   return { diceValue, player };
 }
@@ -72,7 +72,7 @@ export const selectSpotLogic = (state, pointId) => {
   const selectedIndex = pointId - 1;
 
   if (state.checkersOnBar[state.player]) {
-    const startKeyId = state.player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
+    const startKeyId = state.player === PLAYERS.LEFT ? BOARD_CONFIG.START_KEY_LEFT : BOARD_CONFIG.START_KEY_RIGHT;
     if (Object.keys(state.potentialMoves).includes(pointId.toString())) {
       const moveDistance = (startKeyId + 1) - pointId;
       return { type: 'move', fromIndex: -1, selectedIndex, moveDistance };

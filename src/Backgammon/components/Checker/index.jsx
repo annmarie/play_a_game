@@ -1,16 +1,16 @@
 // Backgammon Checker Component
 import PropTypes from 'prop-types'
-import { PLAYER_RIGHT } from '../../globals';
+import { PLAYERS } from '../../globals';
 import styles from './Checker.module.css'
 
 const getClassNames = (player, selected) => {
-  const playerClass = player === PLAYER_RIGHT ? styles.playerRight : styles.playerLeft;
+  const playerClass = player === PLAYERS.RIGHT ? styles.playerRight : styles.playerLeft;
   const selectedClass = selected ? ` ${styles.selected}` : '';
   return `${styles.checker} ${playerClass}${selectedClass}`;
 };
 
 const getPlayerId = (player) => {
-  return player === PLAYER_RIGHT ? 'player_right' : 'player_left';
+  return player === PLAYERS.RIGHT ? 'player_right' : 'player_left';
 };
 
 const Checker = ({ player, selected = false }) => {

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT, PLAYER_LEFT, PLAYER_RIGHT } from '../../globals';
+import { BUTTON_TEXT, PLAYERS } from '../../globals';
 import { undoRoll, resetGame } from '../../slice';
 import Checker from '../Checker';
 import styles from './GameStatus.module.css';
@@ -31,7 +31,7 @@ const GameStatus = ({
           disabled={!player || pointsHistory.length <= 1 || winner || isMultiplayer}
           aria-label="Undo last move"
         >
-          {UNDO_BUTTON_TEXT}
+          {BUTTON_TEXT.UNDO_MOVE}
         </button>
         {!roomId && <button
           className={styles.actionButton}
@@ -39,12 +39,12 @@ const GameStatus = ({
           disabled={!player || winner || isMultiplayer}
           aria-label="Reset the game"
         >
-          {RESET_BUTTON_TEXT}
+          {BUTTON_TEXT.RESET_GAME}
         </button>}
       </div>
 
       <div className={styles.borneOff}>
-        {[PLAYER_LEFT, PLAYER_RIGHT].map(player =>
+        {[PLAYERS.LEFT, PLAYERS.RIGHT].map(player =>
           checkersBorneOff[player] > 0 && (
             <div key={player} className={styles.statusItem} aria-label={`Borne Off for ${player}`}>
               <Checker player={player} /> Borne Off: {checkersBorneOff[player]}
@@ -54,7 +54,7 @@ const GameStatus = ({
       </div>
 
       <div className={styles.bar}>
-        {[PLAYER_LEFT, PLAYER_RIGHT].map(player =>
+        {[PLAYERS.LEFT, PLAYERS.RIGHT].map(player =>
           checkersOnBar[player] > 0 && (
             <div key={player} className={styles.statusItem} aria-label={`Checkers Bar for ${player}`}>
               <Checker player={player} /> Bar: {checkersOnBar[player]}

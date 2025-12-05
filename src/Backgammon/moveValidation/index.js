@@ -1,4 +1,4 @@
-import { PLAYER_LEFT, START_KEY_LEFT, START_KEY_RIGHT } from '../globals';
+import { PLAYERS, BOARD_CONFIG } from '../globals';
 import { getHomeRange, getPointIdToIndexMap, getIndexToPointIdMap } from '../boardUtils';
 
 /**
@@ -12,7 +12,7 @@ function getFurthestOccupiedPoint(points, player) {
   const occupiedPoints = points
     .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
     .map(p => p.id);
-  return player === PLAYER_LEFT ? Math.min(...occupiedPoints) : Math.min(...occupiedPoints);
+  return player === PLAYERS.LEFT ? Math.min(...occupiedPoints) : Math.min(...occupiedPoints);
 }
 
 /**
@@ -24,7 +24,7 @@ function getFurthestOccupiedPoint(points, player) {
  * @returns {{isValid: boolean, usedDiceValue?: number}} Validation result with dice value used
  */
 export function validateBearOffMove(player, fromPointId, diceValue, points) {
-  const moveDistance = player === PLAYER_LEFT ? 25 - fromPointId : 13 - fromPointId;
+  const moveDistance = player === PLAYERS.LEFT ? 25 - fromPointId : 13 - fromPointId;
 
   if (diceValue.includes(moveDistance)) {
     return { isValid: true, usedDiceValue: moveDistance };
@@ -90,7 +90,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
   const hasCheckerOnBar = (checkersOnBar[player] || 0) > 0;
 
   if (hasCheckerOnBar) {
-    const startPointId = player === PLAYER_LEFT ? START_KEY_LEFT : START_KEY_RIGHT;
+    const startPointId = player === PLAYERS.LEFT ? BOARD_CONFIG.START_KEY_LEFT : BOARD_CONFIG.START_KEY_RIGHT;
     const uniqueDice = [...new Set(dice)];
     for (const die of uniqueDice) {
       const targetPointId = (startPointId + 1) - die;
@@ -123,7 +123,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
         const isInHomeBoard = point.id >= homeRange[0] && point.id <= homeRange[1];
 
         if (isInHomeBoard) {
-          const requiredDie = player === PLAYER_LEFT ? 25 - point.id : 13 - point.id;
+          const requiredDie = player === PLAYERS.LEFT ? 25 - point.id : 13 - point.id;
 
           if (die >= requiredDie) {
             if (die === requiredDie) {

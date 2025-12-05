@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { PLAYER_LEFT, PLAYER_RIGHT } from '../globals';
+import { PLAYERS } from '../globals';
 import { makeMultiplayerMove, syncGameState, setMultiplayerMode } from '../slice';
 import { setConnectionStatus, joinRoom, setOpponent, setError } from '../../RoomManager/slice';
 import { wsService } from '../../services/websocket';
@@ -29,7 +29,7 @@ export const useWebSocketHandlers = () => {
         dispatch(setOpponent(data.opponent));
         dispatch(setMultiplayerMode({
           isMultiplayer: true,
-          myPlayer: data.isHost ? PLAYER_LEFT : PLAYER_RIGHT
+          myPlayer: data.isHost ? PLAYERS.LEFT : PLAYERS.RIGHT
         }));
       }
     };
@@ -38,7 +38,7 @@ export const useWebSocketHandlers = () => {
       dispatch(setOpponent(data.opponent));
       dispatch(setMultiplayerMode({
         isMultiplayer: true,
-        myPlayer: PLAYER_LEFT
+        myPlayer: PLAYERS.LEFT
       }));
     };
 

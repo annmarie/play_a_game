@@ -1,15 +1,18 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { PLAYER_RIGHT } from '../../globals';
-import Point from '.';
+import Point from './index';
+import { PLAYERS } from '../../globals';
 
 describe('Point Component', () => {
+  const mockOnClick = jest.fn();
   const mockPoint = {
     id: 1,
     checkers: 3,
-    player: PLAYER_RIGHT,
+    player: PLAYERS.RIGHT
   };
 
-  const mockOnClick = jest.fn();
+  beforeEach(() => {
+    mockOnClick.mockClear();
+  });
 
   it('should render with the correct test data based on point id', async () => {
     await act(async () => render(<Point point={mockPoint} onClick={mockOnClick} />));

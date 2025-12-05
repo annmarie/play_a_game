@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { PLAYER_LEFT, PLAYER_RIGHT } from '../../globals';
+import { PLAYERS } from '../../globals';
 import { setMultiplayerMode } from '../../slice';
 import { leaveRoom } from '../../../RoomManager/slice';
 import { wsService } from '../../../services/websocket';
@@ -20,7 +20,7 @@ const MultiplayerInfo = ({ multiplayer, myPlayer }) => {
       <p>Room: {multiplayer.roomId}</p>
       <p>You: {multiplayer.playerName} ({myPlayer})</p>
       {multiplayer.opponent ? (
-        <p>Opponent: {multiplayer.opponent.name} ({myPlayer === PLAYER_LEFT ? PLAYER_RIGHT : PLAYER_LEFT})</p>
+        <p>Opponent: {multiplayer.opponent.name} ({myPlayer === PLAYERS.LEFT ? PLAYERS.RIGHT : PLAYERS.LEFT})</p>
       ) : (
         <p>Waiting for opponent...</p>
       )}

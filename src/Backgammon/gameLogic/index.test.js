@@ -1,4 +1,4 @@
-import { PLAYER_LEFT, PLAYER_RIGHT } from '../globals';
+import { PLAYERS } from '../globals';
 import { rollDie, togglePlayer, selectSpotLogic } from './index';
 
 describe('Game Logic', () => {
@@ -14,19 +14,19 @@ describe('Game Logic', () => {
 
   describe('togglePlayer', () => {
     it('should toggle from PLAYER_RIGHT to PLAYER_LEFT', () => {
-      expect(togglePlayer(PLAYER_RIGHT)).toBe(PLAYER_LEFT);
+      expect(togglePlayer(PLAYERS.RIGHT)).toBe(PLAYERS.LEFT);
     });
 
     it('should toggle from PLAYER_LEFT to PLAYER_RIGHT', () => {
-      expect(togglePlayer(PLAYER_LEFT)).toBe(PLAYER_RIGHT);
+      expect(togglePlayer(PLAYERS.LEFT)).toBe(PLAYERS.RIGHT);
     });
   });
 
   describe('selectSpotLogic', () => {
     const mockState = {
-      player: PLAYER_LEFT,
+      player: PLAYERS.LEFT,
       diceValue: [3, 4],
-      checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
+      checkersOnBar: { [PLAYERS.LEFT]: 0, [PLAYERS.RIGHT]: 0 },
       points: Array.from({ length: 24 }, (_, i) => ({
         id: i + 1,
         checkers: 0,
@@ -36,7 +36,7 @@ describe('Game Logic', () => {
     };
 
     beforeEach(() => {
-      mockState.points[0] = { id: 1, checkers: 2, player: PLAYER_LEFT };
+      mockState.points[0] = { id: 1, checkers: 2, player: PLAYERS.LEFT };
       mockState.potentialMoves = { 1: [4, 5] };
     });
 
@@ -58,7 +58,7 @@ describe('Game Logic', () => {
     it('handles checker on bar move', () => {
       const state = {
         ...mockState,
-        checkersOnBar: { [PLAYER_LEFT]: 1, [PLAYER_RIGHT]: 0 },
+        checkersOnBar: { [PLAYERS.LEFT]: 1, [PLAYERS.RIGHT]: 0 },
         potentialMoves: { 22: [] }
       };
 
@@ -74,7 +74,7 @@ describe('Game Logic', () => {
     it('returns null for invalid bar move', () => {
       const state = {
         ...mockState,
-        checkersOnBar: { [PLAYER_LEFT]: 1, [PLAYER_RIGHT]: 0 },
+        checkersOnBar: { [PLAYERS.LEFT]: 1, [PLAYERS.RIGHT]: 0 },
         potentialMoves: {}
       };
 
@@ -91,7 +91,7 @@ describe('Game Logic', () => {
     });
 
     it('returns null when point belongs to opponent', () => {
-      mockState.points[1] = { id: 2, checkers: 2, player: PLAYER_RIGHT };
+      mockState.points[1] = { id: 2, checkers: 2, player: PLAYERS.RIGHT };
       expect(selectSpotLogic(mockState, 2)).toBeNull();
     });
 

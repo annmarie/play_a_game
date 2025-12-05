@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { PLAYER_LEFT, PLAYER_RIGHT } from '../../globals';
+import { PLAYERS } from '../../globals';
 import { acceptDouble, declineDouble } from '../../slice';
 import Checker from '../Checker';
 import styles from './DoubleOffer.module.css';
@@ -12,7 +12,7 @@ const DoubleOffer = ({ pendingOffer }) => {
     <div className={styles.doubleOffer}>
       <div className={styles.doubleQuestion}>
         <span>Does</span>
-        <Checker player={pendingOffer === PLAYER_LEFT ? PLAYER_RIGHT : PLAYER_LEFT} />
+        <Checker player={pendingOffer === PLAYERS.LEFT ? PLAYERS.RIGHT : PLAYERS.LEFT} />
         <span>accept the offer?</span>
       </div>
       <div className={styles.doubleButtons}>

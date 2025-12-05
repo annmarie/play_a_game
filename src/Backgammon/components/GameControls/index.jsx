@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { ROLL_DICE_BUTTON_TEXT, END_TURN_BUTTON_TEXT } from '../../globals';
+import { BUTTON_TEXT } from '../../globals';
 import { rollDice, endTurn, togglePlayerRoll } from '../../slice';
 import Dice from '../Dice';
 import styles from './GameControls.module.css';
@@ -19,7 +19,7 @@ const GameControls = ({ diceValue, potentialMoves, turnEnding, winner, doublingC
               aria-label="End turn"
               onClick={() => dispatch(turnEnding ? endTurn() : togglePlayerRoll())}
             >
-              {END_TURN_BUTTON_TEXT}
+              {BUTTON_TEXT.END_TURN}
             </button>
           )}
         </div>
@@ -30,7 +30,7 @@ const GameControls = ({ diceValue, potentialMoves, turnEnding, winner, doublingC
           onClick={() => dispatch(rollDice())}
           disabled={winner || doublingCube.pendingOffer || turnEnding}
         >
-          {ROLL_DICE_BUTTON_TEXT}
+          {BUTTON_TEXT.ROLL_DICE}
         </button>
       )}
       {turnEnding && !diceValue && (
@@ -39,7 +39,7 @@ const GameControls = ({ diceValue, potentialMoves, turnEnding, winner, doublingC
           aria-label="End turn"
           onClick={() => dispatch(endTurn())}
         >
-          {END_TURN_BUTTON_TEXT}
+          {BUTTON_TEXT.END_TURN}
         </button>
       )}
     </div>

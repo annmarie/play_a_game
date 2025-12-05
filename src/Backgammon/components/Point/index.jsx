@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import { useMemo } from 'react'
 import Checker from '../Checker'
 import styles from './Point.module.css'
-import { START_KEY_LEFT } from '../../globals';
+import { BOARD_CONFIG } from '../../globals';
 
 const Point = ({ point, onClick, selected, potential }) => {
   const pointClasses = useMemo(() => {
     const classes = [
       styles.point,
       point.id % 2 === 0 ? styles.light : styles.dark,
-      point.id > START_KEY_LEFT ? styles.bottom : '',
+      point.id > BOARD_CONFIG.START_KEY_LEFT ? styles.bottom : '',
       selected ? styles.selected : '',
       potential ? styles.potential : ''
     ];
@@ -21,7 +21,7 @@ const Point = ({ point, onClick, selected, potential }) => {
     const testClasses = [
       'point',
       point.id % 2 === 0 ? 'light' : 'dark',
-      point.id > START_KEY_LEFT ? 'bottom' : 'top',
+      point.id > BOARD_CONFIG.START_KEY_LEFT ? 'bottom' : 'top',
       selected ? 'selected' : '',
       potential ? 'potential' : ''
     ];

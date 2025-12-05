@@ -2,12 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard, getPointIdToIndexMap } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gameLogic';
 import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveValidation';
-import { PLAYER_LEFT, PLAYER_RIGHT, MAX_HISTORY } from './globals';
+import { PLAYERS, BOARD_CONFIG } from './globals';
 
 export const initialState = {
   points: initializeBoard(),
-  checkersOnBar: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
-  checkersBorneOff: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
+  checkersOnBar: { [PLAYERS.LEFT]: 0, [PLAYERS.RIGHT]: 0 },
+  checkersBorneOff: { [PLAYERS.LEFT]: 0, [PLAYERS.RIGHT]: 0 },
   diceValue: null,
   player: null,
   winner: null,
@@ -20,7 +20,7 @@ export const initialState = {
   checkersOnBarHistory: [],
   checkersBorneOffHistory: [],
   potentialMovesHistory: [],
-  gamesWon: { [PLAYER_LEFT]: 0, [PLAYER_RIGHT]: 0 },
+  gamesWon: { [PLAYERS.LEFT]: 0, [PLAYERS.RIGHT]: 0 },
   doublingCube: {
     value: 1,
     owner: null,
@@ -171,7 +171,7 @@ export const slice = createSlice({
         ...state,
         isMultiplayer,
         myPlayer,
-        isMyTurn: isMultiplayer ? myPlayer === PLAYER_LEFT : true
+        isMyTurn: isMultiplayer ? myPlayer === PLAYERS.LEFT : true
       };
     },
 
@@ -267,12 +267,12 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
     turnEnding: turnShouldEnd,
     selectedSpot: null,
     potentialSpots: [],
-    pointsHistory: [...state.pointsHistory, state.points].slice(-MAX_HISTORY),
-    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar].slice(-MAX_HISTORY),
-    checkersBorneOffHistory: [...state.checkersBorneOffHistory, state.checkersBorneOff].slice(-MAX_HISTORY),
-    diceHistory: [...state.diceHistory, state.diceValue].slice(-MAX_HISTORY),
-    playerHistory: [...state.playerHistory, state.player].slice(-MAX_HISTORY),
-    potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves].slice(-MAX_HISTORY),
+    pointsHistory: [...state.pointsHistory, state.points].slice(-BOARD_CONFIG.MAX_HISTORY),
+    checkersOnBarHistory: [...state.checkersOnBarHistory, state.checkersOnBar].slice(-BOARD_CONFIG.MAX_HISTORY),
+    checkersBorneOffHistory: [...state.checkersBorneOffHistory, state.checkersBorneOff].slice(-BOARD_CONFIG.MAX_HISTORY),
+    diceHistory: [...state.diceHistory, state.diceValue].slice(-BOARD_CONFIG.MAX_HISTORY),
+    playerHistory: [...state.playerHistory, state.player].slice(-BOARD_CONFIG.MAX_HISTORY),
+    potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves].slice(-BOARD_CONFIG.MAX_HISTORY),
   };
 }
 
