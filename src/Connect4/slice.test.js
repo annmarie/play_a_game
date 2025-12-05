@@ -1,4 +1,3 @@
-/* globals jest, beforeEach, describe, expect, it */
 import { configureStore } from '@reduxjs/toolkit';
 import reducer, { initialState, makeMove, undoMove, resetGame } from './slice';
 import { PLAYER_ONE, PLAYER_TWO } from './globals';

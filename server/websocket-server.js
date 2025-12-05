@@ -71,7 +71,7 @@ function handleMessage(ws, data) {
       handleJoinRoom(ws, payload);
       break;
     case MESSAGE_TYPES.LEAVE_ROOM:
-      handleLeaveRoom(ws, payload);
+      handleLeaveRoom(ws);
       break;
     case MESSAGE_TYPES.GAME_MOVE:
       handleGameMove(ws, payload);
@@ -148,7 +148,7 @@ function handleJoinRoom(ws, payload) {
   console.log(`${playerName} joined room ${roomId}`);
 }
 
-function handleLeaveRoom(ws, payload) {
+function handleLeaveRoom(ws) {
   const player = players.get(ws);
   if (!player) return;
 
@@ -188,7 +188,7 @@ function handleGameMove(ws, payload) {
   // Forward the move to the opponent
   opponent.ws.send(JSON.stringify({
     type: MESSAGE_TYPES.GAME_MOVE,
-    payload: payload
+    payload
   }));
 
   // Update room game state
@@ -198,7 +198,7 @@ function handleGameMove(ws, payload) {
 function handleDisconnect(ws) {
   const player = players.get(ws);
   if (player) {
-    handleLeaveRoom(ws, { roomId: player.roomId });
+    handleLeaveRoom(ws);
   }
 }
 

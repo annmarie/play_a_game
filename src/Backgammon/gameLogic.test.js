@@ -1,4 +1,3 @@
-/* globals describe, expect, it, beforeEach */
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 import { rollDie, togglePlayer, selectSpotLogic } from './gameLogic';
 

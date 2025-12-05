@@ -33,11 +33,19 @@ const Connect4 = () => {
           <div className={styles.gameModeSelector}>
             <button
               onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }))}
-              className={!state.isMultiplayer ? styles.activeMode : ''}
+              style={{ backgroundColor: '#6c757d', color: 'white' }}
             >
               Local Game
             </button>
-            <RoomManager gameType="connect4" />
+            {!state.isMultiplayer && (
+              <button
+                onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: true, myPlayer: null }))}
+                style={{ backgroundColor: '#6c757d', color: 'white' }}
+              >
+                Multiplayer Game
+              </button>
+            )}
+            {state.isMultiplayer && <RoomManager gameType="connect4" />}
           </div>
         )}
 

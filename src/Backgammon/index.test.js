@@ -23,7 +23,6 @@ const RESET_GAME = /reset the game/i;
 const UNDO_MOVE = /undo last move/i;
 const BEAR_OFF = /bear off/i;
 const SPACEBAR_KEY = ' ';
-const UNDO_KEY = 'u';
 
 describe('Backgammon Component Tests', () => {
   let store;

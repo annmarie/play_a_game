@@ -1,4 +1,3 @@
-/* globals jest, beforeEach, describe, expect, it */
 import { configureStore } from '@reduxjs/toolkit';
 import backgammonReducer, { initialState, selectSpot, rollDice, makeMove, resetGame, undoRoll, offerDouble, acceptDouble, declineDouble, endTurn } from './slice';
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';

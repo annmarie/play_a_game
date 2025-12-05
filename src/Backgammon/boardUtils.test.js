@@ -1,4 +1,3 @@
-/* globals describe, expect, it */
 import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
 import { initializeBoard, getIndexToPointIdMap, getPointIdToIndexMap } from './boardUtils';
 

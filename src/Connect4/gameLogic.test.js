@@ -1,4 +1,3 @@
-/* globals describe, expect, it */
 import { dropChecker, isBoardFull, checkWin, togglePlayer } from './gameLogic';
 import { PLAYER_ONE, PLAYER_TWO } from './globals';
 

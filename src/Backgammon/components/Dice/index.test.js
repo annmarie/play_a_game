@@ -1,4 +1,4 @@
-import { render, screen, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import Dice from '.';
 
 const DICE_DOT_LEFT_TEST_ID = /die-dot-left/i;

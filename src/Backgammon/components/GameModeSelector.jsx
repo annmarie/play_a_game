@@ -11,11 +11,19 @@ const GameModeSelector = ({ isMultiplayer }) => {
     <div className={styles.gameModeSelector}>
       <button
         onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }))}
-        className={!isMultiplayer ? styles.activeMode : ''}
+        style={{ backgroundColor: '#6c757d', color: 'white' }}
       >
         Local Game
       </button>
-      <RoomManager gameType="backgammon" />
+      {!isMultiplayer && (
+        <button
+          onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: true, myPlayer: null }))}
+          style={{ backgroundColor: '#6c757d', color: 'white' }}
+        >
+          Multiplayer Game
+        </button>
+      )}
+      {isMultiplayer && <RoomManager gameType="backgammon" />}
     </div>
   );
 };

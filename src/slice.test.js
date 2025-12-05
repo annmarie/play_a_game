@@ -1,4 +1,3 @@
-/* globals beforeEach, describe, expect, it */
 import { configureStore } from '@reduxjs/toolkit';
 import mainReducer, { initialState, setName } from './slice';
 
