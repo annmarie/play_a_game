@@ -11,14 +11,14 @@ class CSRFWebSocketClient {
   connect() {
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket(this.url);
-      
+
       this.ws.onopen = () => {
         console.log('WebSocket connected');
       };
-      
+
       this.ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        
+
         if (data.type === 'CSRF_TOKEN') {
           this.csrfToken = data.payload.token;
           this.sessionId = data.payload.sessionId;
@@ -30,12 +30,12 @@ class CSRFWebSocketClient {
           this.onMessage(data);
         }
       };
-      
+
       this.ws.onerror = (error) => {
         console.error('WebSocket error:', error);
         reject(error);
       };
-      
+
       this.ws.onclose = () => {
         console.log('WebSocket closed');
         this.authenticated = false;
@@ -50,14 +50,14 @@ class CSRFWebSocketClient {
         reject(new Error('No CSRF token received'));
         return;
       }
-      
+
       const handshakeMessage = {
         type: 'HANDSHAKE',
         payload: { sessionId: this.sessionId }
       };
-      
+
       this.ws.send(JSON.stringify(handshakeMessage));
-      
+
       setTimeout(() => {
         if (this.authenticated) {
           resolve();

@@ -217,7 +217,7 @@ const reduceMakeMove = (state, { payload: { fromPointId, toPointId } }) => {
   return updateMoveCheckerState(state, fromIndex, toIndex, moveDistance);
 };
 
-const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) =>{
+const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) => {
   const { updatedPoints, hasBarPlayer } = moveCheckers(
     state.points,
     toIndex, fromIndex,

@@ -150,8 +150,8 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
         if (
           targetPoint &&
           (targetPoint.checkers === 0 ||
-          targetPoint.player === player ||
-          (targetPoint.checkers === 1 && targetPoint.player !== player))
+            targetPoint.player === player ||
+            (targetPoint.checkers === 1 && targetPoint.player !== player))
         ) {
           potentialMoves[point.id] = potentialMoves[point.id] || [];
           potentialMoves[point.id].push(targetPoint.id);

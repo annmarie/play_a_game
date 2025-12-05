@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const { MESSAGE_TYPES, ERROR_MESSAGES, DEFAULT_PORT, ROOM_ID_LENGTH } = require('./globals');
 const CSRFProtection = require('./csrf-protection');
 
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS 
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
   : ['http://localhost:5173', 'http://localhost:3000'];
 
@@ -45,12 +45,12 @@ wss.on('connection', (ws, req) => {
   // Generate session ID and CSRF token
   const sessionId = crypto.randomUUID();
   const csrfToken = csrfProtection.generateToken(sessionId);
-  
+
   // Store session info
   ws.sessionId = sessionId;
   ws.origin = req.headers.origin;
   sessions.set(sessionId, { ws, authenticated: false });
-  
+
   // Send CSRF token to client with additional security headers
   if (ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({
@@ -63,25 +63,25 @@ wss.on('connection', (ws, req) => {
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
-      
+
       // Verify origin
       if (!isOriginAllowed(ws.origin)) {
         ws.close(1008, 'Origin not allowed');
         return;
       }
-      
+
       // Skip CSRF validation for initial handshake
       if (data.type === 'HANDSHAKE') {
         handleHandshake(ws, data);
         return;
       }
-      
+
       // Validate CSRF token for all other messages
       if (!data.csrfToken || !csrfProtection.validateToken(ws.sessionId, data.csrfToken)) {
         ws.close(1008, 'Invalid CSRF token');
         return;
       }
-      
+
       handleMessage(ws, data);
     } catch (error) {
       console.error('Error parsing message:', error);
@@ -104,7 +104,7 @@ wss.on('connection', (ws, req) => {
   });
 });
 
-function handleHandshake(ws, data) {
+function handleHandshake(ws) {
   const session = sessions.get(ws.sessionId);
   if (session) {
     session.authenticated = true;
@@ -115,7 +115,7 @@ function handleHandshake(ws, data) {
 function handleMessage(ws, data) {
   const { type, payload } = data;
   const session = sessions.get(ws.sessionId);
-  
+
   // Check if session is authenticated
   if (!session || !session.authenticated) {
     ws.close(1008, 'Session not authenticated');
@@ -151,7 +151,7 @@ function handleCreateRoom(ws, payload) {
     ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
     return;
   }
-  
+
   const { gameType, playerId, playerName } = payload;
   const roomId = generateRoomId();
 

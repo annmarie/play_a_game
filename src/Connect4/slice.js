@@ -50,7 +50,7 @@ export const slice = createSlice({
 
 const reduceMakeMove = (state, action) => {
   const { col } = action.payload;
-  
+
   const moveResult = makeMoveLogic(state, col);
   if (!moveResult || moveResult.error) return state;
 

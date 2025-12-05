@@ -13,7 +13,7 @@ export const dropChecker = (col, board, player) => {
   if (!board || !board.length || col < 0 || col >= board[0]?.length) {
     return { currentMove: null, newBoard: board, error: 'Invalid column' };
   }
-  
+
   const newBoard = board.map(row => [...row]); // Create a deep copy of the board
   let currentMove = null;
 
@@ -55,17 +55,17 @@ export const isBoardFull = (board) => {
  */
 export const checkWin = (board, move) => {
   if (!move || typeof move.row !== 'number' || typeof move.col !== 'number' ||
-      move.row < 0 || move.row >= board.length ||
-      move.col < 0 || move.col >= board[0].length) {
+    move.row < 0 || move.row >= board.length ||
+    move.col < 0 || move.col >= board[0].length) {
     return { haveWinner: false, desc: '' };
   }
   const { row, col } = move;
   const player = board[row][col];
   const directions = [
-    { x: 1, y: 1,  desc: 'diagonal' },   // Diagonal (top-left to bottom-right)
+    { x: 1, y: 1, desc: 'diagonal' },   // Diagonal (top-left to bottom-right)
     { x: 1, y: -1, desc: 'diagonal' },   // Diagonal (top-right to bottom-left)
-    { x: 0, y: 1,  desc: 'horizontal' }, // Horizontal direction
-    { x: 1, y: 0,  desc: 'vertical' },   // Vertical direction
+    { x: 0, y: 1, desc: 'horizontal' }, // Horizontal direction
+    { x: 1, y: 0, desc: 'vertical' },   // Vertical direction
   ];
 
   /**

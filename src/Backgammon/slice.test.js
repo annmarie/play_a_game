@@ -27,13 +27,13 @@ describe('Backgammon Slice', () => {
     store.dispatch(rollDice());
     store.dispatch(selectSpot(24));
     state = store.getState()
-    expect(state.potentialSpots).toEqual([22,21])
+    expect(state.potentialSpots).toEqual([22, 21])
     store.dispatch(selectSpot(5))
     state = store.getState()
-    expect(state.potentialSpots).toEqual([7,8])
+    expect(state.potentialSpots).toEqual([7, 8])
     store.dispatch(selectSpot(13))
     state = store.getState()
-    expect(state.potentialSpots).toEqual([2,3])
+    expect(state.potentialSpots).toEqual([2, 3])
   });
 
 
@@ -42,13 +42,13 @@ describe('Backgammon Slice', () => {
     store.dispatch(rollDice())
     store.dispatch(selectSpot(12))
     state = store.getState()
-    expect(state.potentialSpots).toEqual([9,10])
+    expect(state.potentialSpots).toEqual([9, 10])
     store.dispatch(selectSpot(1))
     state = store.getState()
-    expect(state.potentialSpots).toEqual([15,14])
+    expect(state.potentialSpots).toEqual([15, 14])
     store.dispatch(selectSpot(17))
     state = store.getState()
-    expect(state.potentialSpots).toEqual([20,19])
+    expect(state.potentialSpots).toEqual([20, 19])
   });
 
 
@@ -59,14 +59,14 @@ describe('Backgammon Slice', () => {
     store.dispatch(rollDice())
     // make moves for left player
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 15 }))
-    store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 } ))
+    store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }))
     // doubles roll for right player
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 4, 4, 4], player: PLAYERS.RIGHT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 }))
-    store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 } ))
     store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 }))
-    store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 } ))
+    store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 }))
+    store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 }))
     state = store.getState()
     expect(state.turnEnding).toBe(true);
     expect(state.player).toBe(PLAYERS.RIGHT);
@@ -132,7 +132,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should roll and reset dice', () => {
-    const [ leftDie, rightDie ] = [ 5, 3 ]
+    const [leftDie, rightDie] = [5, 3]
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [leftDie, rightDie], player: PLAYERS.LEFT });
     store.dispatch(rollDice())
     state = store.getState()
@@ -144,7 +144,7 @@ describe('Backgammon Slice', () => {
 
   it('should not allow moves without a dice roll', () => {
     expect(state.player).toEqual(null)
-    store.dispatch(makeMove( { fromPointId: 1, toPointId: 2 } ))
+    store.dispatch(makeMove({ fromPointId: 1, toPointId: 2 }))
     state = store.getState()
     expect(state.player).toEqual(null)
     expect(state.points[0].checkers).toBe(5);
@@ -160,7 +160,7 @@ describe('Backgammon Slice', () => {
     expect(state.playerHistory).toHaveLength(1);
     expect(state.playerHistory[0]).toEqual(state.player);
     expect(state.potentialMovesHistory).toHaveLength(1);
-    expect(state.potentialMovesHistory[0]).toEqual({1: [18, 15], 12: [6, 9], 17: [23, 20], 19: [22]})
+    expect(state.potentialMovesHistory[0]).toEqual({ 1: [18, 15], 12: [6, 9], 17: [23, 20], 19: [22] })
     expect(state.checkersOnBarHistory[0][PLAYERS.LEFT]).toEqual(0);
     expect(state.checkersOnBarHistory[0][PLAYERS.RIGHT]).toEqual(0);
   });
