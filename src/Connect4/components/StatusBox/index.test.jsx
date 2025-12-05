@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import StatusBox from '../StatusBox';
-import { DRAW_MESSAGE } from '../../globals';
+import { MESSAGES } from '../../globals';
 
 describe('StatusBox Component', () => {
   it('should render the winner message when a winner exists', () => {
@@ -28,7 +28,7 @@ describe('StatusBox Component', () => {
       />
     );
 
-    expect(screen.getByRole('status')).toHaveTextContent(DRAW_MESSAGE);
+    expect(screen.getByRole('status')).toHaveTextContent(MESSAGES.DRAW);
   });
 
   it('should render the current player message when the game is ongoing', () => {

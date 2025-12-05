@@ -1,4 +1,4 @@
-// WebSocket Message Types
+// globals.js
 const MESSAGE_TYPES = {
   CREATE_ROOM: 'createRoom',
   JOIN_ROOM: 'joinRoom',
@@ -11,7 +11,6 @@ const MESSAGE_TYPES = {
   ERROR: 'error'
 };
 
-// Error Messages
 const ERROR_MESSAGES = {
   INVALID_FORMAT: 'Invalid message format',
   UNKNOWN_TYPE: 'Unknown message type',
@@ -19,11 +18,9 @@ const ERROR_MESSAGES = {
   ROOM_FULL: 'Room is full'
 };
 
-// Server Configuration
 const DEFAULT_PORT = 8080;
 const ROOM_ID_LENGTH = 6;
 
-// Game Types
 const GAME_TYPES = {
   CONNECT4: 'connect4',
   BACKGAMMON: 'backgammon'

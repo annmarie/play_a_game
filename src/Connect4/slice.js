@@ -1,16 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard, makeMoveLogic, togglePlayer } from './gameLogic';
-import { PLAYER_ONE, PLAYER_TWO, MAX_HISTORY } from './globals';
+import { PLAYERS, GAME_CONFIG } from './globals';
 import { wsService } from '../services/websocket';
 
 export const initialState = {
   board: initializeBoard(),
-  player: PLAYER_ONE,
+  player: PLAYERS.ONE,
   winner: null,
   winnerDesc: '',
   boardFull: false,
   history: [],
-  gamesWon: { [PLAYER_ONE]: 0, [PLAYER_TWO]: 0 },
+  gamesWon: { [PLAYERS.ONE]: 0, [PLAYERS.TWO]: 0 },
   isMultiplayer: false,
   myPlayer: null,
   isMyTurn: true,
@@ -40,7 +40,7 @@ export const slice = createSlice({
       const { isMultiplayer, myPlayer } = action.payload;
       state.isMultiplayer = isMultiplayer;
       state.myPlayer = myPlayer;
-      state.isMyTurn = myPlayer === PLAYER_ONE;
+      state.isMyTurn = myPlayer === PLAYERS.ONE;
     },
     undoMove: (state, action) => reduceUndoMove(state, action),
     resetGame: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
@@ -58,7 +58,7 @@ const reduceMakeMove = (state, action) => {
   const updatedGamesWon = winner ? { ...state.gamesWon, [state.player]: state.gamesWon[state.player] + 1 } : state.gamesWon;
 
   const newHistory = [...state.history, state.board];
-  if (newHistory.length > MAX_HISTORY) {
+  if (newHistory.length > GAME_CONFIG.MAX_HISTORY) {
     newHistory.shift();
   }
 

@@ -3,13 +3,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../store';
-import { PLAYER_ONE, PLAYER_TWO, DRAW_MESSAGE } from './globals';
+import { PLAYERS, MESSAGES } from './globals';
 import Connect4 from '.';
 
 const BOARD_LENGTH = 6 * 7;
-const CURRENT_PLAYER_ONE = new RegExp(`Current Player: ${PLAYER_ONE}`, 'i');
-const CURRENT_PLAYER_TWO = new RegExp(`Current Player: ${PLAYER_TWO}`, 'i');
-const WINNER_PLAYER_ONE = new RegExp(`Winner: ${PLAYER_ONE}`, 'i');
+const CURRENT_PLAYER_ONE = new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i');
+const CURRENT_PLAYER_TWO = new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i');
+const WINNER_PLAYER_ONE = new RegExp(`Winner: ${PLAYERS.ONE}`, 'i');
 const RESET_GAME = /reset game/i;
 const UNDO_MOVE = /undo move/i;
 
@@ -58,17 +58,17 @@ describe('Connect4 Component', () => {
     const cells = screen.getAllByRole('cell');
 
     await act(async () => fireEvent.click(cells[4])); // Player One
-    spotRex = new RegExp(`Spot row 5 and col 4 with ${PLAYER_ONE}`, 'i');
+    spotRex = new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i');
     expect(screen.getAllByLabelText(spotRex).length).toBe(1);
     expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
 
     await act(async () => fireEvent.click(cells[4])); // Player Two
-    spotRex = new RegExp(`Spot row 4 and col 4 with ${PLAYER_TWO}`, 'i');
+    spotRex = new RegExp(`Spot row 4 and col 4 with ${PLAYERS.TWO}`, 'i');
     expect(screen.getAllByLabelText(spotRex).length).toBe(1);
     expect(screen.getByText(CURRENT_PLAYER_ONE)).toBeInTheDocument();
 
     await act(async () => fireEvent.click(cells[3])); // Player One
-    spotRex = new RegExp(`Spot row 5 and col 3 with ${PLAYER_ONE}`, 'i');
+    spotRex = new RegExp(`Spot row 5 and col 3 with ${PLAYERS.ONE}`, 'i');
     expect(screen.getAllByLabelText(spotRex).length).toBe(1);
     expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
   });
@@ -86,7 +86,7 @@ describe('Connect4 Component', () => {
     for (let i = 0; i < 6; i++) {
       await simulateMoves(cells, [6, 0, 5, 1, 2, 4, 3]);
     }
-    expect(screen.getByText(DRAW_MESSAGE)).toBeInTheDocument();
+    expect(screen.getByText(MESSAGES.DRAW)).toBeInTheDocument();
   });
 
   it('should reset the game', async () => {
@@ -96,13 +96,13 @@ describe('Connect4 Component', () => {
     const resetButton = screen.getByRole('button', { name: RESET_GAME });
 
     await act(async () => fireEvent.click(cells[35])); // Player One
-    spotRex = new RegExp(`Spot row 5 and col 0 with ${PLAYER_ONE}`, 'i');
+    spotRex = new RegExp(`Spot row 5 and col 0 with ${PLAYERS.ONE}`, 'i');
     expect(screen.getAllByLabelText(spotRex).length).toBe(1);
     expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
     expect(resetButton).toBeEnabled();
 
     await act(async () => fireEvent.click(cells[35])); // Player Two
-    spotRex = new RegExp(`Spot row 4 and col 0 with ${PLAYER_TWO}`, 'i');
+    spotRex = new RegExp(`Spot row 4 and col 0 with ${PLAYERS.TWO}`, 'i');
     expect(screen.getAllByLabelText(spotRex).length).toBe(1);
     expect(screen.getByText(CURRENT_PLAYER_ONE)).toBeInTheDocument();
     expect(resetButton).toBeEnabled();
@@ -120,7 +120,7 @@ describe('Connect4 Component', () => {
     const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
 
     await act(async () => fireEvent.click(cells[4])); // Player One
-    spotRex = new RegExp(`Spot row 5 and col 4 with ${PLAYER_ONE}`, 'i');
+    spotRex = new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i');
     expect(screen.getAllByLabelText(spotRex).length).toBe(1);
     expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
     expect(undoButton).toHaveAttribute('disabled');

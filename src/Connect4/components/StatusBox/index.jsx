@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { DRAW_MESSAGE } from '../../globals';
+import { MESSAGES } from '../../globals';
 import styles from './StatusBox.module.css';
 
 const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player = 'Unknown', onPlayAgain }) => {
@@ -16,7 +16,7 @@ const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player =
       {winner
         ? `Winner: ${winner} Winning move (${winnerDesc})`
         : normalizedBoardFull
-        ? DRAW_MESSAGE
+        ? MESSAGES.DRAW
         : `Current Player: ${player}`}
       
       {gameEnded && onPlayAgain && (

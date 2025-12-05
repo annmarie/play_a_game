@@ -1,4 +1,4 @@
-import { UNDO_BUTTON_TEXT, RESET_BUTTON_TEXT, PLAYER_ONE, PLAYER_TWO } from './globals';
+import { BUTTON_TEXT, PLAYERS } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, resetGame, playAgain, setMultiplayerMode } from './slice';
 import { leaveRoom } from '../RoomManager/slice';
@@ -54,7 +54,7 @@ const Connect4 = () => {
             <p>Room: {multiplayer.roomId}</p>
             <p>You: {multiplayer.playerName} ({state.myPlayer})</p>
             {multiplayer.opponent ? (
-              <p>Opponent: {multiplayer.opponent.name} ({state.myPlayer === PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE})</p>
+              <p>Opponent: {multiplayer.opponent.name} ({state.myPlayer === PLAYERS.ONE ? PLAYERS.TWO : PLAYERS.ONE})</p>
             ) : (
               <p>Waiting for opponent...</p>
             )}
@@ -64,8 +64,8 @@ const Connect4 = () => {
 
         <div className={styles.gameScore}>
           <div>Games Won:</div>
-          <div style={{color: 'red'}}>{PLAYER_ONE}: {state.gamesWon?.[PLAYER_ONE] || 0}</div>
-          <div style={{color: 'yellow'}}>{PLAYER_TWO}: {state.gamesWon?.[PLAYER_TWO] || 0}</div>
+          <div style={{color: 'red'}}>{PLAYERS.ONE}: {state.gamesWon?.[PLAYERS.ONE] || 0}</div>
+          <div style={{color: 'yellow'}}>{PLAYERS.TWO}: {state.gamesWon?.[PLAYERS.TWO] || 0}</div>
         </div>
 
         <StatusBox
@@ -91,7 +91,7 @@ const Connect4 = () => {
             onClick={() => dispatch(undoMove())}
             disabled={state.history.length <= 1 || state.winner || state.isMultiplayer}
           >
-            {UNDO_BUTTON_TEXT}
+            {BUTTON_TEXT.UNDO}
           </button>
           {!state.isMultiplayer && (
             <button
@@ -99,7 +99,7 @@ const Connect4 = () => {
               onClick={() => dispatch(resetGame())}
               disabled={state.history.length === 0}
             >
-              {RESET_BUTTON_TEXT}
+              {BUTTON_TEXT.RESET}
             </button>
           )}
         </div>

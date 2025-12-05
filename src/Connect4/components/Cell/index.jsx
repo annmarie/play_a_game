@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
-import { PLAYER_ONE, PLAYER_TWO } from '../../globals';
+import { PLAYERS } from '../../globals';
 import styles from './Cell.module.css'
 
 const Cell = ({ cell, rowIndex, colIndex, onCellClick }) => {
   const isOccupied = Boolean(cell);
   const checkerTestId = `checker-${cell || 'empty'}`;
-  const playerClass = cell === PLAYER_ONE ? styles.playerOne : cell === PLAYER_TWO ? styles.playerTwo : '';
+  const playerClass = cell === PLAYERS.ONE ? styles.playerOne : cell === PLAYERS.TWO ? styles.playerTwo : '';
 
   return (
     <div

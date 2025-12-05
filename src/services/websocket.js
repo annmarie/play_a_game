@@ -8,7 +8,6 @@ class WebSocketService {
 
   connect(url = 'ws://localhost:8080') {
     try {
-      // Validate URL to prevent SSRF
       const allowedHosts = ['localhost', '127.0.0.1'];
       const urlObj = new URL(url);
       if (!allowedHosts.includes(urlObj.hostname)) {
