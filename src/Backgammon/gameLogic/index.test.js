@@ -1,5 +1,5 @@
-import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
-import { rollDie, togglePlayer, selectSpotLogic } from './gameLogic';
+import { PLAYER_LEFT, PLAYER_RIGHT } from '../globals';
+import { rollDie, togglePlayer, selectSpotLogic } from './index';
 
 describe('Game Logic', () => {
   describe('rollDie', () => {

@@ -1,7 +1,7 @@
 import {
   PLAYER_LEFT, PLAYER_RIGHT, START_KEY_LEFT, START_KEY_RIGHT,
   RIGHT_PLAYER_POINT_ORDER, LEFT_PLAYER_POINT_ORDER,
-} from './globals';
+} from '../globals';
 
 /**
  * Initializes the game board with standard backgammon starting positions

@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { initializeBoard } from './boardUtils';
+import { initializeBoard, getPointIdToIndexMap } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gameLogic';
 import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveValidation';
-import { getPointIdToIndexMap } from './boardUtils';
 import { PLAYER_LEFT, PLAYER_RIGHT, MAX_HISTORY } from './globals';
 
 export const initialState = {

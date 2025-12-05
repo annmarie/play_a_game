@@ -1,6 +1,6 @@
-import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
-import { initializeBoard } from './boardUtils';
-import { calculatePotentialMove, findPotentialMoves, moveCheckers, canBearOff, validateBearOffMove } from './moveValidation';
+import { PLAYER_LEFT, PLAYER_RIGHT } from '../globals';
+import { initializeBoard } from '../boardUtils';
+import { calculatePotentialMove, findPotentialMoves, moveCheckers, canBearOff, validateBearOffMove } from './index';
 
 describe('Move Validation', () => {
   describe('calculatePotentialMove', () => {

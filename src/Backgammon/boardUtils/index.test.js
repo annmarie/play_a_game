@@ -1,5 +1,5 @@
-import { PLAYER_LEFT, PLAYER_RIGHT } from './globals';
-import { initializeBoard, getIndexToPointIdMap, getPointIdToIndexMap } from './boardUtils';
+import { PLAYER_LEFT, PLAYER_RIGHT } from '../globals';
+import { initializeBoard, getIndexToPointIdMap, getPointIdToIndexMap } from './index';
 
 describe('Board Utilities', () => {
   describe('initializeBoard', () => {

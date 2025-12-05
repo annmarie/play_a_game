@@ -1,5 +1,5 @@
-import { PLAYER_LEFT, START_KEY_LEFT, START_KEY_RIGHT } from './globals';
-import { getHomeRange, getPointIdToIndexMap, getIndexToPointIdMap } from './boardUtils';
+import { PLAYER_LEFT, START_KEY_LEFT, START_KEY_RIGHT } from '../globals';
+import { getHomeRange, getPointIdToIndexMap, getIndexToPointIdMap } from '../boardUtils';
 
 /**
  * Gets the furthest occupied point in home board for bear-off validation
