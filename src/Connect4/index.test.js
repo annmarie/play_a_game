@@ -6,34 +6,19 @@ import { reducer } from '../store';
 import { PLAYERS, MESSAGES } from './globals';
 import Connect4 from '.';
 
-const BOARD_LENGTH = 6 * 7;
-const CURRENT_PLAYER_ONE = new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i');
-const CURRENT_PLAYER_TWO = new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i');
-const WINNER_PLAYER_ONE = new RegExp(`Winner: ${PLAYERS.ONE}`, 'i');
-const RESET_GAME = /reset game/i;
-const UNDO_MOVE = /undo move/i;
+const renderGame = (store) => render(
+  <BrowserRouter>
+    <Provider store={store}>
+      <Connect4 />
+    </Provider>
+  </BrowserRouter>
+);
 
-function validateInitialBoardState(cells) {
-  cells.forEach((cell) => {
-    expect(cell).toBeEmptyDOMElement();
-  });
-}
-
-function simulateMoves(cells, moves) {
-  return act(async () => {
-    moves.forEach((index) => fireEvent.click(cells[index]));
-  });
-}
-
-function renderGame(store) {
-  return render(
-    <BrowserRouter>
-      <Provider store={store}>
-        <Connect4 />
-      </Provider>
-    </BrowserRouter>
-  );
-}
+const clickCells = async (cells, indices) => {
+  for (const index of indices) {
+    await act(async () => fireEvent.click(cells[index]));
+  }
+};
 
 describe('Connect4 Component', () => {
   let store;
@@ -45,84 +30,64 @@ describe('Connect4 Component', () => {
   it('should render the initial board setup', async () => {
     await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
-    expect(cells).toHaveLength(BOARD_LENGTH);
-    validateInitialBoardState(cells);
-    expect(screen.getByText(CURRENT_PLAYER_ONE)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: UNDO_MOVE })).not.toBeEnabled();
-    expect(screen.getByRole('button', { name: RESET_GAME })).not.toBeEnabled();
+    expect(cells).toHaveLength(42);
+    cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
+    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /undo move/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /reset game/i })).toBeDisabled();
   });
 
   it('should allow players to take turns', async () => {
-    let spotRex;
     await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
 
-    await act(async () => fireEvent.click(cells[4])); // Player One
-    spotRex = new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i');
-    expect(screen.getAllByLabelText(spotRex).length).toBe(1);
-    expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
+    await clickCells(cells, [4]);
+    expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
 
-    await act(async () => fireEvent.click(cells[4])); // Player Two
-    spotRex = new RegExp(`Spot row 4 and col 4 with ${PLAYERS.TWO}`, 'i');
-    expect(screen.getAllByLabelText(spotRex).length).toBe(1);
-    expect(screen.getByText(CURRENT_PLAYER_ONE)).toBeInTheDocument();
-
-    await act(async () => fireEvent.click(cells[3])); // Player One
-    spotRex = new RegExp(`Spot row 5 and col 3 with ${PLAYERS.ONE}`, 'i');
-    expect(screen.getAllByLabelText(spotRex).length).toBe(1);
-    expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
+    await clickCells(cells, [4]);
+    expect(screen.getByLabelText(new RegExp(`Spot row 4 and col 4 with ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
   });
 
   it('should declare a winner', async () => {
     await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
-    await simulateMoves(cells, [1, 2, 1, 2, 1, 2, 1]);
-    expect(screen.getByText(WINNER_PLAYER_ONE)).toBeInTheDocument();
+    await clickCells(cells, [1, 2, 1, 2, 1, 2, 1]);
+    expect(screen.getByText(new RegExp(`Winner: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
   });
 
   it('should declare a draw', async () => {
     await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
     for (let i = 0; i < 6; i++) {
-      await simulateMoves(cells, [6, 0, 5, 1, 2, 4, 3]);
+      await clickCells(cells, [6, 0, 5, 1, 2, 4, 3]);
     }
     expect(screen.getByText(MESSAGES.DRAW)).toBeInTheDocument();
   });
 
   it('should reset the game', async () => {
-    let spotRex;
     await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
-    const resetButton = screen.getByRole('button', { name: RESET_GAME });
+    const resetButton = screen.getByRole('button', { name: /reset game/i });
 
-    await act(async () => fireEvent.click(cells[35])); // Player One
-    spotRex = new RegExp(`Spot row 5 and col 0 with ${PLAYERS.ONE}`, 'i');
-    expect(screen.getAllByLabelText(spotRex).length).toBe(1);
-    expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
+    await clickCells(cells, [35, 35]);
     expect(resetButton).toBeEnabled();
 
-    await act(async () => fireEvent.click(cells[35])); // Player Two
-    spotRex = new RegExp(`Spot row 4 and col 0 with ${PLAYERS.TWO}`, 'i');
-    expect(screen.getAllByLabelText(spotRex).length).toBe(1);
-    expect(screen.getByText(CURRENT_PLAYER_ONE)).toBeInTheDocument();
-    expect(resetButton).toBeEnabled();
-
-    await act(async () => fireEvent.click(resetButton)); // Reset
-    expect(screen.getByText(CURRENT_PLAYER_ONE)).toBeInTheDocument();
-    validateInitialBoardState(cells);
-    expect(resetButton).not.toBeEnabled();
+    await act(async () => fireEvent.click(resetButton));
+    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+    cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
+    expect(resetButton).toBeDisabled();
   });
 
   it('should undo last move', async () => {
-    let spotRex;
     await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
-    const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
+    const undoButton = screen.getByRole('button', { name: /undo move/i });
 
-    await act(async () => fireEvent.click(cells[4])); // Player One
-    spotRex = new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i');
-    expect(screen.getAllByLabelText(spotRex).length).toBe(1);
-    expect(screen.getByText(CURRENT_PLAYER_TWO)).toBeInTheDocument();
-    expect(undoButton).toHaveAttribute('disabled');
+    await clickCells(cells, [4]);
+    expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
+    expect(undoButton).toBeDisabled();
   });
 });

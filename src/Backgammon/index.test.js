@@ -12,47 +12,35 @@ jest.mock('./gameLogic', () => ({
   rollDiceLogic: jest.fn(),
 }));
 
-const PLAYER_LABEL = /current player [left|right]/i;
-const DICE_DOT_LEFT_TEST_ID = /die-dot-left/i;
-const DICE_DOT_EXTRA_LEFT_TEST_ID = /die-dot-doubles-left/i;
-const DICE_DOT_RIGHT_TEST_ID = /die-dot-right/i;
-const DICE_DOT_EXTRA_RIGHT_TEST_ID = /die-dot-doubles-right/i;
-const ROLL_DICE = /roll dice/i;
-const END_TURN = /end turn/i;
-const RESET_GAME = /reset the game/i;
-const UNDO_MOVE = /undo last move/i;
-const SPACEBAR_KEY = ' ';
+const renderGame = (store) => render(
+  <BrowserRouter>
+    <Provider store={store}>
+      <Backgammon />
+    </Provider>
+  </BrowserRouter>
+);
 
-function validateInitialBoardState(points) {
-  points.forEach((point, index) => {
-    const ariaLabel = point.getAttribute('aria-label');
-    if ([0, 18].includes(index)) {
-      expect(ariaLabel).toContain('5 left checkers');
-    } else if ([6, 12].includes(index)) {
-      expect(ariaLabel).toContain('5 right checkers');
-    } else if ([4].includes(index)) {
-      expect(ariaLabel).toContain('3 right checkers');
-    } else if ([16].includes(index)) {
-      expect(ariaLabel).toContain('3 left checkers');
-    } else if ([11].includes(index)) {
-      expect(ariaLabel).toContain('2 left checkers');
-    } else if ([23].includes(index)) {
-      expect(ariaLabel).toContain('2 right checkers');
-    } else {
-      expect(ariaLabel).toContain('0 checkers');
-    }
+const rollDice = async (diceValue, player) => {
+  gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue, player });
+  await act(async () => fireEvent.click(screen.getByRole('button', { name: /roll dice/i })));
+};
+
+const clickPoints = async (points, indices) => {
+  for (const index of indices) {
+    await act(async () => fireEvent.click(points[index]));
+  }
+};
+
+const validateInitialBoard = (points) => {
+  const expected = {
+    0: '5 left', 18: '5 left', 6: '5 right', 12: '5 right',
+    4: '3 right', 16: '3 left', 11: '2 left', 23: '2 right'
+  };
+  points.forEach((point, i) => {
+    const label = point.getAttribute('aria-label');
+    expect(label).toContain(expected[i] ? `${expected[i]} checkers` : '0 checkers');
   });
-}
-
-function renderGame(store) {
-  return render(
-    <BrowserRouter>
-      <Provider store={store}>
-        <Backgammon />
-      </Provider>
-    </BrowserRouter>
-  );
-}
+};
 
 describe('Backgammon Component Tests', () => {
   let store;
@@ -64,177 +52,112 @@ describe('Backgammon Component Tests', () => {
 
   it('should render the initial board', async () => {
     await act(async () => renderGame(store));
-    const rollButton = screen.getByRole('button', { name: ROLL_DICE });
-    expect(rollButton).toBeInTheDocument();
-    const resetButton = screen.getByRole('button', { name: RESET_GAME });
-    expect(resetButton).toBeInTheDocument();
-    expect(resetButton).toHaveAttribute('disabled');
-    const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
-    expect(undoButton).toBeInTheDocument();
-    expect(undoButton).toHaveAttribute('disabled');
+    expect(screen.getByRole('button', { name: /roll dice/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /reset the game/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /undo last move/i })).toBeDisabled();
     const points = screen.queryAllByRole('point');
-    validateInitialBoardState(points);
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(0);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(0);
+    validateInitialBoard(points);
+    expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(0);
+    expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(0);
   });
 
   it('should have class selected on the point if selected for play', async () => {
     await act(async () => renderGame(store));
-    const rollButton = screen.getByRole('button', { name: ROLL_DICE });
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [3, 5], player: PLAYERS.RIGHT });
-    await act(async () => fireEvent.click(rollButton));
+    await rollDice([3, 5], PLAYERS.RIGHT);
     const points = screen.queryAllByRole('point');
-    const selectCell = 4;
-    await act(async () => fireEvent.click(points[selectCell]));
-    expect(points[selectCell]).toHaveAttribute('data-testid', expect.stringContaining('selected'));
+    await clickPoints(points, [4]);
+    expect(points[4]).toHaveAttribute('data-testid', expect.stringContaining('selected'));
     expect(points[9]).toHaveAttribute('data-testid', expect.stringContaining('potential'));
     expect(points[7]).toHaveAttribute('data-testid', expect.stringContaining('potential'));
   });
 
   it('should roll the dice and render the dots for each die', async () => {
     await act(async () => renderGame(store));
-    const rollButton = screen.getByRole('button', { name: ROLL_DICE });
-    const resetButton = screen.getByRole('button', { name: RESET_GAME });
-    const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
-    const [leftDie, rightDie] = [5, 3];
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [leftDie, rightDie], player: PLAYERS.LEFT });
-    await act(async () => fireEvent.click(rollButton));
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(5);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
-    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_RIGHT_TEST_ID).length).toBe(0);
-    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_LEFT_TEST_ID).length).toBe(0);
-    await act(async () => fireEvent.click(resetButton));
-    expect(resetButton).toHaveAttribute('disabled');
-    expect(undoButton).toHaveAttribute('disabled');
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(0);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(0);
-    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_RIGHT_TEST_ID).length).toBe(0);
-    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_LEFT_TEST_ID).length).toBe(0);
-    const points = screen.queryAllByRole('point');
-    validateInitialBoardState(points);
+    await rollDice([5, 3], PLAYERS.LEFT);
+    expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(5);
+    expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(3);
+    expect(screen.queryAllByTestId(/die-dot-doubles/i)).toHaveLength(0);
+
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: /reset the game/i })));
+    expect(screen.getByRole('button', { name: /reset the game/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /undo last move/i })).toBeDisabled();
+    expect(screen.queryAllByTestId(/die-dot/i)).toHaveLength(0);
+    validateInitialBoard(screen.queryAllByRole('point'));
   });
 
   it('should be able roll dice, make a move and reset board', async () => {
     await act(async () => renderGame(store));
-    const rollButton = screen.getByRole('button', { name: ROLL_DICE });
-    const resetButton = screen.getByRole('button', { name: RESET_GAME });
-    const undoButton = screen.getByRole('button', { name: UNDO_MOVE });
     const points = screen.queryAllByRole('point');
-    expect(points[0].getAttribute('aria-label')).toContain('5 left checkers');
-    expect(points[14].getAttribute('aria-label')).toContain('0 checkers');
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
-    await act(async () => fireEvent.click(rollButton));
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[14]));
-    expect(points[0].getAttribute('aria-label')).toContain('4 left checkers');
+    await rollDice([6, 3], PLAYERS.LEFT);
+    await clickPoints(points, [0, 14, 0, 17]);
+
+    expect(points[0].getAttribute('aria-label')).toContain('3 left checkers');
     expect(points[14].getAttribute('aria-label')).toContain('1 left checkers');
-    expect(points[17].getAttribute('aria-label')).toContain('0 checkers');
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain('left');
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[17]));
     expect(points[17].getAttribute('aria-label')).toContain('1 left checkers');
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(0);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(0);
-    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_RIGHT_TEST_ID).length).toBe(0);
-    expect(screen.queryAllByTestId(DICE_DOT_EXTRA_LEFT_TEST_ID).length).toBe(0);
-    const endTurnButton = screen.getByRole('button', { name: END_TURN });
-    expect(endTurnButton).toBeInTheDocument();
+    expect(screen.queryAllByTestId(/die-dot/i)).toHaveLength(0);
+
+    const endTurnButton = screen.getByRole('button', { name: /end turn/i });
     await act(async () => fireEvent.click(endTurnButton));
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain('right');
-    await act(async () => fireEvent.click(resetButton));
-    expect(resetButton).toHaveAttribute('disabled');
-    expect(undoButton).toHaveAttribute('disabled');
-    validateInitialBoardState(points);
+    expect(screen.getByLabelText(/current player/i).getAttribute('aria-label')).toContain('right');
+
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: /reset the game/i })));
+    expect(screen.getByRole('button', { name: /reset the game/i })).toBeDisabled();
+    validateInitialBoard(points);
   });
 
   it('should move a right player to the checker bar', async () => {
     await act(async () => renderGame(store));
     const points = screen.queryAllByRole('point');
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 6], player: PLAYERS.RIGHT });
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(1);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.RIGHT);
-    await act(async () => fireEvent.click(points[23]));
-    await act(async () => fireEvent.click(points[22]));
-    await act(async () => fireEvent.click(points[23]));
-    await act(async () => fireEvent.click(points[17]));
+    await rollDice([1, 6], PLAYERS.RIGHT);
+    await clickPoints(points, [23, 22, 23, 17]);
     expect(points[17].getAttribute('aria-label')).toContain('1 right checkers');
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.RIGHT);
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    expect(points[0].getAttribute('aria-label')).toContain('5 left checkers');
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[14]));
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[17]));
+
+    await rollDice([6, 3], PLAYERS.LEFT);
+    await clickPoints(points, [0, 14, 0, 17]);
     expect(points[17].getAttribute('aria-label')).toContain('1 right checkers');
   });
 
   it('should move a left player to the checker bar', async () => {
     await act(async () => renderGame(store));
     const points = screen.queryAllByRole('point');
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[14]));
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[17]));
+    await rollDice([6, 3], PLAYERS.LEFT);
+    await clickPoints(points, [0, 14, 0, 17]);
     expect(points[17].getAttribute('aria-label')).toContain('1 left checkers');
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 1], player: PLAYERS.RIGHT });
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    expect(points[23].getAttribute('aria-label')).toContain('2 right checkers');
-    await act(async () => fireEvent.click(points[23]));
-    await act(async () => fireEvent.click(points[22]));
-    await act(async () => fireEvent.click(points[23]));
-    await act(async () => fireEvent.click(points[17]));
+
+    await rollDice([6, 1], PLAYERS.RIGHT);
+    await clickPoints(points, [23, 22, 23, 17]);
     expect(points[17].getAttribute('aria-label')).toContain('1 left checkers');
   });
 
   it('should display four sets of die when doubles are rolled', async () => {
     await act(async () => renderGame(store));
     const points = screen.queryAllByRole('point');
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(6);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(3);
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[14]));
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[17]));
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 4, 4, 4], player: PLAYERS.RIGHT });
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: RESET_GAME })));
-    expect(screen.getByRole('button', { name: RESET_GAME })).toHaveAttribute('disabled');
-    expect(screen.getByRole('button', { name: UNDO_MOVE })).toHaveAttribute('disabled');
-    validateInitialBoardState(points);
+    await rollDice([6, 3], PLAYERS.LEFT);
+    await clickPoints(points, [0, 14, 0, 17]);
+
+    await rollDice([4, 4, 4, 4], PLAYERS.RIGHT);
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: /reset the game/i })));
+    expect(screen.getByRole('button', { name: /reset the game/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /undo last move/i })).toBeDisabled();
+    validateInitialBoard(points);
   });
 
   it('should roll the dice when spacebar is pressed and diceValue is null', async () => {
     await act(async () => renderGame(store));
-    const rollButton = screen.getByRole('button', { name: ROLL_DICE });
-    expect(rollButton).toBeInTheDocument();
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
-    await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }));
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(4);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
+    await act(async () => fireEvent.keyDown(window, { key: ' ' }));
+    expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
+    expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(6);
   });
 
   it('should not roll the dice when spacebar is pressed and diceValue is not null', async () => {
     await act(async () => renderGame(store));
-    expect(screen.getByRole('button', { name: ROLL_DICE })).toBeInTheDocument();
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
-    await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }));
+    await act(async () => fireEvent.keyDown(window, { key: ' ' }));
     gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 3], player: PLAYERS.LEFT });
-    await act(async () => fireEvent.keyDown(window, { key: SPACEBAR_KEY }));
-    expect(screen.queryAllByTestId(DICE_DOT_LEFT_TEST_ID).length).toBe(4);
-    expect(screen.queryAllByTestId(DICE_DOT_RIGHT_TEST_ID).length).toBe(6);
+    await act(async () => fireEvent.keyDown(window, { key: ' ' }));
+    expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
+    expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(6);
   });
 
   it('should clean up the event listener on unmount', async () => {
@@ -320,16 +243,12 @@ describe('Backgammon Component Tests', () => {
   it('should end turn when end turn button is clicked', async () => {
     await act(async () => renderGame(store));
     const points = screen.queryAllByRole('point');
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: ROLL_DICE })));
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[14]));
-    await act(async () => fireEvent.click(points[0]));
-    await act(async () => fireEvent.click(points[17]));
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.LEFT);
-    const endTurnButton = screen.getByRole('button', { name: END_TURN });
+    await rollDice([6, 3], PLAYERS.LEFT);
+    await clickPoints(points, [0, 14, 0, 17]);
+
+    const endTurnButton = screen.getByRole('button', { name: /end turn/i });
     await act(async () => fireEvent.click(endTurnButton));
-    expect(screen.getByLabelText(PLAYER_LABEL).getAttribute('aria-label')).toContain(PLAYERS.RIGHT);
+    expect(screen.getByLabelText(/current player/i).getAttribute('aria-label')).toContain(PLAYERS.RIGHT);
   });
 
   it('should not display bear off when clicking on point 11 with specific board', async () => {

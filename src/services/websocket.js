@@ -48,11 +48,11 @@ class WebSocketService {
 
       this.ws.onerror = (error) => {
         console.error('WebSocket error:', error);
-        this.emit('error', error);
+        this.emit('error', { message: 'WebSocket error occurred' });
       };
     } catch (error) {
       console.error('Failed to connect to WebSocket:', error);
-      this.emit('error', error);
+      this.emit('error', { message: 'Failed to connect to WebSocket' });
     }
   }
 

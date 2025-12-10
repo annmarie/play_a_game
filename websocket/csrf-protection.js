@@ -1,13 +1,12 @@
-const crypto = require('crypto');
-
 class CSRFProtection {
   constructor() {
+    this.crypto = require('crypto');
     this.tokens = new Map(); // Store tokens with expiration
     this.tokenExpiry = 30 * 60 * 1000; // 30 minutes
   }
 
   generateToken(sessionId) {
-    const token = crypto.randomBytes(32).toString('hex');
+    const token = this.crypto.randomBytes(32).toString('hex');
     const expiry = Date.now() + this.tokenExpiry;
 
     this.tokens.set(sessionId, { token, expiry });
@@ -16,7 +15,6 @@ class CSRFProtection {
 
     return token;
   }
-
   validateToken(sessionId, providedToken) {
     const tokenData = this.tokens.get(sessionId);
 
@@ -26,9 +24,12 @@ class CSRFProtection {
       return false;
     }
 
-    return tokenData.token === providedToken;
+    try {
+      return this.crypto.timingSafeEqual(Buffer.from(tokenData.token), Buffer.from(providedToken));
+    } catch (err) {
+      return false;
+    }
   }
-
   cleanupExpiredTokens() {
     const now = Date.now();
     for (const [sessionId, tokenData] of this.tokens.entries()) {

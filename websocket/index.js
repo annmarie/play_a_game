@@ -64,21 +64,14 @@ wss.on('connection', (ws, req) => {
     try {
       const data = JSON.parse(message);
 
-      // Verify origin
-      if (!isOriginAllowed(ws.origin)) {
-        ws.close(1008, 'Origin not allowed');
-        return;
-      }
-
-      // Skip CSRF validation for initial handshake
-      if (data.type === 'HANDSHAKE') {
-        handleHandshake(ws, data);
-        return;
-      }
-
-      // Validate CSRF token for all other messages
+      // Validate CSRF token for all messages before processing
       if (!data.csrfToken || !csrfProtection.validateToken(ws.sessionId, data.csrfToken)) {
         ws.close(1008, 'Invalid CSRF token');
+        return;
+      }
+
+      if (data.type === 'HANDSHAKE') {
+        handleHandshake(ws, data);
         return;
       }
 
@@ -101,6 +94,14 @@ wss.on('connection', (ws, req) => {
 
   ws.on('error', (error) => {
     console.error('WebSocket error:', error);
+  });
+
+  // Revoke CSRF token on error or abnormal close
+  ws.on('close', () => {
+    if (ws.sessionId) {
+      csrfProtection.revokeToken(ws.sessionId);
+      sessions.delete(ws.sessionId);
+    }
   });
 });
 
