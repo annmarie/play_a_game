@@ -34,7 +34,7 @@ const MultiplayerSetup = ({ gameType }) => {
 
   if (roomId) {
     return (
-      <div className={styles.roomInfo}>
+      <div className={styles.setupInfo}>
         <h3>Room: {roomId}</h3>
         <p>{LABELS.WAITING_FOR_OPPONENT}</p>
         <button onClick={() => dispatch(leaveRoom())}>{BUTTON_TEXT.LEAVE_ROOM}</button>
@@ -43,7 +43,7 @@ const MultiplayerSetup = ({ gameType }) => {
   }
 
   return (
-    <div className={styles.roomManager}>
+    <div className={styles.MultiplayerSetup}>
       <h3>{LABELS.MULTIPLAYER_SETUP}</h3>
 
       {error && <div className={styles.error}>{error}</div>}
