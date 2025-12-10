@@ -13,7 +13,7 @@ class WebSocketService {
       if (!allowedHosts.includes(urlObj.hostname)) {
         throw new Error('Connection to this host is not allowed');
       }
-      this.ws = new WebSocket(url);
+      this.ws = new WebSocket(urlObj.href);
 
       this.ws.onopen = () => {
         console.log('WebSocket connected');
