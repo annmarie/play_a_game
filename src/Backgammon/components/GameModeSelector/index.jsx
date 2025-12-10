@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { setMultiplayerMode } from '../../slice';
-import RoomManager from '../../../RoomManager';
+import MultiplayerSetup from '../../../MultiplayerSetup';
 import styles from './GameModeSelector.module.css';
 
 const GameModeSelector = ({ isMultiplayer }) => {
@@ -23,7 +23,7 @@ const GameModeSelector = ({ isMultiplayer }) => {
           Multiplayer Game
         </button>
       )}
-      {isMultiplayer && <RoomManager gameType="backgammon" />}
+      {isMultiplayer && <MultiplayerSetup gameType="backgammon" />}
     </div>
   );
 };

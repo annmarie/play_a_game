@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import MultiplayerInfo from './index';
 import backgammonSlice from '../../slice';
-import roomManagerSlice from '../../../RoomManager/slice';
+import roomManagerSlice from '../../../MultiplayerSetup/slice';
 
 const createMockStore = () => {
   return configureStore({

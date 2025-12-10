@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { PLAYERS } from '../../globals';
 import { setMultiplayerMode } from '../../slice';
-import { leaveRoom } from '../../../RoomManager/slice';
+import { leaveRoom } from '../../../MultiplayerSetup/slice';
 import { wsService } from '../../../services/websocket';
 import styles from './MultiplayerInfo.module.css';
 

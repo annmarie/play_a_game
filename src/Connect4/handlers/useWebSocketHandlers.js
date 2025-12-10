@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeMultiplayerMove, syncGameState, setMultiplayerMode } from '../slice';
-import { setConnectionStatus, joinRoom, setOpponent, setError } from '../../RoomManager/slice';
+import { setConnectionStatus, joinRoom, setOpponent, setError } from '../../MultiplayerSetup/slice';
 import { wsService } from '../../services/websocket';
 import { PLAYERS } from '../globals';
 

@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { wsService } from '../services/websocket';
 import { setPlayerInfo, setError, leaveRoom } from './slice';
 import { BUTTON_TEXT, LABELS, PLACEHOLDERS, ERROR_MESSAGES } from './globals';
-import styles from './RoomManager.module.css';
+import styles from './MultiplayerSetup.module.css';
 
-const RoomManager = ({ gameType }) => {
+const MultiplayerSetup = ({ gameType }) => {
   const dispatch = useDispatch();
   const { isConnected, roomId, playerName, error } = useSelector(state => state.multiplayer);
   const [inputName, setInputName] = useState(playerName || '');
@@ -91,8 +91,8 @@ const RoomManager = ({ gameType }) => {
   );
 };
 
-RoomManager.propTypes = {
+MultiplayerSetup.propTypes = {
   gameType: PropTypes.string.isRequired,
 };
 
-export default RoomManager;
+export default MultiplayerSetup;

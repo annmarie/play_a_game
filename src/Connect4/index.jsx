@@ -1,14 +1,14 @@
 import { BUTTON_TEXT, PLAYERS } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, resetGame, playAgain, setMultiplayerMode } from './slice';
-import { leaveRoom } from '../RoomManager/slice';
+import { leaveRoom } from '../MultiplayerSetup/slice';
 import { wsService } from '../services/websocket';
 import { useWebSocketHandlers } from './handlers/useWebSocketHandlers';
 import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import styles from './Connect4.module.css';
 import Layout from '../Layout';
-import RoomManager from '../RoomManager';
+import MultiplayerSetup from '../MultiplayerSetup';
 
 const Connect4 = () => {
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ const Connect4 = () => {
                 Multiplayer Game
               </button>
             )}
-            {state.isMultiplayer && <RoomManager gameType="connect4" />}
+            {state.isMultiplayer && <MultiplayerSetup gameType="connect4" />}
           </div>
         )}
 
