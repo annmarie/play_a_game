@@ -12,35 +12,23 @@ const RoomManager = ({ gameType }) => {
   const [inputName, setInputName] = useState(playerName || '');
   const [inputRoomId, setInputRoomId] = useState('');
 
-  const handleCreateRoom = () => {
-    if (!inputName.trim()) {
-      dispatch(setError(ERROR_MESSAGES.ENTER_NAME));
+  const handleRoomAction = (action, roomId = null) => {
+    const name = inputName.trim();
+    const room = roomId?.trim();
+    
+    if (!name || (action === 'joinRoom' && !room)) {
+      dispatch(setError(action === 'joinRoom' ? ERROR_MESSAGES.ENTER_NAME_AND_ROOM : ERROR_MESSAGES.ENTER_NAME));
       return;
     }
 
     const playerId = Math.random().toString(36).substr(2, 9);
-    dispatch(setPlayerInfo({ playerId, playerName: inputName.trim() }));
+    dispatch(setPlayerInfo({ playerId, playerName: name }));
 
-    wsService.send('createRoom', {
+    wsService.send(action, {
       gameType,
       playerId,
-      playerName: inputName.trim()
-    });
-  };
-
-  const handleJoinRoom = () => {
-    if (!inputName.trim() || !inputRoomId.trim()) {
-      dispatch(setError(ERROR_MESSAGES.ENTER_NAME_AND_ROOM));
-      return;
-    }
-
-    const playerId = Math.random().toString(36).substr(2, 9);
-    dispatch(setPlayerInfo({ playerId, playerName: inputName.trim() }));
-
-    wsService.send('joinRoom', {
-      roomId: inputRoomId.trim(),
-      playerId,
-      playerName: inputName.trim()
+      playerName: name,
+      ...(room && { roomId: room })
     });
   };
 
@@ -72,7 +60,7 @@ const RoomManager = ({ gameType }) => {
 
       <div className={styles.actions}>
         <button
-          onClick={handleCreateRoom}
+          onClick={() => handleRoomAction('createRoom')}
           disabled={!isConnected}
         >
           {BUTTON_TEXT.CREATE_ROOM}
@@ -86,7 +74,7 @@ const RoomManager = ({ gameType }) => {
             placeholder={PLACEHOLDERS.ROOM_ID}
           />
           <button
-            onClick={handleJoinRoom}
+            onClick={() => handleRoomAction('joinRoom', inputRoomId)}
             disabled={!isConnected}
           >
             {BUTTON_TEXT.JOIN_ROOM}
