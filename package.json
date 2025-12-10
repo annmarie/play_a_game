@@ -9,9 +9,9 @@
     "lint": "eslint .",
     "preview": "NODE_ENV=production vite preview",
     "test": "NODE_ENV=test jest -u",
-    "server": "cd server && npm start",
-    "server:dev": "cd server && npm run dev",
-    "dev:full": "concurrently \"npm run server:dev\" \"npm run dev\""
+    "server": "cd websocket && npm start",
+    "websocket:dev": "cd websocket && npm run dev",
+    "dev:full": "concurrently \"npm run websocket:dev\" \"npm run dev\""
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.0",

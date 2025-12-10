@@ -2,10 +2,10 @@
   "name": "@local/play-a-game-server",
   "version": "1.0.0",
   "description": "WebSocket server for multiplayer games",
-  "main": "websocket-server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node websocket-server.js",
-    "dev": "nodemon websocket-server.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "ws": "^8.14.2"
