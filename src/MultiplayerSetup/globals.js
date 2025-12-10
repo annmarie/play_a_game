@@ -1,4 +1,4 @@
-// RoomManager constants and text labels
+
 export const BUTTON_TEXT = {
   CREATE_ROOM: 'Create Room',
   JOIN_ROOM: 'Join Room',

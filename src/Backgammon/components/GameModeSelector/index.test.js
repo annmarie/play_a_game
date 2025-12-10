@@ -3,13 +3,13 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import GameModeSelector from './index';
 import backgammonSlice from '../../slice';
-import roomManagerSlice from '../../../MultiplayerSetup/slice';
+import multiplayerSlice from '../../../MultiplayerSetup/slice';
 
 const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
       backgammon: backgammonSlice,
-      multiplayer: roomManagerSlice,
+      multiplayer: multiplayerSlice,
     },
     preloadedState: {
       backgammon: {

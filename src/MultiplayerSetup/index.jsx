@@ -15,7 +15,7 @@ const MultiplayerSetup = ({ gameType }) => {
   const handleRoomAction = (action, roomId = null) => {
     const name = inputName.trim();
     const room = roomId?.trim();
-    
+
     if (!name || (action === 'joinRoom' && !room)) {
       dispatch(setError(action === 'joinRoom' ? ERROR_MESSAGES.ENTER_NAME_AND_ROOM : ERROR_MESSAGES.ENTER_NAME));
       return;
