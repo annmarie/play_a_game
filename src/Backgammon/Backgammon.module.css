@@ -1,94 +1,68 @@
 /* Backgammon game container */
 .backgammonGame {
-  background-color: darkgray;
-  border-radius: 0.625em;
-  border: 0.0625em solid black;
-  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.1);
-  padding: 1.25em;
+  background-color: var(--background-gray);
+  border-radius: var(--radius-lg);
+  border: 1px solid black;
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-lg);
 }
 
 .diceButton {
   width: 100%;
-  border-radius: 0.5em;
-  border: 0.0625em solid transparent;
-  cursor: pointer;
-  height: fit-content;
-  transition: border-color 0.25s;
-  background-color: #007bff;
-  color: white;
-  padding: 0.75em 1.5em;
+  padding: var(--spacing-lg) var(--spacing-xl);
   font-weight: bold;
 }
 
-.diceButton:hover {
-  background-color: #0056b3;
-}
-
-.diceButton:active {
-  outline: 0.5em auto black;
-}
-
 .backgammonGame button {
-  background-color: #6c757d;
+  background-color: var(--secondary-gray);
   color: white;
   border: none;
-  padding: 0.5em 1em;
-  border-radius: 0.25em;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.2s;
 }
 
 .backgammonGame button:hover {
-  background-color: #5a6268;
-}
-
-.backgammonGame button:active {
-  outline: 0.5em auto #e76f51;
-}
-
-.backgammonGame button:disabled {
-  cursor: not-allowed;
-  outline: transparent;
-  background-color: #ccc;
-  color: #666;
+  background-color: var(--secondary-gray-hover);
 }
 
 .backgammonStatus {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 20px;
+  gap: var(--spacing-lg);
 }
 
 .backgammonBar,
 .backgammonBorneOff {
   display: flex;
-  gap: 1.25em;
+  gap: var(--spacing-lg);
   justify-content: right;
 }
 
 .backgammonDebug {
-  margin-top: 1.25em;
+  margin-top: var(--spacing-lg);
 }
 
 .debugControls {
   display: flex;
-  gap: 0.625em;
+  gap: var(--spacing-sm);
   align-items: center;
 }
 
 .playAgainButton {
-  margin-left: 1em;
-  padding: 0.5em 1em;
-  background-color: #4CAF50;
+  margin-left: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--success-green);
   color: white;
   border: none;
-  border-radius: 0.25em;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: bold;
 }
 
 .playAgainButton:hover {
-  background-color: #45a049;
+  background-color: var(--success-green-hover);
 }

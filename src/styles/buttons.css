@@ -1,0 +1,51 @@
+/* Base button styles */
+button {
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  height: fit-content;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  background-color: #ccc;
+  color: #666;
+}
+
+/* Button variants */
+.btn-primary {
+  background-color: var(--primary-blue);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-blue-hover);
+}
+
+.btn-success {
+  background-color: var(--success-green);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: var(--success-green-hover);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-gray);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--secondary-gray-hover);
+}
+
+.btn-large {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  font-weight: bold;
+}

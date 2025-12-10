@@ -6,12 +6,12 @@
 }
 
 .listItem {
-  margin: 1em 0;
+  margin: var(--spacing-md) 0;
 }
 
 .listItem a {
   text-decoration: none;
-  font-size: 1.125em;
+  font-size: 1.125rem;
 }
 
 .listItem a:hover {
@@ -25,21 +25,21 @@
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 1em;
-  margin-top: 2em;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
 }
 
 .navLink {
-  padding: 1em 2em;
-  background-color: #006400;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--primary-green);
   color: white;
-  border-radius: 0.5em;
+  border-radius: var(--radius-md);
   text-decoration: none;
   font-weight: bold;
   transition: background-color 0.25s;
 }
 
 .navLink:hover {
-  background-color: #004d00;
+  background-color: var(--primary-green-hover);
   color: white;
 }

@@ -1,87 +1,87 @@
 .roomManager {
   background: #f5f5f5;
-  padding: 1.25em;
-  border-radius: 0.5em;
-  margin: 1.25em 0;
-  max-width: 25em;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin: var(--spacing-lg) 0;
+  max-width: 25rem;
 }
 
 .roomInfo {
   background: #e8f5e8;
-  padding: 0.9375em;
-  border-radius: 0.5em;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
   text-align: center;
 }
 
 .inputGroup {
-  margin-bottom: 0.9375em;
+  margin-bottom: var(--spacing-md);
 }
 
 .inputGroup label {
   display: block;
-  margin-bottom: 0.3125em;
+  margin-bottom: var(--spacing-xs);
   font-weight: bold;
 }
 
 .inputGroup input {
   width: 100%;
-  padding: 0.5em;
-  border: 0.0625em solid #ddd;
-  border-radius: 0.25em;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
 }
 
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 0.9375em;
+  gap: var(--spacing-md);
 }
 
 .joinSection {
   display: flex;
-  gap: 0.625em;
+  gap: var(--spacing-sm);
 }
 
 .joinSection input {
   flex: 1;
-  padding: 0.5em;
-  border: 0.0625em solid #ddd;
-  border-radius: 0.25em;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
 }
 
 .roomManager button,
 .roomInfo button {
-  padding: 0.625em 1.25em;
-  background: #007bff !important;
-  color: white !important;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--primary-blue);
+  color: white;
   border: none;
-  border-radius: 0.25em;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .roomManager button:hover,
 .roomInfo button:hover {
-  background: #0056b3 !important;
+  background: var(--primary-blue-hover);
 }
 
 .roomManager button:disabled,
 .roomInfo button:disabled {
-  background: #ccc !important;
-  color: #5c5c5c!important;
+  background: #ccc;
+  color: #5c5c5c;
   cursor: not-allowed;
 }
 
 .error {
   background: #f8d7da;
   color: #721c24;
-  padding: 0.625em;
-  border-radius: 0.25em;
-  margin-bottom: 0.9375em;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-md);
 }
 
 .connectionStatus {
   color: #5c5c5c;
   font-style: italic;
   text-align: center;
-  margin-top: 0.625em;
+  margin-top: var(--spacing-sm);
 }

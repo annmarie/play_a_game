@@ -1,30 +1,30 @@
 /* Header */
 .header {
-  color: #8b4513;
-  background: cornsilk;
+  color: var(--text-brown);
+  background: var(--background-light);
   text-align: center;
-  padding: 2em;
+  padding: var(--spacing-xl);
   margin: 0;
   width: 100%;
 }
 
 .header h1 {
-  margin: 0 0 1em 0;
+  margin: 0 0 var(--spacing-md) 0;
 }
 
 /* Navigation */
 .nav {
   display: flex;
   justify-content: center;
-  gap: 2em;
+  gap: var(--spacing-xl);
 }
 
 .navLink {
-  color: #8b4513;
+  color: var(--text-brown);
   text-decoration: none;
-  font-size: 1.125em;
-  padding: 0.5em 1em;
-  border-radius: 0.25em;
+  font-size: 1.125rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
   transition: background-color 0.25s;
 }
 
@@ -37,6 +37,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: cornsilk;
+  background-color: var(--background-light);
   height: 100vh;
 }

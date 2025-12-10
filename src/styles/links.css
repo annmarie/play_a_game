@@ -1,0 +1,10 @@
+
+a {
+  font-weight: 500;
+  color: var(--primary-green);
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: var(--primary-green-hover);
+}
