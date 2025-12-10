@@ -40,9 +40,3 @@ export const makeMoveLogic = (state, col) => {
     haveWinner
   };
 };
-
-// Re-export functions from modules for backward compatibility
-export { initializeBoard, isBoardFull, dropChecker, checkWin } from '../boardUtils';
-export { isValidMove, isValidColumn } from '../moveValidation';
-
-
