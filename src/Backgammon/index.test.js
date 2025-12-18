@@ -1,13 +1,13 @@
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { PLAYERS, BUTTON_TEXT } from './globals';
+import { PLAYERS } from './globals';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../store';
 import Backgammon from '.';
 import * as gameLogic from './gameLogic';
 
-const { END_TURN, ROLL_DICE, UNDO_MOVE } = BUTTON_TEXT;
+const SPACE_KEY = ' ';
 
 jest.mock('./gameLogic', () => ({
   ...jest.requireActual('./gameLogic'),
@@ -63,7 +63,6 @@ const DEFAULT_GAME_STATE = {
   }
 };
 
-// Store factory function
 const createCustomStore = (overrides = {}) => {
   const gameState = { ...DEFAULT_GAME_STATE, ...overrides };
   return configureStore({
@@ -80,7 +79,6 @@ const validateInitialBoard = (points) => {
   });
 };
 
-// Custom board configurations
 const createBearOffTestBoard = () => Array.from({ length: 24 }, (_, i) => {
   const id = i + 1;
   if (id === 7 || id === 8) return { id, checkers: 5, player: PLAYERS.RIGHT };
@@ -159,7 +157,7 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
       gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
 
-      await act(async () => fireEvent.keyDown(window, { key: ' ' }));
+      await act(async () => fireEvent.keyDown(window, { key: SPACE_KEY }));
 
       expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
       expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(6);
@@ -168,10 +166,10 @@ describe('Backgammon Component Tests', () => {
     it('should prevent rolling when dice already rolled', async () => {
       await act(async () => renderGame(store));
       gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
-      await act(async () => fireEvent.keyDown(window, { key: ' ' }));
+      await act(async () => fireEvent.keyDown(window, { key: SPACE_KEY }));
 
       gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 3], player: PLAYERS.LEFT });
-      await act(async () => fireEvent.keyDown(window, { key: ' ' }));
+      await act(async () => fireEvent.keyDown(window, { key: SPACE_KEY }));
 
       expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
       expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(6);
@@ -279,7 +277,7 @@ describe('Backgammon Component Tests', () => {
           const id = i + 1;
           return id === 24 ? { id, checkers: 1, player: PLAYERS.LEFT } : { id, checkers: 0, player: null };
         }),
-        checkersBorneOff: { left: 3, right: 0 },
+        checkersBorneOff: { [PLAYERS.LEFT]: 3, [PLAYERS.RIGHT]: 0 },
         diceValue: [6, 4],
         potentialSpots: [-1],
         potentialMoves: { '24': [-1] },
@@ -289,8 +287,8 @@ describe('Backgammon Component Tests', () => {
         })],
         diceHistory: [[6, 4, 4]],
         playerHistory: [PLAYERS.LEFT],
-        checkersOnBarHistory: [{ left: 0, right: 0 }],
-        checkersBorneOffHistory: [{ left: 2, right: 0 }],
+        checkersOnBarHistory: [{ [PLAYERS.LEFT]: 0, [PLAYERS.RIGHT]: 0 }],
+        checkersBorneOffHistory: [{ [PLAYERS.LEFT]: 2, [PLAYERS.RIGHT]: 0 }],
         potentialMovesHistory: [{ '24': [-1, -1] }]
       });
 

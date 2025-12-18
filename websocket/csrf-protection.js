@@ -1,6 +1,8 @@
+import crypto from 'crypto';
+
 class CSRFProtection {
   constructor() {
-    this.crypto = require('crypto');
+    this.crypto = crypto;
     this.tokens = new Map(); // Store tokens with expiration
     this.tokenExpiry = 30 * 60 * 1000; // 30 minutes
   }
