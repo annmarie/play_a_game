@@ -99,6 +99,7 @@ describe('MultiplayerSetup', () => {
     fireEvent.click(joinButton);
 
     expect(wsService.send).toHaveBeenCalledWith('joinRoom', {
+      gameType: 'connect4',
       roomId: 'ABC123',
       playerId: expect.any(String),
       playerName: 'TestPlayer'

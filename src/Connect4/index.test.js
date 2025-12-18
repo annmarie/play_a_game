@@ -20,6 +20,10 @@ const clickCells = async (cells, indices) => {
   }
 };
 
+const BOARD_SIZE = 7 * 6;
+const WINNING_SEQUENCE = [1, 2, 1, 2, 1, 2, 1];
+const DRAW_SEQUENCE = [6, 0, 5, 1, 2, 4, 3];
+
 describe('Connect4 Component', () => {
   let store;
 
@@ -27,67 +31,76 @@ describe('Connect4 Component', () => {
     store = configureStore({ reducer });
   });
 
-  it('should render the initial board setup', async () => {
+  const setupGame = async () => {
     await act(async () => renderGame(store));
     const cells = screen.getAllByRole('cell');
-    expect(cells).toHaveLength(42);
-    cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
-    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /undo move/i })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /reset game/i })).toBeDisabled();
+    return cells;
+  };
+
+  describe('Initial Setup', () => {
+    it('should render empty board with correct initial state', async () => {
+      const cells = await setupGame();
+
+      expect(cells).toHaveLength(BOARD_SIZE);
+      cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
+      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /undo move/i })).toBeDisabled();
+      expect(screen.getByRole('button', { name: /reset game/i })).toBeDisabled();
+    });
   });
 
-  it('should allow players to take turns', async () => {
-    await act(async () => renderGame(store));
-    const cells = screen.getAllByRole('cell');
+  describe('Gameplay', () => {
+    it('should alternate players on each move', async () => {
+      const cells = await setupGame();
 
-    await clickCells(cells, [4]);
-    expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
+      await clickCells(cells, [4]);
+      expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
 
-    await clickCells(cells, [4]);
-    expect(screen.getByLabelText(new RegExp(`Spot row 4 and col 4 with ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      await clickCells(cells, [4]);
+      expect(screen.getByLabelText(new RegExp(`Spot row 4 and col 4 with ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+    });
+
+    it('should declare winner when four in a row achieved', async () => {
+      const cells = await setupGame();
+
+      await clickCells(cells, WINNING_SEQUENCE);
+      expect(screen.getByText(new RegExp(`Winner: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+    });
+
+    it('should declare draw when board is full', async () => {
+      const cells = await setupGame();
+
+      for (let i = 0; i < 6; i++) {
+        await clickCells(cells, DRAW_SEQUENCE);
+      }
+      expect(screen.getByText(MESSAGES.DRAW)).toBeInTheDocument();
+    });
   });
 
-  it('should declare a winner', async () => {
-    await act(async () => renderGame(store));
-    const cells = screen.getAllByRole('cell');
-    await clickCells(cells, [1, 2, 1, 2, 1, 2, 1]);
-    expect(screen.getByText(new RegExp(`Winner: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
-  });
+  describe('Game Controls', () => {
+    it('should reset game to initial state', async () => {
+      const cells = await setupGame();
+      const resetButton = screen.getByRole('button', { name: /reset game/i });
 
-  it('should declare a draw', async () => {
-    await act(async () => renderGame(store));
-    const cells = screen.getAllByRole('cell');
-    for (let i = 0; i < 6; i++) {
-      await clickCells(cells, [6, 0, 5, 1, 2, 4, 3]);
-    }
-    expect(screen.getByText(MESSAGES.DRAW)).toBeInTheDocument();
-  });
+      await clickCells(cells, [35, 35]);
+      expect(resetButton).toBeEnabled();
 
-  it('should reset the game', async () => {
-    await act(async () => renderGame(store));
-    const cells = screen.getAllByRole('cell');
-    const resetButton = screen.getByRole('button', { name: /reset game/i });
+      await act(async () => fireEvent.click(resetButton));
+      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
+      expect(resetButton).toBeDisabled();
+    });
 
-    await clickCells(cells, [35, 35]);
-    expect(resetButton).toBeEnabled();
+    it('should handle undo functionality', async () => {
+      const cells = await setupGame();
+      const undoButton = screen.getByRole('button', { name: /undo move/i });
 
-    await act(async () => fireEvent.click(resetButton));
-    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
-    cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
-    expect(resetButton).toBeDisabled();
-  });
-
-  it('should undo last move', async () => {
-    await act(async () => renderGame(store));
-    const cells = screen.getAllByRole('cell');
-    const undoButton = screen.getByRole('button', { name: /undo move/i });
-
-    await clickCells(cells, [4]);
-    expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
-    expect(undoButton).toBeDisabled();
+      await clickCells(cells, [4]);
+      expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
+      expect(undoButton).toBeDisabled();
+    });
   });
 });

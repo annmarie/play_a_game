@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import reducer, { initialState, makeMove, undoMove, resetGame } from './slice';
 import { PLAYERS } from './globals';
-import * as gameLogic from './gameLogic';
+import * as boardUtils from './boardUtils';
 
-jest.mock('./gameLogic', () => ({
-  ...jest.requireActual('./gameLogic'),
-  initializeBoard: jest.fn(() => jest.requireActual('./gameLogic').initializeBoard()),
+jest.mock('./boardUtils', () => ({
+  ...jest.requireActual('./boardUtils'),
+  initializeBoard: jest.fn(() => jest.requireActual('./boardUtils').initializeBoard()),
 }));
 
 describe('Connect4 Slice', () => {
@@ -83,7 +83,7 @@ describe('Connect4 Slice', () => {
     store.dispatch(makeMove({ col: 1 }))
     store.dispatch(makeMove({ col: 2 }))
     store.dispatch(makeMove({ col: 2 }))
-    gameLogic.initializeBoard.mockReturnValueOnce(jest.requireActual('./gameLogic').initializeBoard());
+    boardUtils.initializeBoard.mockReturnValueOnce(jest.requireActual('./boardUtils').initializeBoard());
     store.dispatch(resetGame())
     state = store.getState()
     expect(state.board).toStrictEqual(initialState.board)
@@ -111,10 +111,9 @@ describe('Connect4 Slice', () => {
       [PLAYERS.TWO, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.ONE, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.ONE],
       [PLAYERS.ONE, PLAYERS.ONE, PLAYERS.TWO, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.TWO, PLAYERS.TWO],
       [PLAYERS.TWO, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.ONE, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.ONE],
-      [PLAYERS.ONE, PLAYERS.ONE, PLAYERS.TWO, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.TWO, PLAYERS.TWO],
-      [PLAYERS.TWO, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.ONE, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.ONE],
+      [PLAYERS.ONE, PLAYERS.ONE, PLAYERS.TWO, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.TWO, PLAYERS.TWO]
     ]
-    gameLogic.initializeBoard.mockReturnValueOnce(board);
+    boardUtils.initializeBoard.mockReturnValueOnce(board);
     store.dispatch(resetGame())
     store.dispatch(makeMove({ col: 2 }))
     state = store.getState()
@@ -130,7 +129,7 @@ describe('Connect4 Slice', () => {
       [PLAYERS.ONE, PLAYERS.ONE, PLAYERS.ONE, PLAYERS.TWO],
       [PLAYERS.ONE, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.ONE],
     ];
-    gameLogic.initializeBoard.mockReturnValueOnce(board);
+    boardUtils.initializeBoard.mockReturnValueOnce(board);
     store.dispatch(resetGame())
     store.dispatch(makeMove({ col: 0 }))
     state = store.getState()
