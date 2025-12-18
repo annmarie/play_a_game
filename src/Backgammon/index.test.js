@@ -79,18 +79,25 @@ const validateInitialBoard = (points) => {
   });
 };
 
-const createBearOffTestBoard = () => Array.from({ length: 24 }, (_, i) => {
-  const id = i + 1;
-  if (id === 7 || id === 8) return { id, checkers: 5, player: PLAYERS.RIGHT };
-  if (id === 9 || id === 10) return { id, checkers: 2, player: PLAYERS.RIGHT };
-  if (id === 11) return { id, checkers: 1, player: PLAYERS.RIGHT };
-  if (id === 19) return { id, checkers: 5, player: PLAYERS.LEFT };
-  if (id === 20) return { id, checkers: 3, player: PLAYERS.LEFT };
-  if (id === 21) return { id, checkers: 2, player: PLAYERS.LEFT };
-  if (id === 22) return { id, checkers: 3, player: PLAYERS.LEFT };
-  if (id === 23) return { id, checkers: 1, player: PLAYERS.LEFT };
-  return { id, checkers: 0, player: null };
-});
+const createBearOffTestBoard = () => {
+  const config = {
+    7: { checkers: 5, player: PLAYERS.RIGHT },
+    8: { checkers: 5, player: PLAYERS.RIGHT },
+    9: { checkers: 2, player: PLAYERS.RIGHT },
+    10: { checkers: 2, player: PLAYERS.RIGHT },
+    11: { checkers: 1, player: PLAYERS.RIGHT },
+    19: { checkers: 5, player: PLAYERS.LEFT },
+    20: { checkers: 3, player: PLAYERS.LEFT },
+    21: { checkers: 2, player: PLAYERS.LEFT },
+    22: { checkers: 3, player: PLAYERS.LEFT },
+    23: { checkers: 1, player: PLAYERS.LEFT }
+  };
+
+  return Array.from({ length: 24 }, (_, i) => {
+    const id = i + 1;
+    return config[id] ? { id, ...config[id] } : { id, checkers: 0, player: null };
+  });
+};
 
 describe('Backgammon Component Tests', () => {
   let store;
