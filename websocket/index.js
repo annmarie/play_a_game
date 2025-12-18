@@ -9,6 +9,7 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   : ['http://localhost:5173', 'http://localhost:3000'];
 
 function isOriginAllowed(origin) {
+  if (!origin) return false;
   return ALLOWED_ORIGINS.includes(origin);
 }
 
@@ -16,7 +17,7 @@ const server = http.createServer();
 const wss = new WebSocket.Server({
   server,
   verifyClient: (info) => {
-    return isOriginAllowed(info.origin);
+    return info.origin && isOriginAllowed(info.origin);
   }
 });
 
@@ -28,7 +29,7 @@ const sessions = new Map(); // Track WebSocket sessions
 function generateRoomId() {
   let roomId;
   do {
-    roomId = Math.random().toString(36).substr(2, ROOM_ID_LENGTH).toUpperCase();
+    roomId = Math.random().toString(36).slice(2, 2 + ROOM_ID_LENGTH).toUpperCase();
   } while (rooms.has(roomId));
   return roomId;
 }
@@ -85,7 +86,6 @@ wss.on('connection', (ws, req) => {
   ws.on('close', () => {
     console.log('Client disconnected');
     handleDisconnect(ws);
-    // Clean up session
     if (ws.sessionId) {
       sessions.delete(ws.sessionId);
       csrfProtection.revokeToken(ws.sessionId);
@@ -95,21 +95,15 @@ wss.on('connection', (ws, req) => {
   ws.on('error', (error) => {
     console.error('WebSocket error:', error);
   });
-
-  // Revoke CSRF token on error or abnormal close
-  ws.on('close', () => {
-    if (ws.sessionId) {
-      csrfProtection.revokeToken(ws.sessionId);
-      sessions.delete(ws.sessionId);
-    }
-  });
 });
 
-function handleHandshake(ws) {
+function handleHandshake(ws, data) {
   const session = sessions.get(ws.sessionId);
   if (session) {
     session.authenticated = true;
-    ws.send(JSON.stringify({ type: 'HANDSHAKE_ACK', payload: { success: true } }));
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'HANDSHAKE_ACK', payload: { success: true } }));
+    }
   }
 }
 
@@ -148,8 +142,14 @@ function handleMessage(ws, data) {
 }
 
 function handleCreateRoom(ws, payload) {
-  if (!payload.gameType || !payload.playerId || !payload.playerName) {
-    ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
+  if (!payload || typeof payload !== 'object' || 
+      typeof payload.gameType !== 'string' || !payload.gameType.trim() ||
+      typeof payload.playerId !== 'string' || !payload.playerId.trim() ||
+      typeof payload.playerName !== 'string' || !payload.playerName.trim() ||
+      payload.playerName.length > 50) {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
+    }
     return;
   }
 
@@ -178,37 +178,53 @@ function handleCreateRoom(ws, payload) {
 }
 
 function handleJoinRoom(ws, payload) {
+  if (!payload || typeof payload !== 'object' ||
+      typeof payload.roomId !== 'string' || !payload.roomId.trim() ||
+      typeof payload.playerId !== 'string' || !payload.playerId.trim() ||
+      typeof payload.playerName !== 'string' || !payload.playerName.trim() ||
+      payload.playerName.length > 50) {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
+    }
+    return;
+  }
+
   const { roomId, playerId, playerName } = payload;
   const room = rooms.get(roomId);
 
   if (!room) {
-    ws.send(JSON.stringify({
-      type: MESSAGE_TYPES.ERROR,
-      payload: { message: ERROR_MESSAGES.ROOM_NOT_FOUND }
-    }));
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: MESSAGE_TYPES.ERROR,
+        payload: { message: ERROR_MESSAGES.ROOM_NOT_FOUND }
+      }));
+    }
     return;
   }
 
   if (room.guest) {
-    ws.send(JSON.stringify({
-      type: MESSAGE_TYPES.ERROR,
-      payload: { message: ERROR_MESSAGES.ROOM_FULL }
-    }));
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: MESSAGE_TYPES.ERROR,
+        payload: { message: ERROR_MESSAGES.ROOM_FULL }
+      }));
+    }
     return;
   }
 
   room.guest = { ws, playerId, playerName };
   players.set(ws, { playerId, roomId, isHost: false });
 
-  // Notify guest
-  ws.send(JSON.stringify({
-    type: MESSAGE_TYPES.ROOM_JOINED,
-    payload: {
-      roomId,
-      isHost: false,
-      opponent: { name: room.host.playerName, id: room.host.playerId }
-    }
-  }));
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({
+      type: MESSAGE_TYPES.ROOM_JOINED,
+      payload: {
+        roomId,
+        isHost: false,
+        opponent: { name: room.host.playerName, id: room.host.playerId }
+      }
+    }));
+  }
 
   // Notify host
   if (room.host.ws.readyState === WebSocket.OPEN) {
@@ -230,9 +246,8 @@ function handleLeaveRoom(ws) {
   const room = rooms.get(player.roomId);
   if (!room) return;
 
-  // Notify the other player
   const otherPlayer = player.isHost ? room.guest : room.host;
-  if (otherPlayer) {
+  if (otherPlayer && otherPlayer.ws.readyState === WebSocket.OPEN) {
     otherPlayer.ws.send(JSON.stringify({
       type: MESSAGE_TYPES.OPPONENT_LEFT,
       payload: {}
@@ -251,6 +266,8 @@ function handleLeaveRoom(ws) {
 }
 
 function handleGameMove(ws, payload) {
+  if (!payload || typeof payload !== 'object') return;
+
   const player = players.get(ws);
   if (!player) return;
 
@@ -260,14 +277,16 @@ function handleGameMove(ws, payload) {
   const opponent = player.isHost ? room.guest : room.host;
   if (!opponent) return;
 
-  // Forward the move to the opponent
-  opponent.ws.send(JSON.stringify({
-    type: MESSAGE_TYPES.GAME_MOVE,
-    payload
-  }));
+  if (opponent.ws.readyState === WebSocket.OPEN) {
+    opponent.ws.send(JSON.stringify({
+      type: MESSAGE_TYPES.GAME_MOVE,
+      payload
+    }));
+  }
 
-  // Update room game state
-  room.gameState = payload.gameState;
+  if (payload.gameState) {
+    room.gameState = payload.gameState;
+  }
 }
 
 function handleDisconnect(ws) {
@@ -280,6 +299,9 @@ function handleDisconnect(ws) {
 const PORT = process.env.PORT || DEFAULT_PORT;
 server.listen(PORT, () => {
   console.log(`WebSocket server running on port ${PORT}`);
+}).on('error', (error) => {
+  console.error('Server failed to start:', error);
+  process.exit(1);
 });
 
 module.exports = { server, wss };
