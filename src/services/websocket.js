@@ -1,4 +1,4 @@
-import CSRFWebSocketClient from './csrf-websocket.js';
+import CSRFWebSocketClient from './csrf.js';
 
 class WebSocketService {
   constructor() {
