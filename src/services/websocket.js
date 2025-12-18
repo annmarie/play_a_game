@@ -36,7 +36,7 @@ class WebSocketService {
           }
           this.emit(data.type, data.payload);
         } catch (error) {
-          console.error('Failed to parse message:', error);
+          console.error('Failed to parse message:', error.message || 'Unknown error');
         }
       };
 
@@ -46,13 +46,13 @@ class WebSocketService {
         this.attemptReconnect();
       };
 
-      this.ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        this.emit('error', { message: 'WebSocket error occurred' });
+      this.ws.onerror = () => {
+        console.error('WebSocket error occurred');
+        this.emit('error', { message: 'WebSocket connection error' });
       };
     } catch (error) {
       console.error('Failed to connect to WebSocket:', error);
-      this.emit('error', { message: 'Failed to connect to WebSocket' });
+      this.emit('error', { message: 'Failed to establish WebSocket connection' });
     }
   }
 

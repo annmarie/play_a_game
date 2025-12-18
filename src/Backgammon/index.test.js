@@ -7,7 +7,7 @@ import { reducer } from '../store';
 import Backgammon from '.';
 import * as gameLogic from './gameLogic';
 
-const SPACE_KEY = ' ';
+const SPACEBAR = ' ';
 
 jest.mock('./gameLogic', () => ({
   ...jest.requireActual('./gameLogic'),
@@ -164,7 +164,7 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
       gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
 
-      await act(async () => fireEvent.keyDown(window, { key: SPACE_KEY }));
+      await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
 
       expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
       expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(6);
@@ -173,10 +173,10 @@ describe('Backgammon Component Tests', () => {
     it('should prevent rolling when dice already rolled', async () => {
       await act(async () => renderGame(store));
       gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
-      await act(async () => fireEvent.keyDown(window, { key: SPACE_KEY }));
+      await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
 
       gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 3], player: PLAYERS.LEFT });
-      await act(async () => fireEvent.keyDown(window, { key: SPACE_KEY }));
+      await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
 
       expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
       expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(6);

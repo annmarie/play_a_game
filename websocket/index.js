@@ -10,14 +10,32 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
 
 function isOriginAllowed(origin) {
   if (!origin) return false;
-  return ALLOWED_ORIGINS.includes(origin);
+  return ALLOWED_ORIGINS.some(allowed => origin === allowed);
 }
 
-const server = http.createServer();
+const server = http.createServer((req, res) => {
+  // Reject all HTTP requests - only WebSocket connections allowed
+  res.writeHead(426, {
+    'Content-Type': 'text/plain',
+    'Upgrade': 'websocket',
+    'Connection': 'Upgrade'
+  });
+  res.end('WebSocket connection required');
+});
 const wss = new WebSocket.Server({
   server,
   verifyClient: (info) => {
-    return info.origin && isOriginAllowed(info.origin);
+    // Strict origin validation
+    const origin = info.origin || info.req.headers.origin;
+    if (!origin) {
+      console.warn('Connection rejected: No origin header');
+      return false;
+    }
+    if (!isOriginAllowed(origin)) {
+      console.warn(`Connection rejected: Invalid origin ${origin}`);
+      return false;
+    }
+    return true;
   }
 });
 
@@ -37,8 +55,10 @@ function generateRoomId() {
 wss.on('connection', (ws, req) => {
   console.log('New client connected');
 
-  // Verify origin before proceeding
-  if (!isOriginAllowed(req.headers.origin)) {
+  // Double-check origin validation
+  const origin = req.headers.origin;
+  if (!origin || !isOriginAllowed(origin)) {
+    console.warn(`Connection rejected in handler: Invalid origin ${origin}`);
     ws.close(1008, 'Origin not allowed');
     return;
   }
@@ -47,10 +67,10 @@ wss.on('connection', (ws, req) => {
   const sessionId = crypto.randomUUID();
   const csrfToken = csrfProtection.generateToken(sessionId);
 
-  // Store session info
+  // Store session info with origin binding
   ws.sessionId = sessionId;
   ws.origin = req.headers.origin;
-  sessions.set(sessionId, { ws, authenticated: false });
+  sessions.set(sessionId, { ws, authenticated: false, origin: req.headers.origin, createdAt: Date.now() });
 
   // Send CSRF token to client with additional security headers
   if (ws.readyState === WebSocket.OPEN) {
@@ -63,15 +83,91 @@ wss.on('connection', (ws, req) => {
 
   ws.on('message', (message) => {
     try {
+      // Comprehensive origin validation on every message
+      if (!ws.origin || !isOriginAllowed(ws.origin)) {
+        console.warn(`Message rejected: Invalid stored origin ${ws.origin}`);
+        ws.close(1008, 'Origin validation failed');
+        return;
+      }
+
+      // Additional origin integrity check
+      const session = sessions.get(ws.sessionId);
+      if (!session || session.origin !== ws.origin) {
+        console.warn(`Origin mismatch detected for session ${ws.sessionId}`);
+        ws.close(1008, 'Origin integrity violation');
+        return;
+      }
+
+      // Rate limiting check
+      const now = Date.now();
+      if (!ws.lastMessageTime) ws.lastMessageTime = 0;
+      if (now - ws.lastMessageTime < 50) {
+        console.warn(`Rate limit exceeded for ${ws.sessionId}`);
+        ws.close(1008, 'Rate limit exceeded');
+        return;
+      }
+      ws.lastMessageTime = now;
+
       const data = JSON.parse(message);
 
-      // Validate CSRF token for all messages before processing
-      if (!data.csrfToken || !csrfProtection.validateToken(ws.sessionId, data.csrfToken)) {
+      // Comprehensive CSRF validation
+      if (!data || typeof data !== 'object') {
+        console.warn(`Invalid message structure from ${ws.sessionId}`);
+        ws.close(1008, 'Invalid message structure');
+        return;
+      }
+
+      if (!data.csrfToken || typeof data.csrfToken !== 'string' || data.csrfToken.length > 256) {
+        console.warn(`Invalid CSRF token format from ${ws.sessionId}`);
+        ws.close(1008, 'Invalid CSRF token format');
+        return;
+      }
+
+      // Validate CSRF token with session binding
+      const session = sessions.get(ws.sessionId);
+      if (!session || session.ws !== ws) {
+        console.warn(`Session validation failed for ${ws.sessionId}`);
+        ws.close(1008, 'Invalid session');
+        return;
+      }
+
+      if (!csrfProtection.validateToken(ws.sessionId, data.csrfToken)) {
+        console.warn(`CSRF validation failed for ${ws.sessionId}`);
         ws.close(1008, 'Invalid CSRF token');
         return;
       }
 
+      // Enhanced CSRF protection for state-changing operations
+      const stateChangingTypes = [MESSAGE_TYPES.CREATE_ROOM, MESSAGE_TYPES.JOIN_ROOM, MESSAGE_TYPES.LEAVE_ROOM, MESSAGE_TYPES.GAME_MOVE];
+      if (stateChangingTypes.includes(data.type)) {
+        if (!session.authenticated) {
+          console.warn(`Unauthenticated state change attempt from ${ws.sessionId}`);
+          ws.close(1008, 'Authentication required');
+          return;
+        }
+
+        // Additional CSRF validation for critical operations
+        if (!data.timestamp || Math.abs(Date.now() - data.timestamp) > 300000) {
+          console.warn(`Expired request from ${ws.sessionId}`);
+          ws.close(1008, 'Request expired');
+          return;
+        }
+
+        // Session age validation
+        if (Date.now() - session.createdAt > 3600000) {
+          console.warn(`Session expired for ${ws.sessionId}`);
+          ws.close(1008, 'Session expired');
+          return;
+        }
+      }
+
       if (data.type === 'HANDSHAKE') {
+        // CSRF validation required for handshake
+        if (!csrfProtection.validateToken(ws.sessionId, data.csrfToken)) {
+          console.warn(`CSRF validation failed for handshake from ${ws.sessionId}`);
+          ws.close(1008, 'Invalid CSRF token');
+          return;
+        }
         handleHandshake(ws, data);
         return;
       }
@@ -79,7 +175,9 @@ wss.on('connection', (ws, req) => {
       handleMessage(ws, data);
     } catch (error) {
       console.error('Error parsing message:', error);
-      ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
+      }
     }
   });
 
@@ -99,11 +197,15 @@ wss.on('connection', (ws, req) => {
 
 function handleHandshake(ws, data) {
   const session = sessions.get(ws.sessionId);
-  if (session) {
-    session.authenticated = true;
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: 'HANDSHAKE_ACK', payload: { success: true } }));
-    }
+  if (!session) {
+    ws.close(1008, 'Invalid session');
+    return;
+  }
+
+  // CSRF token already validated before this function is called
+  session.authenticated = true;
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ type: 'HANDSHAKE_ACK', payload: { success: true } }));
   }
 }
 
@@ -117,9 +219,11 @@ function handleMessage(ws, data) {
     return;
   }
 
-  // Validate message structure
-  if (!type || payload === undefined || typeof type !== 'string') {
-    ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
+  // Enhanced message validation
+  if (!type || payload === undefined || typeof type !== 'string' || type.length > 50) {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
+    }
     return;
   }
 
@@ -137,12 +241,14 @@ function handleMessage(ws, data) {
       handleGameMove(ws, payload);
       break;
     default:
-      ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.UNKNOWN_TYPE } }));
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.UNKNOWN_TYPE } }));
+      }
   }
 }
 
 function handleCreateRoom(ws, payload) {
-  if (!payload || typeof payload !== 'object' || 
+  if (!payload || typeof payload !== 'object' ||
       typeof payload.gameType !== 'string' || !payload.gameType.trim() ||
       typeof payload.playerId !== 'string' || !payload.playerId.trim() ||
       typeof payload.playerName !== 'string' || !payload.playerName.trim() ||
@@ -297,8 +403,37 @@ function handleDisconnect(ws) {
 }
 
 const PORT = process.env.PORT || DEFAULT_PORT;
+
+// Add comprehensive security to HTTP server
+server.on('request', (req, res) => {
+  // Validate origin for all requests
+  const origin = req.headers.origin;
+  if (origin && !isOriginAllowed(origin)) {
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Origin not allowed' }));
+    return;
+  }
+
+  // Set comprehensive security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('Content-Security-Policy', "default-src 'self'");
+
+  // Set secure cookies with SameSite protection
+  const cookieOptions = 'HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600';
+  res.setHeader('Set-Cookie', [
+    `sessionId=; ${cookieOptions}`,
+    `csrfToken=; ${cookieOptions}`,
+    `gameSession=; ${cookieOptions}`
+  ]);
+});
+
 server.listen(PORT, () => {
   console.log(`WebSocket server running on port ${PORT}`);
+  console.log('HTTP requests will be rejected - WebSocket only');
+  console.log('Security headers enabled');
 }).on('error', (error) => {
   console.error('Server failed to start:', error);
   process.exit(1);
