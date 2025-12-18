@@ -40,6 +40,7 @@ class CSRFWebSocketClient {
         console.log('WebSocket closed');
         this.authenticated = false;
         this.csrfToken = null;
+        if (this.onClose) this.onClose();
       };
     });
   }
@@ -53,7 +54,8 @@ class CSRFWebSocketClient {
 
       const handshakeMessage = {
         type: 'HANDSHAKE',
-        payload: { sessionId: this.sessionId }
+        payload: { sessionId: this.sessionId },
+        csrfToken: this.csrfToken
       };
 
       this.ws.send(JSON.stringify(handshakeMessage));
@@ -89,8 +91,12 @@ class CSRFWebSocketClient {
     }
   }
 
-  onMessage(data) {
-    console.log('Received message:', data);
+  onMessage() {
+    // Override this method
+  }
+
+  onClose() {
+    // Override this method
   }
 
   close() {

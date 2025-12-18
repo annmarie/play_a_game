@@ -14,7 +14,30 @@ function isOriginAllowed(origin) {
 }
 
 const server = http.createServer((req, res) => {
-  // Reject all HTTP requests - only WebSocket connections allowed
+  // Handle CSRF token requests
+  if (req.method === 'GET' && req.url === '/api/csrf-token') {
+    const origin = req.headers.origin;
+    if (!origin || !isOriginAllowed(origin)) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Origin not allowed' }));
+      return;
+    }
+
+    const sessionId = crypto.randomUUID();
+    const token = csrfProtection.generateToken(sessionId);
+
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Set-Cookie': `sessionId=${sessionId}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600`
+    });
+
+    res.end(JSON.stringify({ token, sessionId }));
+    return;
+  }
+
+  // Reject all other HTTP requests - only WebSocket connections allowed
   res.writeHead(426, {
     'Content-Type': 'text/plain',
     'Upgrade': 'websocket',
@@ -124,8 +147,8 @@ wss.on('connection', (ws, req) => {
       }
 
       // Validate CSRF token with session binding
-      const session = sessions.get(ws.sessionId);
-      if (!session || session.ws !== ws) {
+      const sessionData = sessions.get(ws.sessionId);
+      if (!sessionData || sessionData.ws !== ws) {
         console.warn(`Session validation failed for ${ws.sessionId}`);
         ws.close(1008, 'Invalid session');
         return;
@@ -140,7 +163,7 @@ wss.on('connection', (ws, req) => {
       // Enhanced CSRF protection for state-changing operations
       const stateChangingTypes = [MESSAGE_TYPES.CREATE_ROOM, MESSAGE_TYPES.JOIN_ROOM, MESSAGE_TYPES.LEAVE_ROOM, MESSAGE_TYPES.GAME_MOVE];
       if (stateChangingTypes.includes(data.type)) {
-        if (!session.authenticated) {
+        if (!sessionData.authenticated) {
           console.warn(`Unauthenticated state change attempt from ${ws.sessionId}`);
           ws.close(1008, 'Authentication required');
           return;
@@ -154,7 +177,7 @@ wss.on('connection', (ws, req) => {
         }
 
         // Session age validation
-        if (Date.now() - session.createdAt > 3600000) {
+        if (Date.now() - sessionData.createdAt > 3600000) {
           console.warn(`Session expired for ${ws.sessionId}`);
           ws.close(1008, 'Session expired');
           return;
@@ -249,10 +272,10 @@ function handleMessage(ws, data) {
 
 function handleCreateRoom(ws, payload) {
   if (!payload || typeof payload !== 'object' ||
-      typeof payload.gameType !== 'string' || !payload.gameType.trim() ||
-      typeof payload.playerId !== 'string' || !payload.playerId.trim() ||
-      typeof payload.playerName !== 'string' || !payload.playerName.trim() ||
-      payload.playerName.length > 50) {
+    typeof payload.gameType !== 'string' || !payload.gameType.trim() ||
+    typeof payload.playerId !== 'string' || !payload.playerId.trim() ||
+    typeof payload.playerName !== 'string' || !payload.playerName.trim() ||
+    payload.playerName.length > 50) {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
     }
@@ -285,10 +308,10 @@ function handleCreateRoom(ws, payload) {
 
 function handleJoinRoom(ws, payload) {
   if (!payload || typeof payload !== 'object' ||
-      typeof payload.roomId !== 'string' || !payload.roomId.trim() ||
-      typeof payload.playerId !== 'string' || !payload.playerId.trim() ||
-      typeof payload.playerName !== 'string' || !payload.playerName.trim() ||
-      payload.playerName.length > 50) {
+    typeof payload.roomId !== 'string' || !payload.roomId.trim() ||
+    typeof payload.playerId !== 'string' || !payload.playerId.trim() ||
+    typeof payload.playerName !== 'string' || !payload.playerName.trim() ||
+    payload.playerName.length > 50) {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: MESSAGE_TYPES.ERROR, payload: { message: ERROR_MESSAGES.INVALID_FORMAT } }));
     }

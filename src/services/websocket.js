@@ -1,58 +1,40 @@
+import CSRFWebSocketClient from './csrf-websocket.js';
+
 class WebSocketService {
   constructor() {
-    this.ws = null;
+    this.csrfClient = null;
     this.listeners = new Map();
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 5;
   }
 
-  connect(url = 'ws://localhost:8080') {
+  async connect(url = 'ws://localhost:8080') {
     try {
       const allowedHosts = ['localhost', '127.0.0.1'];
       const urlObj = new URL(url);
       if (!allowedHosts.includes(urlObj.hostname)) {
         throw new Error('Connection to this host is not allowed');
       }
-      this.ws = new WebSocket(urlObj.href);
 
-      this.ws.onopen = () => {
-        console.log('WebSocket connected');
-        this.reconnectAttempts = 0;
-        this.emit('connected');
-      };
-
-      this.ws.onmessage = (event) => {
-        try {
-          // Validate data before parsing
-          if (typeof event.data !== 'string' || event.data.length > 10000) {
-            console.error('Invalid message format or size');
-            return;
-          }
-          const data = JSON.parse(event.data);
-          // Validate parsed data structure
-          if (!data || typeof data.type !== 'string' || !data.payload) {
-            console.error('Invalid message structure');
-            return;
-          }
+      this.csrfClient = new CSRFWebSocketClient(urlObj.href);
+      this.csrfClient.onMessage = (data) => {
+        if (typeof data.type === 'string' && data.payload !== undefined) {
           this.emit(data.type, data.payload);
-        } catch (error) {
-          console.error('Failed to parse message:', error.message || 'Unknown error');
         }
       };
 
-      this.ws.onclose = () => {
-        console.log('WebSocket disconnected');
+      this.csrfClient.onClose = () => {
         this.emit('disconnected');
         this.attemptReconnect();
       };
 
-      this.ws.onerror = () => {
-        console.error('WebSocket error occurred');
-        this.emit('error', { message: 'WebSocket connection error' });
-      };
+      await this.csrfClient.connect();
+      this.reconnectAttempts = 0;
+      this.emit('connected');
     } catch (error) {
       console.error('Failed to connect to WebSocket:', error);
       this.emit('error', { message: 'Failed to establish WebSocket connection' });
+      this.attemptReconnect();
     }
   }
 
@@ -66,8 +48,9 @@ class WebSocketService {
   }
 
   send(type, payload) {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({ type, payload }));
+    if (this.csrfClient && this.csrfClient.authenticated) {
+      const message = { ...payload, timestamp: Date.now() };
+      this.csrfClient.send(type, message);
     }
   }
 
@@ -95,9 +78,9 @@ class WebSocketService {
   }
 
   disconnect() {
-    if (this.ws) {
-      this.ws.close();
-      this.ws = null;
+    if (this.csrfClient) {
+      this.csrfClient.close();
+      this.csrfClient = null;
     }
   }
 }
