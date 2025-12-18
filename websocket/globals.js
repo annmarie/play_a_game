@@ -1,4 +1,3 @@
-// globals.js
 const MESSAGE_TYPES = {
   CREATE_ROOM: 'createRoom',
   JOIN_ROOM: 'joinRoom',
@@ -21,15 +20,9 @@ const ERROR_MESSAGES = {
 const DEFAULT_PORT = 8080;
 const ROOM_ID_LENGTH = 6;
 
-const GAME_TYPES = {
-  CONNECT4: 'connect4',
-  BACKGAMMON: 'backgammon'
-};
-
 module.exports = {
   MESSAGE_TYPES,
   ERROR_MESSAGES,
   DEFAULT_PORT,
-  ROOM_ID_LENGTH,
-  GAME_TYPES
+  ROOM_ID_LENGTH
 };

@@ -1,7 +1,8 @@
 class CSRFHttpClient {
-  constructor() {
+  constructor(allowedHosts = ['localhost', '127.0.0.1']) {
     this.token = null;
     this.sessionId = null;
+    this.allowedHosts = allowedHosts;
   }
 
   async fetchToken() {
@@ -21,7 +22,7 @@ class CSRFHttpClient {
       const data = await response.json();
       this.token = data.token;
       this.sessionId = data.sessionId;
-      
+
       return this.token;
     } catch (error) {
       console.error('CSRF token fetch failed:', error);
@@ -29,7 +30,20 @@ class CSRFHttpClient {
     }
   }
 
+  validateUrl(url) {
+    try {
+      const urlObj = new URL(url, window.location.origin);
+      return this.allowedHosts.includes(urlObj.hostname);
+    } catch {
+      return false;
+    }
+  }
+
   async request(url, options = {}) {
+    if (!this.validateUrl(url)) {
+      throw new Error('URL not allowed');
+    }
+
     if (!this.token) {
       await this.fetchToken();
     }
@@ -57,16 +71,22 @@ class CSRFHttpClient {
       // Token might be expired, retry once
       await this.fetchToken();
       headers['X-CSRF-Token'] = this.token;
-      
+
+      if (!this.validateUrl(url)) {
+        throw new Error('URL not allowed');
+      }
+
+      const retryBody = body ? {
+        ...options.body,
+        csrfToken: this.token,
+        sessionId: this.sessionId
+      } : undefined;
+
       return fetch(url, {
         ...options,
         credentials: 'include',
         headers,
-        body: body ? JSON.stringify({
-          ...options.body,
-          csrfToken: this.token,
-          sessionId: this.sessionId
-        }) : undefined
+        body: retryBody ? JSON.stringify(retryBody) : undefined
       });
     }
 
