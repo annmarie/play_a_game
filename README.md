@@ -31,8 +31,9 @@
   npm run dev
   ```
 
-**Url of dev server:**
-   - http://localhost:3000
+**Url of dev servers:**
+   - http://localhost:3000 <-- webserver
+   - http://localhost:8080 <-- websocket
 
 ### Single Player Mode
 - Both games support local play on the same device
