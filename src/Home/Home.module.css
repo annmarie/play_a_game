@@ -43,3 +43,24 @@
   background-color: var(--primary-green-hover);
   color: white;
 }
+.gameSelectors {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.gameSection {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  min-width: 300px;
+}
+
+.gameSection h2 {
+  margin-top: 0;
+  text-align: center;
+  color: #333;
+}
