@@ -6,7 +6,7 @@
 ## Framework
 - Node.js: 20.17
 - Vite: 6.2
-- React: 19.0
+- React: 19.2.3
 - ESLint: ES2022
 
 ## Quick Start
@@ -14,7 +14,7 @@
 **Install dependencies:**
   ```bash
   npm install
-  cd server && npm install && cd ..
+  cd websocket && npm install && cd ..
   ```
 
 **Start both client and server:**
@@ -25,7 +25,7 @@
   Or start them separately:
   ```bash
   # Terminal 1 - Start WebSocket server
-  npm run server:dev
+  npm run websocket:dev
 
   # Terminal 2 - Start React app
   npm run dev
