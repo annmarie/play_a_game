@@ -9,7 +9,8 @@ import styles from './MultiplayerSetup.module.css';
 const MultiplayerSetup = ({ gameType }) => {
   const dispatch = useDispatch();
   const { isConnected, roomId, playerName, error } = useSelector(state => state.multiplayer);
-  const [inputName, setInputName] = useState(playerName || '');
+  const storedName = useSelector(state => state.main.name);
+  const [inputName, setInputName] = useState(playerName || storedName || '');
   const [inputRoomId, setInputRoomId] = useState('');
 
   const handleRoomAction = (action, roomId = null) => {
