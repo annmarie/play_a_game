@@ -8,8 +8,7 @@ const Layout = ({ children, showHeader = true }) => {
       {showHeader && (
         <div className={styles.header}>
           <nav className={styles.nav}>
-            <Link to="/backgammon" className={styles.navLink}>Backgammon</Link>
-            <Link to="/connect4" className={styles.navLink}>Connect Four</Link>
+            <Link to="/" className={styles.navLink}>Home</Link>
           </nav>
         </div>
       )}

@@ -8,19 +8,21 @@ const GameModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
 
   return (
     <div className={styles.gameModeSelector}>
-      <button
-        onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }))}
-        className={styles.modeButton}
-      >
-        Local Game
-      </button>
       {!isMultiplayer && (
-        <button
-          onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: true, myPlayer: null }))}
-          className={styles.modeButton}
-        >
-          Multiplayer Game
-        </button>
+        <>
+          <button
+            onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }))}
+            className={styles.modeButton}
+          >
+            Local Game
+          </button>
+          <button
+            onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: true, myPlayer: null }))}
+            className={styles.modeButton}
+          >
+            Multiplayer Game
+          </button>
+        </>
       )}
       {isMultiplayer && <MultiplayerSetup gameType={gameType} />}
     </div>
