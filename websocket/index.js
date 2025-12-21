@@ -1,8 +1,9 @@
 const WebSocket = require('ws');
 const http = require('http');
 const crypto = require('crypto');
-const { MESSAGE_TYPES, ERROR_MESSAGES, DEFAULT_PORT, ROOM_ID_LENGTH } = require('./globals');
+const { MESSAGE_TYPES, ERROR_MESSAGES, DEFAULT_PORT } = require('./globals');
 const CSRFProtection = require('./csrf-protection');
+const { handleMessage, handleDisconnect } = require('./room-handlers');
 
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) ||
   ['http://localhost:5173', 'http://localhost:3000'];
@@ -56,18 +57,8 @@ const wss = new WebSocket.Server({
   }
 });
 
-const rooms = new Map();
-const players = new Map();
 const csrfProtection = new CSRFProtection();
 const sessions = new Map();
-
-const generateRoomId = () => {
-  let roomId;
-  do {
-    roomId = Math.random().toString(36).slice(2, 2 + ROOM_ID_LENGTH).toUpperCase();
-  } while (rooms.has(roomId));
-  return roomId;
-};
 
 const sendError = (ws, message) => {
   if (ws.readyState === WebSocket.OPEN) {
@@ -157,136 +148,7 @@ wss.on('connection', (ws, req) => {
   ws.on('error', console.error);
 });
 
-function handleMessage(ws, data) {
-  const { type, payload } = data;
-
-  if (!type || !payload || typeof type !== 'string') {
-    return sendError(ws, ERROR_MESSAGES.INVALID_FORMAT);
-  }
-
-  switch (type) {
-    case MESSAGE_TYPES.CREATE_ROOM:
-      handleCreateRoom(ws, payload);
-      break;
-    case MESSAGE_TYPES.JOIN_ROOM:
-      handleJoinRoom(ws, payload);
-      break;
-    case MESSAGE_TYPES.LEAVE_ROOM:
-      handleLeaveRoom(ws);
-      break;
-    case MESSAGE_TYPES.GAME_MOVE:
-      handleGameMove(ws, payload);
-      break;
-    default:
-      sendError(ws, ERROR_MESSAGES.UNKNOWN_TYPE);
-  }
-}
-
-function handleCreateRoom(ws, payload) {
-  const { gameType, playerId, playerName } = payload;
-
-  if (!gameType?.trim() || !playerId?.trim() || !playerName?.trim()) {
-    return sendError(ws, ERROR_MESSAGES.INVALID_FORMAT);
-  }
-
-  const roomId = generateRoomId();
-  const room = {
-    id: roomId,
-    gameType,
-    host: { ws, playerId, playerName },
-    guest: null,
-    gameState: null
-  };
-
-  rooms.set(roomId, room);
-  players.set(ws, { playerId, roomId, isHost: true });
-
-  ws.send(JSON.stringify({
-    type: MESSAGE_TYPES.ROOM_CREATED,
-    payload: { roomId, isHost: true }
-  }));
-}
-
-function handleJoinRoom(ws, payload) {
-  const { roomId, playerId, playerName } = payload;
-
-  if (!roomId?.trim() || !playerId?.trim() || !playerName?.trim()) {
-    return sendError(ws, ERROR_MESSAGES.INVALID_FORMAT);
-  }
-
-  const room = rooms.get(roomId);
-  if (!room) {
-    return sendError(ws, ERROR_MESSAGES.ROOM_NOT_FOUND);
-  }
-  if (room.guest) {
-    return sendError(ws, ERROR_MESSAGES.ROOM_FULL);
-  }
-
-  room.guest = { ws, playerId, playerName };
-  players.set(ws, { playerId, roomId, isHost: false });
-
-  ws.send(JSON.stringify({
-    type: MESSAGE_TYPES.ROOM_JOINED,
-    payload: {
-      roomId,
-      isHost: false,
-      opponent: { name: room.host.playerName, id: room.host.playerId }
-    }
-  }));
-
-  room.host.ws.send(JSON.stringify({
-    type: MESSAGE_TYPES.OPPONENT_JOINED,
-    payload: { opponent: { name: playerName, id: playerId } }
-  }));
-}
-
-function handleLeaveRoom(ws) {
-  const player = players.get(ws);
-  if (!player) return;
-
-  const room = rooms.get(player.roomId);
-  if (!room) return;
-
-  const opponent = player.isHost ? room.guest : room.host;
-  if (opponent?.ws.readyState === WebSocket.OPEN) {
-    opponent.ws.send(JSON.stringify({
-      type: MESSAGE_TYPES.OPPONENT_LEFT,
-      payload: {}
-    }));
-  }
-
-  players.delete(ws);
-  if (player.isHost) {
-    rooms.delete(player.roomId);
-  } else {
-    room.guest = null;
-  }
-}
-
-function handleGameMove(ws, payload) {
-  const player = players.get(ws);
-  const room = rooms.get(player?.roomId);
-  const opponent = player?.isHost ? room?.guest : room?.host;
-
-  if (opponent?.ws.readyState === WebSocket.OPEN) {
-    opponent.ws.send(JSON.stringify({
-      type: MESSAGE_TYPES.GAME_MOVE,
-      payload
-    }));
-  }
-
-  if (payload.gameState && room) {
-    room.gameState = payload.gameState;
-  }
-}
-
-function handleDisconnect(ws) {
-  const player = players.get(ws);
-  if (player) {
-    handleLeaveRoom(ws);
-  }
-}
-
+// Start the server
 const PORT = process.env.PORT || DEFAULT_PORT;
 server.listen(PORT, () => {
   console.log(`WebSocket server running on port ${PORT}`);
