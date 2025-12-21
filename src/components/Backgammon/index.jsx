@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, selectSpot, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './handlers/useWebSocketHandlers';
 import { useKeyboardControls } from './handlers/useKeyboardControls';
-import GameModeSelector from '@components/GameModeSelector';
+import GameModeSelector from '@/components/ModeSelector';
 import MultiplayerInfo from './components/MultiplayerInfo';
 import GameScore from './components/GameScore';
 import WinnerAnnouncement from './components/WinnerAnnouncement';

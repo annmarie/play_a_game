@@ -1,4 +1,4 @@
-import GameModeSelector from '@components/GameModeSelector';
+import GameModeSelector from '@/components/ModeSelector';
 import { BUTTON_TEXT, PLAYERS } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain, setMultiplayerMode } from './slice';
@@ -87,8 +87,7 @@ const Connect4 = () => {
               </button>
               <button
                 onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: null, myPlayer: null }))}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#dc3545'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = ''}
+                className={styles.endGameButton}
               >
                 End Game
               </button>
