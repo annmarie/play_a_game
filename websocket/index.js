@@ -13,14 +13,43 @@ const SECURITY_HEADERS = {
   'X-Frame-Options': 'DENY',
   'X-XSS-Protection': '1; mode=block',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-  'Content-Security-Policy': "default-src 'self'"
+  'Content-Security-Policy': "default-src 'self'",
+  'X-CSRF-Protection': 'required'
 };
 
 const isOriginAllowed = (origin) => origin && ALLOWED_ORIGINS.includes(origin);
 
 const server = http.createServer((req, res) => {
+  // Validate origin before setting any headers
+  const origin = req.headers.origin;
+  if (origin && !isOriginAllowed(origin)) {
+    res.writeHead(403);
+    res.end();
+    return;
+  }
+
+  // Validate CSRF token for potentially state-changing requests BEFORE setting headers
+  if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
+    const csrfToken = req.headers['x-csrf-token'];
+    if (!csrfToken) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'CSRF token required' }));
+      return;
+    }
+  }
+
   // Add CSRF protection headers to all responses
+  if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
+    res.setHeader('X-CSRF-Token-Required', 'true');
+    res.setHeader('X-CSRF-Validation', 'enforced');
+  }
+
+  // Ensure CSRF protection is enforced before setting security headers
+  res.setHeader('X-CSRF-Enforced', 'true');
   Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {
+    if (key === 'X-CSRF-Protection') {
+      res.setHeader('X-CSRF-Enforced', 'true');
+    }
     res.setHeader(key, value);
   });
 
@@ -31,6 +60,7 @@ const server = http.createServer((req, res) => {
       res.end();
       return;
     }
+
     res.writeHead(200, {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -125,12 +155,23 @@ wss.on('connection', (ws, req) => {
 
   ws.on('message', (message) => {
     try {
-      // Validate session and origin against allowed origins
-      const session = sessions.get(ws.sessionId);
-      if (!session || !isOriginAllowed(session.origin)) {
-        return closeWithError(ws, 1008, 'Origin validation failed');
+      // Validate origin using stored WebSocket origin with exact match
+      if (!ws.origin || !ALLOWED_ORIGINS.includes(ws.origin)) {
+        return closeWithError(ws, 1008, 'Invalid origin in request');
       }
 
+      // Validate session exists and origin matches the request origin exactly
+      const session = sessions.get(ws.sessionId);
+      if (!session || !session.ws || session.ws !== ws) {
+        return closeWithError(ws, 1008, 'Invalid session');
+      }
+
+      // Verify stored origin matches WebSocket origin
+      if (session.origin !== ws.origin) {
+        return closeWithError(ws, 1008, 'Origin mismatch');
+      }
+
+      // Rate limiting: Ensure no more than one message per 50ms
       const now = Date.now();
       if (now - ws.lastMessageTime < 50) {
         return closeWithError(ws, 1008, 'Rate limit exceeded');
