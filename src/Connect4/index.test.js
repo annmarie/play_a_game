@@ -6,13 +6,18 @@ import { reducer } from '../store';
 import { PLAYERS, MESSAGES } from './globals';
 import Connect4 from '.';
 
-const renderGame = (store) => render(
-  <BrowserRouter>
-    <Provider store={store}>
-      <Connect4 />
-    </Provider>
-  </BrowserRouter>
-);
+const renderGame = (store) => {
+  // Set initial state to local mode to render game interface
+  store.dispatch({ type: 'connect4/setMultiplayerMode', payload: { isMultiplayer: false, myPlayer: null } });
+
+  return render(
+    <BrowserRouter>
+      <Provider store={store}>
+        <Connect4 />
+      </Provider>
+    </BrowserRouter>
+  );
+};
 
 const clickCells = async (cells, indices) => {
   for (const index of indices) {
@@ -45,7 +50,7 @@ describe('Connect4 Component', () => {
       cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
       expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /undo move/i })).toBeDisabled();
-      expect(screen.getByRole('button', { name: /reset game/i })).toBeDisabled();
+      expect(screen.getByRole('button', { name: /end game/i })).toBeInTheDocument();
     });
   });
 
@@ -80,17 +85,15 @@ describe('Connect4 Component', () => {
   });
 
   describe('Game Controls', () => {
-    it('should reset game to initial state', async () => {
+    it('should end game and return to mode selector', async () => {
       const cells = await setupGame();
-      const resetButton = screen.getByRole('button', { name: /reset game/i });
+      const endGameButton = screen.getByRole('button', { name: /end game/i });
 
       await clickCells(cells, [35, 35]);
-      expect(resetButton).toBeEnabled();
 
-      await act(async () => fireEvent.click(resetButton));
-      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
-      cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
-      expect(resetButton).toBeDisabled();
+      await act(async () => fireEvent.click(endGameButton));
+      expect(screen.getByText('Local Game')).toBeInTheDocument();
+      expect(screen.getByText('Multiplayer Game')).toBeInTheDocument();
     });
 
     it('should handle undo functionality', async () => {

@@ -14,13 +14,18 @@ jest.mock('./gameLogic', () => ({
   rollDiceLogic: jest.fn(),
 }));
 
-const renderGame = (store) => render(
-  <BrowserRouter>
-    <Provider store={store}>
-      <Backgammon />
-    </Provider>
-  </BrowserRouter>
-);
+const renderGame = (store) => {
+  // Set initial state to local mode to render game interface
+  store.dispatch({ type: 'backgammon/setMultiplayerMode', payload: { isMultiplayer: false, myPlayer: null } });
+
+  return render(
+    <BrowserRouter>
+      <Provider store={store}>
+        <Backgammon />
+      </Provider>
+    </BrowserRouter>
+  );
+};
 
 const rollDice = async (diceValue, player) => {
   gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue, player });
@@ -112,7 +117,7 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
 
       expect(screen.getByRole('button', { name: /roll dice/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /reset the game/i })).toBeDisabled();
+      expect(screen.getByRole('button', { name: /end the game/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /undo last move/i })).toBeDisabled();
 
       const points = screen.queryAllByRole('point');
@@ -311,13 +316,9 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
       await rollDice([5, 3], PLAYERS.LEFT);
 
-      await act(async () => fireEvent.click(screen.getByRole('button', { name: /reset the game/i })));
+      await act(async () => fireEvent.click(screen.getByRole('button', { name: /end the game/i })));
 
-      expect(screen.getByRole('button', { name: /reset the game/i })).toBeDisabled();
-      expect(screen.getByRole('button', { name: /undo last move/i })).toBeDisabled();
-      expect(screen.queryAllByTestId(/die-dot/i)).toHaveLength(0);
-
-      validateInitialBoard(screen.queryAllByRole('point'));
+      expect(screen.getByText('Local Game')).toBeInTheDocument();
     });
 
     it('should clean up event listeners on unmount', async () => {
@@ -359,10 +360,8 @@ describe('Backgammon Component Tests', () => {
       await clickPoints(points, [0, 14, 0, 17]);
 
       await rollDice([4, 4, 4, 4], PLAYERS.RIGHT);
-      await act(async () => fireEvent.click(screen.getByRole('button', { name: /reset the game/i })));
-
-      expect(screen.getByRole('button', { name: /reset the game/i })).toBeDisabled();
-      validateInitialBoard(points);
+      
+      expect(screen.queryAllByTestId(/die-dot/i).length).toBeGreaterThan(0);
     });
   });
 });

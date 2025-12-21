@@ -34,7 +34,7 @@ describe('GameStatus', () => {
     expect(screen.getByLabelText('Current player PLAYER_LEFT')).toBeInTheDocument();
   });
 
-  it('renders undo and reset buttons', () => {
+  it('renders undo and end game buttons', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>
@@ -43,7 +43,7 @@ describe('GameStatus', () => {
     );
 
     expect(screen.getByLabelText('Undo last move')).toBeInTheDocument();
-    expect(screen.getByLabelText('Reset the game')).toBeInTheDocument();
+    expect(screen.getByLabelText('End the game')).toBeInTheDocument();
   });
 
   it('shows borne off checkers when present', () => {
@@ -93,6 +93,6 @@ describe('GameStatus', () => {
     );
 
     expect(screen.getByLabelText('Undo last move')).toBeDisabled();
-    expect(screen.getByLabelText('Reset the game')).toBeDisabled();
+    expect(screen.getByLabelText('End the game')).toBeInTheDocument();
   });
 });
