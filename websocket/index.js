@@ -19,6 +19,28 @@ const SECURITY_HEADERS = {
 const isOriginAllowed = (origin) => origin && ALLOWED_ORIGINS.includes(origin);
 
 const server = http.createServer((req, res) => {
+  // Add CSRF protection headers to all responses
+  Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+
+  if (req.method === 'OPTIONS') {
+    const origin = req.headers.origin;
+    if (!isOriginAllowed(origin)) {
+      res.writeHead(403);
+      res.end();
+      return;
+    }
+    res.writeHead(200, {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-CSRF-Token',
+      'Access-Control-Allow-Credentials': 'true'
+    });
+    res.end();
+    return;
+  }
+
   if (req.method === 'GET' && req.url === '/api/csrf-token') {
     const origin = req.headers.origin;
     if (!isOriginAllowed(origin)) {
@@ -34,17 +56,22 @@ const server = http.createServer((req, res) => {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Credentials': 'true',
-      'Set-Cookie': `sessionId=${sessionId}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600`,
-      ...SECURITY_HEADERS
+      'Set-Cookie': `sessionId=${sessionId}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600`
     });
     res.end(JSON.stringify({ token, sessionId }));
     return;
   }
 
+  // Reject all other HTTP methods for state-changing operations
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+    res.writeHead(405, { 'Allow': 'GET, OPTIONS' });
+    res.end('Method Not Allowed');
+    return;
+  }
+
   res.writeHead(426, {
     'Upgrade': 'websocket',
-    'Connection': 'Upgrade',
-    ...SECURITY_HEADERS
+    'Connection': 'Upgrade'
   });
   res.end('WebSocket connection required');
 });
@@ -98,9 +125,9 @@ wss.on('connection', (ws, req) => {
 
   ws.on('message', (message) => {
     try {
-      // Validate session and origin
+      // Validate session and origin against allowed origins
       const session = sessions.get(ws.sessionId);
-      if (!session || session.origin !== ws.origin) {
+      if (!session || !isOriginAllowed(session.origin)) {
         return closeWithError(ws, 1008, 'Origin validation failed');
       }
 
@@ -112,7 +139,7 @@ wss.on('connection', (ws, req) => {
 
       const data = JSON.parse(message);
 
-      // CSRF Protection: Validate token format and authenticity
+      // CSRF Protection: Validate token format and authenticity for all messages
       if (!data?.csrfToken || typeof data.csrfToken !== 'string' ||
           !csrfProtection.validateToken(ws.sessionId, data.csrfToken)) {
         return closeWithError(ws, 1008, 'CSRF token validation failed');
@@ -130,6 +157,14 @@ wss.on('connection', (ws, req) => {
 
       if (!session.authenticated) {
         return closeWithError(ws, 1008, 'Authentication required');
+      }
+
+      // Additional CSRF validation for state-changing operations
+      const stateChangingOps = ['CREATE_ROOM', 'JOIN_ROOM', 'LEAVE_ROOM', 'GAME_MOVE'];
+      if (stateChangingOps.includes(data.type)) {
+        if (!csrfProtection.validateToken(ws.sessionId, data.csrfToken)) {
+          return closeWithError(ws, 1008, 'CSRF validation failed for state-changing operation');
+        }
       }
 
       handleMessage(ws, data);
