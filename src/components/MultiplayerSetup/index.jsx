@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { wsService } from '../../services/websocket';
+import { wsService } from '@services/websocket';
 import { setPlayerInfo, setError, leaveRoom } from './slice';
 import { BUTTON_TEXT, LABELS, PLACEHOLDERS, ERROR_MESSAGES } from './globals';
 import styles from './MultiplayerSetup.module.css';

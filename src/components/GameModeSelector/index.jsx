@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import MultiplayerSetup from '../MultiplayerSetup';
+import MultiplayerSetup from '@components/MultiplayerSetup';
 import styles from './GameModeSelector.module.css';
 
 const GameModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {

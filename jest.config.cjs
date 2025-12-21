@@ -24,6 +24,10 @@ module.exports = {
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/jest_config/assetsMapper.cjs",
     "\\.module\\.(css|scss|sass)$": "identity-obj-proxy",
     "\\.(css|less)$": "<rootDir>/jest_config/assetsMapper.cjs",
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@components/(.*)$": "<rootDir>/src/components/$1",
+    "^@services/(.*)$": "<rootDir>/src/services/$1",
+    "^@styles/(.*)$": "<rootDir>/src/styles/$1",
     "^.*\/services\/websocket$": "<rootDir>/src/services/__mocks__/websocket.js"
   },
   moduleFileExtensions: [

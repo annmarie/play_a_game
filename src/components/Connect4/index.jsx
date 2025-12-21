@@ -1,14 +1,14 @@
-import GameModeSelector from '../GameModeSelector';
+import GameModeSelector from '@components/GameModeSelector';
 import { BUTTON_TEXT, PLAYERS } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain, setMultiplayerMode } from './slice';
-import { leaveRoom } from '../MultiplayerSetup/slice';
-import { wsService } from '../../services/websocket';
+import { leaveRoom } from '@components/MultiplayerSetup/slice';
+import { wsService } from '@services/websocket';
 import { useWebSocketHandlers } from './handlers/useWebSocketHandlers';
 import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import styles from './Connect4.module.css';
-import Layout from '../Layout';
+import Layout from '@components/Layout';
 
 const Connect4 = () => {
   const dispatch = useDispatch();

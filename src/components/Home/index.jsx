@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import GameModeSelector from '../GameModeSelector';
+import GameModeSelector from '@components/GameModeSelector';
 import styles from './Home.module.css'
-import Layout from '../Layout';
+import Layout from '@components/Layout';
 
 const Home = () => {
   const navigate = useNavigate();

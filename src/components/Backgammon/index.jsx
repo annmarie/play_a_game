@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, selectSpot, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './handlers/useWebSocketHandlers';
 import { useKeyboardControls } from './handlers/useKeyboardControls';
-import GameModeSelector from '../GameModeSelector';
+import GameModeSelector from '@components/GameModeSelector';
 import MultiplayerInfo from './components/MultiplayerInfo';
 import GameScore from './components/GameScore';
 import WinnerAnnouncement from './components/WinnerAnnouncement';
@@ -11,7 +11,7 @@ import DoubleOffer from './components/DoubleOffer';
 import GameControls from './components/GameControls';
 import GameStatus from './components/GameStatus';
 import Board from './components/Board';
-import Layout from '../Layout';
+import Layout from '@components/Layout';
 import styles from './Backgammon.module.css';
 
 const Backgammon = () => {
