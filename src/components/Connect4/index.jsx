@@ -27,7 +27,7 @@ const Connect4 = () => {
   const showGame = state.isMultiplayer === false || multiplayer.roomId;
 
   return (
-    <Layout showHeader={false}>
+    <Layout showHeader={true}>
       <div className={styles.connect4Game}>
         <h2 className={styles.connect4Title}>Connect Four</h2>
 

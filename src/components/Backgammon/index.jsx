@@ -37,7 +37,7 @@ const Backgammon = () => {
   const showGame = state.isMultiplayer === false || multiplayer.roomId;
 
   return (
-    <Layout showHeader={false}>
+    <Layout showHeader={true}>
       <div className={styles.backgammonGame}>
         <h2>Backgammon</h2>
 

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
 import { makeMoveLogic, togglePlayer } from './gameLogic';
 import { PLAYERS, GAME_CONFIG } from './globals';
-import { wsService } from '../services/websocket';
+import { wsService } from '../../services/websocket';
 
 export const initialState = {
   board: initializeBoard(),
