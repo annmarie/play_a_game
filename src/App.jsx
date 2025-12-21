@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import Home from './Home';
-import Backgammon from './Backgammon';
-import Connect4 from './Connect4';
+import Home from './components/Home';
+import Backgammon from './components/Backgammon';
+import Connect4 from './components/Connect4';
 import './App.module.css'
 
 const App = () => {

@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import mainReducer from './slice';
-import backgammonReducer from './Backgammon/slice';
-import connect4Reducer from './Connect4/slice';
-import multiplayerReducer from './MultiplayerSetup/slice';
+import backgammonReducer from './components/Backgammon/slice';
+import connect4Reducer from './components/Connect4/slice';
+import multiplayerReducer from './components/MultiplayerSetup/slice';
 
 export const reducer = {
     main: mainReducer,
