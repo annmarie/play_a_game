@@ -1,17 +1,11 @@
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import Header from '@/components/Header';
 import styles from './Layout.module.css'
 
 const Layout = ({ children, showHeader = true }) => {
   return (
     <div className={styles.main}>
-      {showHeader && (
-        <div className={styles.header}>
-          <nav className={styles.nav}>
-            <Link to="/" className={styles.navLink}>Home</Link>
-          </nav>
-        </div>
-      )}
+      {showHeader && <Header />}
       {children}
     </div>
   );

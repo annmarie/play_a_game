@@ -1,11 +1,9 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { PLAYERS } from '../globals';
-import { makeMultiplayerMove, syncGameState, setMultiplayerMode } from '../slice';
 import { setConnectionStatus, joinRoom, setOpponent, setError } from '@components/MultiplayerSetup/slice';
 import { wsService } from '@services/websocket';
 
-export const useWebSocketHandlers = () => {
+export const useWebSocketHandlers = (gameActions, playerConstants) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -27,27 +25,27 @@ export const useWebSocketHandlers = () => {
       dispatch(joinRoom({ roomId: data.roomId, isHost: false }));
       if (data.opponent) {
         dispatch(setOpponent(data.opponent));
-        dispatch(setMultiplayerMode({
+        dispatch(gameActions.setMultiplayerMode({
           isMultiplayer: true,
-          myPlayer: data.isHost ? PLAYERS.LEFT : PLAYERS.RIGHT
+          myPlayer: data.isHost ? playerConstants.FIRST : playerConstants.SECOND
         }));
       }
     };
 
     const handleOpponentJoined = (data) => {
       dispatch(setOpponent(data.opponent));
-      dispatch(setMultiplayerMode({
+      dispatch(gameActions.setMultiplayerMode({
         isMultiplayer: true,
-        myPlayer: PLAYERS.LEFT
+        myPlayer: playerConstants.FIRST
       }));
     };
 
     const handleGameMove = (data) => {
-      dispatch(makeMultiplayerMove(data));
+      dispatch(gameActions.makeMultiplayerMove(data));
     };
 
     const handleGameSync = (data) => {
-      dispatch(syncGameState(data.gameState));
+      dispatch(gameActions.syncGameState(data.gameState));
     };
 
     const handleError = (error) => {
@@ -73,5 +71,5 @@ export const useWebSocketHandlers = () => {
       wsService.off('gameSync', handleGameSync);
       wsService.off('error', handleError);
     };
-  }, [dispatch]);
+  }, [dispatch, gameActions, playerConstants]);
 };

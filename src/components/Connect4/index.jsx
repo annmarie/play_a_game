@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain, setMultiplayerMode } from './slice';
 import { leaveRoom } from '@components/MultiplayerSetup/slice';
 import { wsService } from '@services/websocket';
-import { useWebSocketHandlers } from './handlers/useWebSocketHandlers';
+import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import styles from './Connect4.module.css';
