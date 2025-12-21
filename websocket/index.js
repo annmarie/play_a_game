@@ -7,6 +7,14 @@ const CSRFProtection = require('./csrf-protection');
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) ||
   ['http://localhost:5173', 'http://localhost:3000'];
 
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Content-Security-Policy': "default-src 'self'"
+};
+
 const isOriginAllowed = (origin) => origin && ALLOWED_ORIGINS.includes(origin);
 
 const server = http.createServer((req, res) => {
@@ -25,13 +33,18 @@ const server = http.createServer((req, res) => {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Credentials': 'true',
-      'Set-Cookie': `sessionId=${sessionId}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600`
+      'Set-Cookie': `sessionId=${sessionId}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=3600`,
+      ...SECURITY_HEADERS
     });
     res.end(JSON.stringify({ token, sessionId }));
     return;
   }
 
-  res.writeHead(426, { 'Upgrade': 'websocket', 'Connection': 'Upgrade' });
+  res.writeHead(426, {
+    'Upgrade': 'websocket',
+    'Connection': 'Upgrade',
+    ...SECURITY_HEADERS
+  });
   res.end('WebSocket connection required');
 });
 
