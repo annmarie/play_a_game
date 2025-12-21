@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, selectSpot } from './slice';
+import { makeMove, selectSpot, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './handlers/useWebSocketHandlers';
 import { useKeyboardControls } from './handlers/useKeyboardControls';
-import GameModeSelector from './components/GameModeSelector';
+import GameModeSelector from '../GameModeSelector';
 import MultiplayerInfo from './components/MultiplayerInfo';
 import GameScore from './components/GameScore';
 import WinnerAnnouncement from './components/WinnerAnnouncement';
@@ -34,60 +34,70 @@ const Backgammon = () => {
     [state.selectedSpot, dispatch]
   );
 
+  const showGame = state.isMultiplayer === false || multiplayer.roomId;
+
   return (
     <Layout showHeader={false}>
       <div className={styles.backgammonGame}>
         <h2>Backgammon</h2>
 
-        {!multiplayer.roomId && (
-          <GameModeSelector isMultiplayer={state.isMultiplayer} />
-        )}
-
-        {multiplayer.roomId && (
-          <MultiplayerInfo multiplayer={multiplayer} myPlayer={state.myPlayer} />
-        )}
-
-        <GameScore
-          gamesWon={state.gamesWon}
-          doublingCube={state.doublingCube}
-          currentPlayer={state.player}
-          winner={state.winner}
-          turnEnding={state.turnEnding}
-        />
-
-        {state.winner && <WinnerAnnouncement winner={state.winner} />}
-
-        {state.doublingCube.pendingOffer && (
-          <DoubleOffer pendingOffer={state.doublingCube.pendingOffer} />
-        )}
-
-        <Board
-          points={state.points}
-          selectedSpot={state.selectedSpot}
-          potentialSpots={state.potentialSpots}
-          handleSpotClick={handleSpotClick}
-          potentialMoves={state.potentialMoves}
-        />
-
-        <div className={styles.backgammonStatus}>
-          <GameControls
-            diceValue={state.diceValue}
-            potentialMoves={state.potentialMoves}
-            turnEnding={state.turnEnding}
-            winner={state.winner}
-            doublingCube={state.doublingCube}
-          />
-
-          <GameStatus
-            player={state.player}
-            winner={state.winner}
-            pointsHistory={state.pointsHistory}
+        {!showGame && (
+          <GameModeSelector
+            gameType="backgammon"
             isMultiplayer={state.isMultiplayer}
-            checkersBorneOff={state.checkersBorneOff}
-            checkersOnBar={state.checkersOnBar}
-            roomId={multiplayer.roomId}
+            setMultiplayerMode={setMultiplayerMode}
           />
-        </div>
+        )}
+
+        {showGame && (
+          <>
+            {multiplayer.roomId && (
+              <MultiplayerInfo multiplayer={multiplayer} myPlayer={state.myPlayer} />
+            )}
+
+            <GameScore
+              gamesWon={state.gamesWon}
+              doublingCube={state.doublingCube}
+              currentPlayer={state.player}
+              winner={state.winner}
+              turnEnding={state.turnEnding}
+            />
+
+            {state.winner && <WinnerAnnouncement winner={state.winner} />}
+
+            {state.doublingCube.pendingOffer && (
+              <DoubleOffer pendingOffer={state.doublingCube.pendingOffer} />
+            )}
+
+            <Board
+              points={state.points}
+              selectedSpot={state.selectedSpot}
+              potentialSpots={state.potentialSpots}
+              handleSpotClick={handleSpotClick}
+              potentialMoves={state.potentialMoves}
+            />
+
+            <div className={styles.backgammonStatus}>
+              <GameControls
+                diceValue={state.diceValue}
+                potentialMoves={state.potentialMoves}
+                turnEnding={state.turnEnding}
+                winner={state.winner}
+                doublingCube={state.doublingCube}
+              />
+
+              <GameStatus
+                player={state.player}
+                winner={state.winner}
+                pointsHistory={state.pointsHistory}
+                isMultiplayer={state.isMultiplayer}
+                checkersBorneOff={state.checkersBorneOff}
+                checkersOnBar={state.checkersOnBar}
+                roomId={multiplayer.roomId}
+              />
+            </div>
+          </>
+        )}
       </div>
     </Layout>
   );

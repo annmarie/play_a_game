@@ -11,7 +11,7 @@ const MultiplayerInfo = ({ multiplayer, myPlayer }) => {
 
   const handleLeaveRoom = () => {
     dispatch(leaveRoom());
-    dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }));
+    dispatch(setMultiplayerMode({ isMultiplayer: null, myPlayer: null }));
     wsService.send('leaveRoom', { roomId: multiplayer.roomId });
   };
 

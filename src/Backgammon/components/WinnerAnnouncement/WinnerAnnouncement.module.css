@@ -1,0 +1,27 @@
+.winnerAnnouncement {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.playAgainButton {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.playAgainButton:hover {
+  background-color: #45a049;
+}
+
+.playAgainButton:active {
+  transform: scale(0.98);
+
+}

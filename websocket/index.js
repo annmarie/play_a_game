@@ -3,7 +3,7 @@ const http = require('http');
 const crypto = require('crypto');
 const { MESSAGE_TYPES, ERROR_MESSAGES, DEFAULT_PORT } = require('./globals');
 const CSRFProtection = require('./csrf-protection');
-const { handleMessage, handleDisconnect } = require('./room-handlers');
+const { handleMessage, handleDisconnect } = require('./message-handlers');
 
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) ||
   ['http://localhost:5173', 'http://localhost:3000'];

@@ -56,3 +56,6 @@
   gap: 0.5rem;
   font-size: 0.875rem;
 }
+.endGameButton:hover {
+  background-color: #dc3545 !important;
+}

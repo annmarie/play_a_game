@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { BUTTON_TEXT, PLAYERS } from '../../globals';
-import { undoRoll, resetGame } from '../../slice';
+import { undoRoll, setMultiplayerMode } from '../../slice';
 import Checker from '../Checker';
 import styles from './GameStatus.module.css';
 
@@ -34,12 +34,11 @@ const GameStatus = ({
           {BUTTON_TEXT.UNDO_MOVE}
         </button>
         {!roomId && <button
-          className={styles.actionButton}
-          onClick={() => dispatch(resetGame())}
-          disabled={!player || winner || isMultiplayer}
-          aria-label="Reset the game"
+          className={`${styles.actionButton} ${styles.endGameButton}`}
+          onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: null, myPlayer: null }))}
+          aria-label="End the game"
         >
-          {BUTTON_TEXT.RESET_GAME}
+          End Game
         </button>}
       </div>
 

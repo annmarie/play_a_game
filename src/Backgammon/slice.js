@@ -27,7 +27,7 @@ export const initialState = {
     pendingOffer: null
   },
   turnEnding: false,
-  isMultiplayer: false,
+  isMultiplayer: null,
   myPlayer: null,
   isMyTurn: false,
 };

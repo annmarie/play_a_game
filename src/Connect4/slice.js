@@ -12,7 +12,7 @@ export const initialState = {
   boardFull: false,
   history: [],
   gamesWon: { [PLAYERS.ONE]: 0, [PLAYERS.TWO]: 0 },
-  isMultiplayer: false,
+  isMultiplayer: null,
   myPlayer: null,
   isMyTurn: true,
 };
