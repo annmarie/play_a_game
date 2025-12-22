@@ -18,7 +18,7 @@ const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player =
         : normalizedBoardFull
         ? MESSAGES.DRAW
         : `Current Player: ${player}`}
-      
+
       {gameEnded && onPlayAgain && (
         <button
           className={styles.playAgainButton}

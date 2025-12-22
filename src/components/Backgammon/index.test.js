@@ -350,7 +350,7 @@ describe('Backgammon Component Tests', () => {
       await clickPoints(points, [0, 14, 0, 17]);
 
       await rollDice([4, 4, 4, 4], PLAYERS.RIGHT);
-      
+
       // Verify the mock was called for doubles
       expect(gameLogic.rollDiceLogic).toHaveBeenCalled();
     });
