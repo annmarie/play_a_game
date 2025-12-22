@@ -1,47 +1,6 @@
 /* Home Styles */
-.list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.listItem {
-  margin: var(--spacing-md) 0;
-}
-
-.listItem a {
-  text-decoration: none;
-  font-size: 1.125rem;
-}
-
-.listItem a:hover {
-  text-decoration: underline;
-}
-
 .homeContent {
   text-align: center;
-}
-
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-xl);
-}
-
-.navLink {
-  padding: var(--spacing-md) var(--spacing-xl);
-  background-color: var(--primary-green);
-  color: white;
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.25s;
-}
-
-.navLink:hover {
-  background-color: var(--primary-green-hover);
-  color: white;
 }
 
 /* Sign In Section */
@@ -111,7 +70,7 @@
   background: #0056b3;
 }
 
-.gameSelectors {
+.gameLinks {
   display: flex;
   gap: 2rem;
   justify-content: center;
@@ -119,16 +78,24 @@
   margin-top: 2rem;
 }
 
-.gameSection {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1.5rem;
-  background-color: #f9f9f9;
-  min-width: 300px;
+.gameLink {
+  display: block;
+  padding: 2rem;
+  background-color: var(--primary-green);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: background-color 0.25s;
+  min-width: 200px;
+  text-align: center;
 }
 
-.gameSection h2 {
-  margin-top: 0;
-  text-align: center;
-  color: #333;
+.gameLink:hover {
+  background-color: var(--primary-green-hover);
+  color: white;
+}
+
+.gameLink h2 {
+  margin: 0;
+  font-size: 1.5rem;
 }

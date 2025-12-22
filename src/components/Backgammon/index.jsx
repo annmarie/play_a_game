@@ -4,7 +4,6 @@ import { makeMove, selectSpot, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import GameModeSelector from '@/components/ModeSelector';
-import MultiplayerInfo from './components/MultiplayerInfo';
 import GameScore from './components/GameScore';
 import WinnerAnnouncement from './components/WinnerAnnouncement';
 import DoubleOffer from './components/DoubleOffer';
@@ -35,26 +34,23 @@ const Backgammon = () => {
   );
 
   const showGame = state.isMultiplayer === false || multiplayer.roomId;
+  const showMultiplayerSetup = state.isMultiplayer === null;
 
   return (
     <Layout showHeader={true}>
       <div className={styles.backgammonGame}>
         <h3 className={styles.backgammonTitle}>Backgammon</h3>
 
-        {!showGame && (
+        {showMultiplayerSetup && (
           <GameModeSelector
             gameType="backgammon"
-            isMultiplayer={state.isMultiplayer}
+            isMultiplayer={null}
             setMultiplayerMode={setMultiplayerMode}
           />
         )}
 
         {showGame && (
           <>
-            {multiplayer.roomId && (
-              <MultiplayerInfo multiplayer={multiplayer} myPlayer={state.myPlayer} />
-            )}
-
             <GameScore
               gamesWon={state.gamesWon}
               doublingCube={state.doublingCube}

@@ -117,7 +117,6 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
 
       expect(screen.getByRole('button', { name: /roll dice/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /end the game/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /undo last move/i })).toBeDisabled();
 
       const points = screen.queryAllByRole('point');
@@ -311,16 +310,7 @@ describe('Backgammon Component Tests', () => {
     });
   });
 
-  describe('Game Reset and Cleanup', () => {
-    it('should reset game state properly', async () => {
-      await act(async () => renderGame(store));
-      await rollDice([5, 3], PLAYERS.LEFT);
-
-      await act(async () => fireEvent.click(screen.getByRole('button', { name: /end the game/i })));
-
-      expect(screen.getByText('Local Game')).toBeInTheDocument();
-    });
-
+  describe('Cleanup', () => {
     it('should clean up event listeners on unmount', async () => {
       const { unmount } = await act(async () => renderGame(store));
       const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');

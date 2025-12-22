@@ -39,23 +39,6 @@
   gap: var(--spacing-lg);
 }
 
-.backgammonBar,
-.backgammonBorneOff {
-  display: flex;
-  gap: var(--spacing-lg);
-  justify-content: right;
-}
-
-.backgammonDebug {
-  margin-top: var(--spacing-lg);
-}
-
-.debugControls {
-  display: flex;
-  gap: var(--spacing-sm);
-  align-items: center;
-}
-
 .playAgainButton {
   margin-left: var(--spacing-md);
   padding: var(--spacing-sm) var(--spacing-md);

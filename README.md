@@ -35,10 +35,10 @@
    - http://localhost:3000 <-- webserver
    - http://localhost:8080 <-- websocket
 
-### Single Player Mode
-- Support local play on the same device
-- Players take turns using the same interface
-
 ### Multiplayer Mode
 - Requires WebSocket server running on port 8080
 - Real-time synchronization between players
+
+### Single Player Mode
+- Players take turns using the same interface
+- Accessed by adding ?local=1 to the end of game url

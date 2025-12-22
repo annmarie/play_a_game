@@ -1,26 +1,14 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setName } from '@/slice';
-import GameModeSelector from '@/components/ModeSelector';
 import styles from './Home.module.css'
 import Layout from '@components/Layout';
 
 const Home = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [inputName, setInputName] = useState('');
   const userName = useSelector((state) => state.main.name);
-
-  const handleBackgammonMode = (payload) => {
-    dispatch({ type: 'backgammon/setMultiplayerMode', payload });
-    navigate('/backgammon');
-  };
-
-  const handleConnect4Mode = (payload) => {
-    dispatch({ type: 'connect4/setMultiplayerMode', payload });
-    navigate('/connect4');
-  };
 
   const handleNameSubmit = (e) => {
     e.preventDefault();
@@ -61,24 +49,13 @@ const Home = () => {
           </div>
         )}
 
-        <div className={styles.gameSelectors}>
-          <div className={styles.gameSection}>
+        <div className={styles.gameLinks}>
+          <Link to="/backgammon" className={styles.gameLink}>
             <h2>Backgammon</h2>
-            <GameModeSelector
-              gameType="backgammon"
-              isMultiplayer={null}
-              setMultiplayerMode={handleBackgammonMode}
-            />
-          </div>
-
-          <div className={styles.gameSection}>
+          </Link>
+          <Link to="/connect4" className={styles.gameLink}>
             <h2>Connect Four</h2>
-            <GameModeSelector
-              gameType="connect4"
-              isMultiplayer={null}
-              setMultiplayerMode={handleConnect4Mode}
-            />
-          </div>
+          </Link>
         </div>
       </div>
     </Layout>
