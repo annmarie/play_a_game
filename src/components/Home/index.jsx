@@ -33,12 +33,9 @@ const Home = () => {
   return (
     <Layout showHeader={false}>
       <div className={styles.homeContent}>
-        <h1>Welcome to Play A Game!</h1>
-        <p>Select a game and mode to start playing:</p>
-
+        <h1>Play A Game!</h1>
         {!userName ? (
           <div className={styles.signInSection}>
-            <p>Enter your name to get started:</p>
             <form onSubmit={handleNameSubmit} className={styles.nameForm}>
               <input
                 type="text"

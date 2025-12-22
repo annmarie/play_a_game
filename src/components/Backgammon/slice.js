@@ -95,7 +95,14 @@ export const slice = createSlice({
 
     resetGame: (state) => ({ ...initialState, points: initializeBoard(), gamesWon: state.gamesWon }),
 
-    playAgain: (state) => ({ ...initialState, points: initializeBoard(), gamesWon: state.gamesWon }),
+    playAgain: (state) => ({ 
+      ...initialState, 
+      points: initializeBoard(), 
+      gamesWon: state.gamesWon,
+      isMultiplayer: state.isMultiplayer,
+      myPlayer: state.myPlayer,
+      isMyTurn: state.isMultiplayer ? state.myPlayer === PLAYERS.LEFT : true
+    }),
 
     setCustomDice: (state, action) => ({
       ...state,

@@ -45,7 +45,14 @@ export const slice = createSlice({
     },
     undoMove: (state, action) => reduceUndoMove(state, action),
     resetGame: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
-    playAgain: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
+    playAgain: (state) => ({ 
+      ...initialState, 
+      board: initializeBoard(), 
+      gamesWon: state.gamesWon,
+      isMultiplayer: state.isMultiplayer,
+      myPlayer: state.myPlayer,
+      isMyTurn: state.myPlayer === PLAYERS.ONE
+    }),
   },
 });
 
