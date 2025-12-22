@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { BUTTON_TEXT, PLAYERS } from '../../globals';
-import { undoRoll, setMultiplayerMode } from '../../slice';
+import { undoRoll } from '../../slice';
 import Checker from '../Checker';
 import styles from './GameStatus.module.css';
 
@@ -11,8 +11,7 @@ const GameStatus = ({
   pointsHistory,
   isMultiplayer,
   checkersBorneOff,
-  checkersOnBar,
-  roomId
+  checkersOnBar
 }) => {
   const dispatch = useDispatch();
 
@@ -33,13 +32,6 @@ const GameStatus = ({
         >
           {BUTTON_TEXT.UNDO_MOVE}
         </button>
-        {!roomId && <button
-          className={`${styles.actionButton} ${styles.endGameButton}`}
-          onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: null, myPlayer: null }))}
-          aria-label="End the game"
-        >
-          End Game
-        </button>}
       </div>
 
       <div className={styles.borneOff}>
@@ -71,8 +63,7 @@ GameStatus.propTypes = {
   pointsHistory: PropTypes.array,
   isMultiplayer: PropTypes.bool,
   checkersBorneOff: PropTypes.object,
-  checkersOnBar: PropTypes.object,
-  roomId: PropTypes.string
+  checkersOnBar: PropTypes.object
 };
 
 export default GameStatus;

@@ -39,7 +39,7 @@ const Backgammon = () => {
   return (
     <Layout showHeader={true}>
       <div className={styles.backgammonGame}>
-        <h2>Backgammon</h2>
+        <h3 className={styles.backgammonTitle}>Backgammon</h3>
 
         {!showGame && (
           <GameModeSelector

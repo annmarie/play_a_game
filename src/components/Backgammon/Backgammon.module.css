@@ -28,6 +28,10 @@
   background-color: var(--secondary-gray-hover);
 }
 
+.backgammonTitle {
+  margin: 0 0 1em 0;
+}
+
 .backgammonStatus {
   display: flex;
   justify-content: space-between;

@@ -29,7 +29,7 @@ const Connect4 = () => {
   return (
     <Layout showHeader={true}>
       <div className={styles.connect4Game}>
-        <h2 className={styles.connect4Title}>Connect Four</h2>
+        <h3 className={styles.connect4Title}>Connect Four</h3>
 
         {!showGame && (
           <GameModeSelector
@@ -84,12 +84,6 @@ const Connect4 = () => {
                 disabled={state.history.length <= 1 || state.winner || state.isMultiplayer}
               >
                 {BUTTON_TEXT.UNDO}
-              </button>
-              <button
-                onClick={() => dispatch(setMultiplayerMode({ isMultiplayer: null, myPlayer: null }))}
-                className={styles.endGameButton}
-              >
-                End Game
               </button>
             </div>
           </>

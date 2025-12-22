@@ -34,7 +34,7 @@ describe('GameStatus', () => {
     expect(screen.getByLabelText('Current player PLAYER_LEFT')).toBeInTheDocument();
   });
 
-  it('renders undo and end game buttons', () => {
+  it('renders undo button', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>
@@ -43,7 +43,6 @@ describe('GameStatus', () => {
     );
 
     expect(screen.getByLabelText('Undo last move')).toBeInTheDocument();
-    expect(screen.getByLabelText('End the game')).toBeInTheDocument();
   });
 
   it('shows borne off checkers when present', () => {
@@ -82,7 +81,7 @@ describe('GameStatus', () => {
     expect(barSection).toBeInTheDocument();
   });
 
-  it('disables buttons in multiplayer mode', () => {
+  it('disables undo button in multiplayer mode', () => {
     const store = createMockStore();
     const props = { ...defaultProps, isMultiplayer: true };
 
@@ -93,6 +92,5 @@ describe('GameStatus', () => {
     );
 
     expect(screen.getByLabelText('Undo last move')).toBeDisabled();
-    expect(screen.getByLabelText('End the game')).toBeInTheDocument();
   });
 });
