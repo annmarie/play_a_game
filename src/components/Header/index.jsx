@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setName } from '@/slice';
 import styles from './Header.module.css';
@@ -9,6 +9,7 @@ const Header = () => {
   const [inputName, setInputName] = useState('');
   const userName = useSelector((state) => state.main.name);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,6 +22,10 @@ const Header = () => {
 
   const handleSignOut = () => {
     dispatch(setName(null));
+    dispatch({ type: 'backgammon/resetGame' });
+    dispatch({ type: 'connect4/resetGame' });
+    dispatch({ type: 'multiplayer/reset' });
+    navigate('/');
   };
 
   return (

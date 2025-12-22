@@ -30,6 +30,13 @@ const Home = () => {
     }
   };
 
+  const handleSignOut = () => {
+    dispatch(setName(null));
+    dispatch({ type: 'backgammon/resetGame' });
+    dispatch({ type: 'connect4/resetGame' });
+    dispatch({ type: 'multiplayer/reset' });
+  };
+
   return (
     <Layout showHeader={false}>
       <div className={styles.homeContent}>
@@ -50,6 +57,7 @@ const Home = () => {
         ) : (
           <div className={styles.welcomeSection}>
             <p className={styles.welcomeText}>Welcome back, {userName}!</p>
+            <button onClick={handleSignOut} className={styles.signOutBtn}>Sign Out</button>
           </div>
         )}
 

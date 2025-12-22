@@ -84,12 +84,31 @@
 
 .welcomeSection {
   margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .welcomeText {
   font-size: 1.125rem;
   font-weight: bold;
   color: #28a745;
+  margin: 0;
+}
+
+.signOutBtn {
+  padding: 0.25rem 0.5rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.signOutBtn:hover {
+  background: #0056b3;
 }
 
 .gameSelectors {

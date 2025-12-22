@@ -48,16 +48,15 @@
 .signOutBtn {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
-  background: #dc3545;
+  background: #007bff;
   color: white;
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
-  display: none;
 }
 
 .signOutBtn:hover {
-  background: #c82333;
+  background: #0056b3;
 }
 
 /* Sign In Section */
