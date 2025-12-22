@@ -118,13 +118,16 @@ function handleJoinRoom(ws, payload) {
   room.guest = { ws, playerId, playerName };
   players.set(ws, { playerId, roomId, isHost: false });
 
+  const responsePayload = {
+    roomId,
+    isHost: false,
+    opponent: { name: room.host.playerName, id: room.host.playerId },
+    gameState: room.gameState
+  };
+
   ws.send(JSON.stringify({
     type: MESSAGE_TYPES.ROOM_JOINED,
-    payload: {
-      roomId,
-      isHost: false,
-      opponent: { name: room.host.playerName, id: room.host.playerId }
-    }
+    payload: responsePayload
   }));
 
   room.host.ws.send(JSON.stringify({

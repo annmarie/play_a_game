@@ -25,7 +25,7 @@ export const isValidColumn = (col, board) => {
  * Validates if a move can be made in the current game state
  * @param {Object} state - Current game state
  * @param {number} col - Column to validate
- * @returns {Object} Validation result
+ * @returns {Object} Validation resul
  */
 export const isValidMove = (state, col) => {
   if (state.winner) {

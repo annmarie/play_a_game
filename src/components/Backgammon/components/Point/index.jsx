@@ -1,4 +1,4 @@
-// backgammon point component
+// backgammon point componen
 import PropTypes from 'prop-types'
 import { useMemo } from 'react'
 import Checker from '../Checker'

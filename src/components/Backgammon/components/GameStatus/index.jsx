@@ -63,7 +63,7 @@ GameStatus.propTypes = {
   pointsHistory: PropTypes.array,
   isMultiplayer: PropTypes.bool,
   checkersBorneOff: PropTypes.object,
-  checkersOnBar: PropTypes.object
+  checkersOnBar: PropTypes.objec
 };
 
 export default GameStatus;

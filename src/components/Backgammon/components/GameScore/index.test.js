@@ -45,7 +45,7 @@ describe('GameScore', () => {
     );
 
     expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument(); // Both scores show as 0 in test
+    expect(screen.getByText('2')).toBeInTheDocument(); // Both scores show as 0 in tes
   });
 
   it('handles null gamesWon gracefully', () => {

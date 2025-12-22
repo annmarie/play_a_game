@@ -34,7 +34,7 @@ const GameModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
 
 GameModeSelector.propTypes = {
   gameType: PropTypes.string.isRequired,
-  isMultiplayer: PropTypes.bool.isRequired,
+  isMultiplayer: PropTypes.oneOf([null, true, false]),
   setMultiplayerMode: PropTypes.func.isRequired
 };
 

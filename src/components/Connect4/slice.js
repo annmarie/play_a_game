@@ -34,7 +34,7 @@ export const slice = createSlice({
         boardFull: boardFull !== undefined ? boardFull : state.boardFull,
         history: history || state.history,
         gamesWon: gamesWon || state.gamesWon,
-        isMyTurn: state.myPlayer ? player !== state.myPlayer : state.isMyTurn,
+        isMyTurn: state.myPlayer ? (player || state.player) !== state.myPlayer : state.isMyTurn,
       };
     },
     setMultiplayerMode: (state, action) => {
@@ -94,23 +94,12 @@ const reduceMakeMove = (state, action) => {
 };
 
 const reduceMultiplayerMove = (state, action) => {
-  const { move } = action.payload;
-  
-  // Apply the opponent's move
-  const moveResult = makeMoveLogic(state, move.col);
-  if (!moveResult || moveResult.error) return state;
+  const { gameState } = action.payload;
 
-  const { board, winner, winnerDesc, boardFull, player } = moveResult;
-  const updatedGamesWon = winner ? { ...state.gamesWon, [state.player]: state.gamesWon[state.player] + 1 } : state.gamesWon;
-
+  // Apply the move received from opponent
   return {
     ...state,
-    board,
-    winner,
-    winnerDesc,
-    boardFull,
-    player,
-    gamesWon: updatedGamesWon,
+    ...gameState,
     isMyTurn: true,
   };
 };

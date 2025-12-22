@@ -42,7 +42,7 @@ export function validateBearOffMove(player, fromPointId, diceValue, points) {
 /**
  * Calculates target point ID for a move
  * @param {string} player - The player making the move
- * @param {number} selectedIndex - The index of the selected point
+ * @param {number} selectedIndex - The index of the selected poin
  * @param {number} die - The dice value to use for the move
  * @returns {number} Target point ID (-2 for bearing off, -1 for invalid move)
  */
@@ -144,7 +144,7 @@ export function findPotentialMoves(points, player, diceValue, checkersOnBar) {
         }
       }
 
-      // Handle moving checkers from a point
+      // Handle moving checkers from a poin
       if (movePointId >= 0 && movePointId < points.length) {
         const targetPoint = points[movePointId];
         if (

@@ -201,7 +201,7 @@ wss.on('connection', (ws, req) => {
       }
 
       // Additional CSRF validation for state-changing operations
-      const stateChangingOps = ['CREATE_ROOM', 'JOIN_ROOM', 'LEAVE_ROOM', 'GAME_MOVE'];
+      const stateChangingOps = [MESSAGE_TYPES.CREATE_ROOM, MESSAGE_TYPES.JOIN_ROOM, MESSAGE_TYPES.LEAVE_ROOM, MESSAGE_TYPES.GAME_MOVE];
       if (stateChangingOps.includes(data.type)) {
         if (!csrfProtection.validateToken(ws.sessionId, data.csrfToken)) {
           return closeWithError(ws, 1008, 'CSRF validation failed for state-changing operation');

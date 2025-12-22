@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setName } from '@/slice';
 import { localStorageService } from '@services/localStorage';
 import styles from './Home.module.css'
-import Layout from '@components/Layout';
+import Layout from '@/components/Layout';
 
 const Home = () => {
   const dispatch = useDispatch();

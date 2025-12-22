@@ -19,7 +19,7 @@ export const rollDie = () => {
 
 /**
  * Handles dice rolling logic for backgammon game
- * @param {string|null} currentPlayer - Current player or null for game start
+ * @param {string|null} currentPlayer - Current player or null for game star
  * @returns {{diceValue: number[], player: string}} Object with dice values and active player
  */
 export function rollDiceLogic(currentPlayer) {
@@ -63,7 +63,7 @@ export const checkWinner = (checkersBorneOff, player) => {
 /**
  * Handles spot selection logic
  * @param {Object} state - Current game state
- * @param {number} pointId - ID of the selected point
+ * @param {number} pointId - ID of the selected poin
  * @returns {Object|null} Selection result with type and relevant data, or null if invalid
  */
 export const selectSpotLogic = (state, pointId) => {

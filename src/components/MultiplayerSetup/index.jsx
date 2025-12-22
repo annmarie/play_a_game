@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { wsService } from '@services/websocket';
-import { localStorageService } from '@services/localStorage';
 import { setPlayerInfo, setError, leaveRoom } from './slice';
 import { setName } from '@/slice';
 import { BUTTON_TEXT, LABELS, PLACEHOLDERS, ERROR_MESSAGES } from './globals';
@@ -15,7 +14,11 @@ const MultiplayerSetup = ({ gameType }) => {
   const [inputName, setInputName] = useState(playerName || '');
   const [inputRoomId, setInputRoomId] = useState('');
 
+  // Check if there's a current room
+  const currentRoom = roomId ? { roomId } : null;
+
   const handleRoomAction = (action, roomId = null) => {
+    console.log('handleRoomAction called:', { action, roomId, isConnected });
     const name = storedName || inputName.trim();
     const room = roomId?.trim();
 
@@ -32,6 +35,14 @@ const MultiplayerSetup = ({ gameType }) => {
     const playerId = Math.random().toString(36).substr(2, 9);
     dispatch(setPlayerInfo({ playerId, playerName: name }));
 
+    console.log('Sending WebSocket message:', {
+      action,
+      gameType,
+      playerId,
+      playerName: name,
+      ...(room && { roomId: room })
+    });
+
     wsService.send(action, {
       gameType,
       playerId,
@@ -40,12 +51,12 @@ const MultiplayerSetup = ({ gameType }) => {
     });
   };
 
-  if (roomId) {
+  if (currentRoom) {
     return (
       <div className={styles.setupInfo}>
-        <h3>Room: {roomId}</h3>
+        <h3>Room: {currentRoom.roomId}</h3>
         <p>{LABELS.WAITING_FOR_OPPONENT}</p>
-        <button onClick={() => dispatch(leaveRoom())}>{BUTTON_TEXT.LEAVE_ROOM}</button>
+        <button onClick={() => dispatch(leaveRoom({ gameType }))}>{BUTTON_TEXT.LEAVE_ROOM}</button>
       </div>
     );
   }

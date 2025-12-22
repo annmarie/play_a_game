@@ -9,6 +9,11 @@ class WebSocketService {
   }
 
   async connect(url = 'ws://localhost:8080') {
+    // Don't create a new connection if one already exists and is open
+    if (this.csrfClient && this.csrfClient.ws && this.csrfClient.ws.readyState === WebSocket.OPEN) {
+      return;
+    }
+
     try {
       const allowedHosts = ['localhost', '127.0.0.1'];
       const urlObj = new URL(url);

@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setConnectionStatus, joinRoom, setOpponent, setError } from '@components/MultiplayerSetup/slice';
 import { wsService } from '@services/websocket';
-import { localStorageService } from '@services/localStorage';
 
 export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => {
   const dispatch = useDispatch();
@@ -20,6 +19,10 @@ export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => 
 
     const handleRoomCreated = (data) => {
       dispatch(joinRoom({ roomId: data.roomId, isHost: true }));
+      dispatch(gameActions.setMultiplayerMode({
+        isMultiplayer: true,
+        myPlayer: null
+      }));
     };
 
     const handleRoomJoined = (data) => {
@@ -30,6 +33,10 @@ export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => 
           isMultiplayer: true,
           myPlayer: playerConstants.SECOND
         }));
+      }
+      // Sync game state if available
+      if (data.gameState) {
+        dispatch(gameActions.syncGameState(data.gameState));
       }
     };
 

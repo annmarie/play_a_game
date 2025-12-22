@@ -239,7 +239,7 @@ describe('Bearing Off Logic', () => {
 
     it('should return valid point for normal moves', () => {
       const result = calculatePotentialMove(PLAYERS.LEFT, 0, 3); // Point 1, die 3
-      expect(result).toBe(14); // Should be a valid point
+      expect(result).toBe(14); // Should be a valid poin
     });
   });
 

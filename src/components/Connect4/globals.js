@@ -10,7 +10,6 @@ export const MESSAGES = {
 
 export const BUTTON_TEXT = {
   UNDO: 'UNDO',
-  RESET: 'RESET',
 };
 
 export const GAME_CONFIG = {

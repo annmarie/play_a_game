@@ -1,4 +1,4 @@
-// Backgammon Checker Component
+// Backgammon Checker Componen
 import PropTypes from 'prop-types'
 import { PLAYERS } from '../../globals';
 import styles from './Checker.module.css'

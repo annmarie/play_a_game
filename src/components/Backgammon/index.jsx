@@ -10,7 +10,7 @@ import DoubleOffer from './components/DoubleOffer';
 import GameControls from './components/GameControls';
 import GameStatus from './components/GameStatus';
 import Board from './components/Board';
-import Layout from '@components/Layout';
+import Layout from '@/components/Layout';
 import styles from './Backgammon.module.css';
 
 const Backgammon = () => {
@@ -51,6 +51,12 @@ const Backgammon = () => {
 
         {showGame && (
           <>
+            {state.isMultiplayer && multiplayer.roomId && (
+              <div className={styles.multiplayerInfo}>
+                <span>Room: {multiplayer.roomId}</span>
+              </div>
+            )}
+
             <GameScore
               gamesWon={state.gamesWon}
               doublingCube={state.doublingCube}

@@ -1,4 +1,4 @@
-// Backgammon Dice Component
+// Backgammon Dice Componen
 import PropTypes from 'prop-types';
 import styles from './Dice.module.css';
 import { useEffect, useState, useRef } from 'react';

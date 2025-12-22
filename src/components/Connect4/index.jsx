@@ -6,7 +6,7 @@ import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import styles from './Connect4.module.css';
-import Layout from '@components/Layout';
+import Layout from '@/components/Layout';
 
 const Connect4 = () => {
   const dispatch = useDispatch();
@@ -16,8 +16,8 @@ const Connect4 = () => {
 
   useWebSocketHandlers();
 
-  const showGame = state.isMultiplayer === false || multiplayer.roomId;
-  const showMultiplayerSetup = state.isMultiplayer === null;
+  const showGame = state.isMultiplayer === false || (multiplayer.roomId && multiplayer.opponent);
+  const showMultiplayerSetup = state.isMultiplayer === null || (state.isMultiplayer === true && !multiplayer.opponent);
 
   return (
     <Layout showHeader={true}>
@@ -27,13 +27,19 @@ const Connect4 = () => {
         {showMultiplayerSetup && (
           <GameModeSelector
             gameType="connect4"
-            isMultiplayer={null}
+            isMultiplayer={state.isMultiplayer}
             setMultiplayerMode={setMultiplayerMode}
           />
         )}
 
         {showGame && (
           <>
+            {state.isMultiplayer && multiplayer.roomId && (
+              <div className={styles.multiplayerInfo}>
+                <span>Room: {multiplayer.roomId}</span>
+              </div>
+            )}
+
             <div className={styles.gameScore}>
               <div>Games Won:</div>
               <div style={{ color: 'red' }}>{PLAYERS.ONE}: {state.gamesWon?.[PLAYERS.ONE] || 0}</div>

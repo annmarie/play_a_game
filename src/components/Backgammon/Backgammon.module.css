@@ -53,3 +53,16 @@
 .playAgainButton:hover {
   background-color: var(--success-green-hover);
 }
+
+/* Multiplayer info */
+.multiplayerInfo {
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+  background: #e8f5e8;
+  padding: 0.5em 1em;
+  border-radius: 0.5em;
+  margin-bottom: 1em;
+  font-size: 0.9em;
+  color: #2d5a2d;
+}
