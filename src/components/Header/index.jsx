@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setName } from '@/slice';
+import { localStorageService } from '@services/localStorage';
 import styles from './Header.module.css';
 
 const Header = () => {
@@ -22,6 +23,7 @@ const Header = () => {
 
   const handleSignOut = () => {
     dispatch(setName(null));
+    localStorageService.clearUserData();
     dispatch({ type: 'backgammon/resetGame' });
     dispatch({ type: 'connect4/resetGame' });
     dispatch({ type: 'multiplayer/reset' });

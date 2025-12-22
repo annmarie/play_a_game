@@ -178,7 +178,7 @@ export const slice = createSlice({
         ...state,
         isMultiplayer,
         myPlayer,
-        isMyTurn: isMultiplayer ? myPlayer === PLAYERS.LEFT : true
+        isMyTurn: isMultiplayer ? myPlayer === state.player : true
       };
     },
 

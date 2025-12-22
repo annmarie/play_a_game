@@ -14,5 +14,5 @@ export const useWebSocketHandlers = () => {
     SECOND: PLAYERS.TWO
   };
 
-  return useSharedWebSocketHandlers(gameActions, playerConstants);
+  return useSharedWebSocketHandlers(gameActions, playerConstants, 'connect4');
 };

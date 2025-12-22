@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { wsService } from '@services/websocket';
+import { localStorageService } from '@services/localStorage';
 import { setPlayerInfo, setError, leaveRoom } from './slice';
 import { setName } from '@/slice';
 import { BUTTON_TEXT, LABELS, PLACEHOLDERS, ERROR_MESSAGES } from './globals';

@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setConnectionStatus, joinRoom, setOpponent, setError } from '@components/MultiplayerSetup/slice';
 import { wsService } from '@services/websocket';
+import { localStorageService } from '@services/localStorage';
 
-export const useWebSocketHandlers = (gameActions, playerConstants) => {
+export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export const useWebSocketHandlers = (gameActions, playerConstants) => {
         dispatch(setOpponent(data.opponent));
         dispatch(gameActions.setMultiplayerMode({
           isMultiplayer: true,
-          myPlayer: data.isHost ? playerConstants.FIRST : playerConstants.SECOND
+          myPlayer: playerConstants.SECOND
         }));
       }
     };
@@ -71,5 +72,5 @@ export const useWebSocketHandlers = (gameActions, playerConstants) => {
       wsService.off('gameSync', handleGameSync);
       wsService.off('error', handleError);
     };
-  }, [dispatch, gameActions, playerConstants]);
+  }, [dispatch, gameActions, playerConstants, gameType]);
 };

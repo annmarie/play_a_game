@@ -14,5 +14,5 @@ export const useWebSocketHandlers = () => {
     SECOND: PLAYERS.RIGHT
   };
 
-  return useSharedWebSocketHandlers(gameActions, playerConstants);
+  return useSharedWebSocketHandlers(gameActions, playerConstants, 'backgammon');
 };

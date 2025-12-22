@@ -41,7 +41,7 @@ export const slice = createSlice({
       const { isMultiplayer, myPlayer } = action.payload;
       state.isMultiplayer = isMultiplayer;
       state.myPlayer = myPlayer;
-      state.isMyTurn = myPlayer === PLAYERS.ONE;
+      state.isMyTurn = myPlayer === state.player;
     },
     undoMove: (state, action) => reduceUndoMove(state, action),
     resetGame: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
@@ -94,12 +94,23 @@ const reduceMakeMove = (state, action) => {
 };
 
 const reduceMultiplayerMove = (state, action) => {
-  const { gameState } = action.payload;
+  const { move } = action.payload;
+  
+  // Apply the opponent's move
+  const moveResult = makeMoveLogic(state, move.col);
+  if (!moveResult || moveResult.error) return state;
 
-  // Apply the move received from opponent
+  const { board, winner, winnerDesc, boardFull, player } = moveResult;
+  const updatedGamesWon = winner ? { ...state.gamesWon, [state.player]: state.gamesWon[state.player] + 1 } : state.gamesWon;
+
   return {
     ...state,
-    ...gameState,
+    board,
+    winner,
+    winnerDesc,
+    boardFull,
+    player,
+    gamesWon: updatedGamesWon,
     isMyTurn: true,
   };
 };
