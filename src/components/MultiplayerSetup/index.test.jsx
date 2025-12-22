@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import MultiplayerSetup from './index';
 import multiplayerReducer from './slice';
+import mainReducer from '@/slice';
 import { wsService } from '@services/websocket';
 
 jest.mock('@services/websocket');
@@ -13,6 +14,7 @@ const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
       multiplayer: multiplayerReducer,
+      main: mainReducer,
     },
     preloadedState: {
       multiplayer: {
@@ -26,6 +28,9 @@ const createMockStore = (initialState = {}) => {
         connectionStatus: 'disconnected',
         error: null,
         ...initialState,
+      },
+      main: {
+        name: null,
       },
     },
   });
