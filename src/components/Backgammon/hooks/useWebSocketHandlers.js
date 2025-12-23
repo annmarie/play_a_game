@@ -3,17 +3,13 @@ import { makeMultiplayerMove, syncGameState, setMultiplayerMode, startGame } fro
 import { useWebSocketHandlers as useSharedWebSocketHandlers } from '@/hooks/useWebSocketHandlers';
 
 export const useWebSocketHandlers = () => {
-  const gameActions = {
+  return useSharedWebSocketHandlers('backgammon', {
     makeMultiplayerMove,
     syncGameState,
     setMultiplayerMode,
     startGame
-  };
-
-  const playerConstants = {
+  }, {
     FIRST: PLAYERS.LEFT,
     SECOND: PLAYERS.RIGHT
-  };
-
-  return useSharedWebSocketHandlers(gameActions, playerConstants, 'backgammon');
+  });
 };

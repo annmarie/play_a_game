@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setConnectionStatus, joinRoom, setOpponent, setError } from '@components/MultiplayerSetup/slice';
 import { wsService } from '@services/websocket';
 
-export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => {
+export const useWebSocketHandlers = (gameType, gameActions, playerConstants) => {
   const dispatch = useDispatch();
   const multiplayer = useSelector((state) => state.multiplayer);
   const gameState = useSelector((state) => state[gameType]);

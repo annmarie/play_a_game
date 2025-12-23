@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
 import { makeMoveLogic, togglePlayer } from './gameLogic';
 import { PLAYERS, GAME_CONFIG } from './globals';
-import { wsService } from '@services/websocket';
+import { sendMultiplayerMove, createMultiplayerReducers } from '@/utils/multiplayerUtils';
 
 export const initialState = {
   board: initializeBoard(),
@@ -23,26 +23,8 @@ export const slice = createSlice({
   reducers: {
     makeMove: (state, action) => reduceMakeMove(state, action),
     makeMultiplayerMove: (state, action) => reduceMultiplayerMove(state, action),
-    syncGameState: (state, action) => {
-      const { board, player, winner, winnerDesc, boardFull, history, gamesWon } = action.payload;
-      return {
-        ...state,
-        board: board || state.board,
-        player: player || state.player,
-        winner: winner !== undefined ? winner : state.winner,
-        winnerDesc: winnerDesc !== undefined ? winnerDesc : state.winnerDesc,
-        boardFull: boardFull !== undefined ? boardFull : state.boardFull,
-        history: history || state.history,
-        gamesWon: gamesWon || state.gamesWon,
-        isMyTurn: state.myPlayer ? (player || state.player) !== state.myPlayer : state.isMyTurn,
-      };
-    },
-    setMultiplayerMode: (state, action) => {
-      const { isMultiplayer, myPlayer } = action.payload;
-      state.isMultiplayer = isMultiplayer;
-      state.myPlayer = myPlayer;
-      state.isMyTurn = myPlayer === state.player;
-    },
+    syncGameState: createMultiplayerReducers().syncGameState,
+    setMultiplayerMode: createMultiplayerReducers().setMultiplayerMode,
     undoMove: (state, action) => reduceUndoMove(state, action),
     resetGame: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
     playAgain: (state) => ({
@@ -83,8 +65,7 @@ const reduceMakeMove = (state, action) => {
   };
 
   if (state.isMultiplayer) {
-    wsService.send('gameMove', {
-      gameType: 'connect4',
+    sendMultiplayerMove('connect4', {
       move: { col },
       gameState: newState
     });
