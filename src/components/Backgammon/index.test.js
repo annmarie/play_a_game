@@ -5,12 +5,12 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../../store';
 import Backgammon from '.';
-import * as gameLogic from './gameLogic';
+import * as gamePlay from './gamePlay';
 
 const SPACEBAR = ' ';
 
-jest.mock('./gameLogic', () => ({
-  ...jest.requireActual('./gameLogic'),
+jest.mock('./gamePlay', () => ({
+  ...jest.requireActual('./gamePlay'),
   rollDiceLogic: jest.fn(),
 }));
 
@@ -28,7 +28,7 @@ const renderGame = (store) => {
 };
 
 const rollDice = async (diceValue, player) => {
-  gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue, player });
+  gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue, player });
   await act(async () => fireEvent.click(screen.getByRole('button', { name: /roll dice/i })));
 };
 
@@ -166,7 +166,7 @@ describe('Backgammon Component Tests', () => {
 
     it('should handle keyboard dice rolling', async () => {
       await act(async () => renderGame(store));
-      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
 
       await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
 
@@ -176,10 +176,10 @@ describe('Backgammon Component Tests', () => {
 
     it('should prevent rolling when dice already rolled', async () => {
       await act(async () => renderGame(store));
-      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
       await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
 
-      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 3], player: PLAYERS.LEFT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 3], player: PLAYERS.LEFT });
       await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
 
       expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
@@ -352,7 +352,7 @@ describe('Backgammon Component Tests', () => {
       await rollDice([4, 4, 4, 4], PLAYERS.RIGHT);
 
       // Verify the mock was called for doubles
-      expect(gameLogic.rollDiceLogic).toHaveBeenCalled();
+      expect(gamePlay.rollDiceLogic).toHaveBeenCalled();
     });
   });
 });

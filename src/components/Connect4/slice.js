@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
-import { makeMoveLogic, togglePlayer } from './gameLogic';
+import { makeMoveLogic, togglePlayer } from './gamePlay';
 import { PLAYERS, GAME_CONFIG } from './globals';
 import { sendMultiplayerMove, createMultiplayerReducers } from '@/utils/multiplayerUtils';
 
@@ -77,7 +77,6 @@ const reduceMakeMove = (state, action) => {
 const reduceMultiplayerMove = (state, action) => {
   const { gameState } = action.payload;
 
-  // Apply the move received from opponent
   return {
     ...state,
     ...gameState,

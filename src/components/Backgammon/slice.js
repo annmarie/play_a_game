@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard, getPointIdToIndexMap } from './boardUtils';
-import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gameLogic';
-import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveValidation';
+import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gamePlay';
+import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveLogic';
 import { PLAYERS, BOARD_CONFIG } from './globals';
 import { sendMultiplayerMove, createMultiplayerReducers } from '@/utils/multiplayerUtils';
 
@@ -160,7 +160,6 @@ export const slice = createSlice({
         potentialMoves: {}
       };
 
-      // Send to WebSocket if multiplayer
       if (state.isMultiplayer) {
         sendMultiplayerMove('backgammon', newState);
       }
@@ -186,7 +185,6 @@ export const slice = createSlice({
         turnEnding: false
       };
 
-      // Send to WebSocket if multiplayer
       if (state.isMultiplayer) {
         sendMultiplayerMove('backgammon', newState);
       }
@@ -206,7 +204,6 @@ export const slice = createSlice({
         isMyTurn: state.isMultiplayer ? state.myPlayer === togglePlayer(state.player) : true
       };
 
-      // Send to WebSocket if multiplayer
       if (state.isMultiplayer) {
         sendMultiplayerMove('backgammon', newState);
       }
@@ -231,7 +228,6 @@ export const slice = createSlice({
         isMyTurn: state.isMultiplayer ? state.myPlayer === player : true
       };
 
-      // Send to WebSocket if multiplayer
       if (state.isMultiplayer) {
         sendMultiplayerMove('backgammon', newState);
       }
@@ -330,7 +326,6 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) => {
     potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves].slice(-BOARD_CONFIG.MAX_HISTORY),
   };
 
-  // Send to WebSocket if multiplayer
   if (state.isMultiplayer) {
     sendMultiplayerMove('backgammon', newState);
   }

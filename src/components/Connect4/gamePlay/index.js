@@ -1,6 +1,6 @@
 import { PLAYERS } from '../globals';
 import { isBoardFull, dropChecker, checkWin } from '../boardUtils';
-import { isValidMove } from '../moveValidation';
+import { isValidMove } from '../moveLogic';
 
 /**
  * Toggles the current player

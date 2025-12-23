@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import backgammonReducer, { initialState, selectSpot, rollDice, makeMove, resetGame, undoRoll, offerDouble, acceptDouble, declineDouble, endTurn } from './slice';
 import { PLAYERS } from './globals';
-import * as gameLogic from './gameLogic';
+import * as gamePlay from './gamePlay';
 
-jest.mock('./gameLogic', () => ({
-  ...jest.requireActual('./gameLogic'),
+jest.mock('./gamePlay', () => ({
+  ...jest.requireActual('./gamePlay'),
   rollDiceLogic: jest.fn(),
 }));
 
@@ -23,7 +23,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should select spot with dice roll 2 3', () => {
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYERS.RIGHT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYERS.RIGHT });
     store.dispatch(rollDice());
     store.dispatch(selectSpot(24));
     state = store.getState()
@@ -38,7 +38,7 @@ describe('Backgammon Slice', () => {
 
 
   it('should select spot with dice roll 3 2', () => {
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [3, 2], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [3, 2], player: PLAYERS.LEFT });
     store.dispatch(rollDice())
     store.dispatch(selectSpot(12))
     state = store.getState()
@@ -55,13 +55,13 @@ describe('Backgammon Slice', () => {
   it('should handle doubles roll', () => {
     // first roll of the game cannot be doubles
     expect(state.player).toBe(null);
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
     store.dispatch(rollDice())
     // make moves for left player
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 15 }))
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }))
     // doubles roll for right player
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 4, 4, 4], player: PLAYERS.RIGHT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 4, 4, 4], player: PLAYERS.RIGHT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 }))
     store.dispatch(makeMove({ fromPointId: 13, toPointId: 4 }))
@@ -73,7 +73,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should move left player to checker to bar', () => {
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 2], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 2], player: PLAYERS.LEFT });
     store.dispatch(rollDice())
     state = store.getState()
     expect(state.player).toBe(PLAYERS.LEFT);
@@ -82,7 +82,7 @@ describe('Backgammon Slice', () => {
     state = store.getState()
     expect(state.turnEnding).toBe(true);
     expect(state.player).toBe(PLAYERS.LEFT);
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 1], player: PLAYERS.RIGHT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 1], player: PLAYERS.RIGHT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 24, toPointId: 18 }))
     store.dispatch(makeMove({ fromPointId: 24, toPointId: 23 }))
@@ -91,7 +91,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should move right player to checker to bar', () => {
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 6], player: PLAYERS.RIGHT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 6], player: PLAYERS.RIGHT });
     store.dispatch(rollDice())
     state = store.getState()
     expect(state.player).toBe(PLAYERS.RIGHT);
@@ -100,7 +100,7 @@ describe('Backgammon Slice', () => {
     state = store.getState()
     expect(state.turnEnding).toBe(true);
     expect(state.player).toBe(PLAYERS.RIGHT);
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 1], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 1], player: PLAYERS.LEFT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 14 }))
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }))
@@ -109,13 +109,13 @@ describe('Backgammon Slice', () => {
   });
 
   it('should move right player checker to bar back to board', () => {
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 6], player: PLAYERS.RIGHT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 6], player: PLAYERS.RIGHT });
     store.dispatch(rollDice())
     state = store.getState();
     expect(state.player).toBe(PLAYERS.RIGHT);
     store.dispatch(makeMove({ fromPointId: 24, toPointId: 18 }))
     store.dispatch(makeMove({ fromPointId: 24, toPointId: 23 }))
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 2], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 2], player: PLAYERS.LEFT });
     store.dispatch(rollDice())
     state = store.getState();
     expect(state.player).toBe(PLAYERS.LEFT);
@@ -123,7 +123,7 @@ describe('Backgammon Slice', () => {
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }))
     state = store.getState();
     expect(state.checkersOnBar[PLAYERS.RIGHT]).toEqual(1);
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [3, 2], player: PLAYERS.RIGHT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [3, 2], player: PLAYERS.RIGHT });
     store.dispatch(rollDice())
     store.dispatch(selectSpot(22))
     state = store.getState();
@@ -133,7 +133,7 @@ describe('Backgammon Slice', () => {
 
   it('should roll and reset dice', () => {
     const [leftDie, rightDie] = [5, 3]
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [leftDie, rightDie], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [leftDie, rightDie], player: PLAYERS.LEFT });
     store.dispatch(rollDice())
     state = store.getState()
     expect(state.diceValue).toEqual([leftDie, rightDie]);
@@ -151,7 +151,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should roll and update the history correctly', () => {
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
     store.dispatch(rollDice())
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 15 }))
     state = store.getState()
@@ -166,10 +166,10 @@ describe('Backgammon Slice', () => {
   });
 
   it('should should set the dice manually on first roll if doubles are rolled 10 times in a row', () => {
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 2], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 2], player: PLAYERS.LEFT });
     store.dispatch(rollDice())
     state = store.getState()
-    expect(gameLogic.rollDiceLogic).toHaveBeenCalledTimes(1);
+    expect(gamePlay.rollDiceLogic).toHaveBeenCalledTimes(1);
     expect(state.diceValue).toEqual([1, 2]);
   });
 
@@ -180,7 +180,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should set turnEnding to true when all dice are used', () => {
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
     store.dispatch(rollDice());
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 15 }));
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }));
@@ -190,7 +190,7 @@ describe('Backgammon Slice', () => {
   });
 
   it('should end turn and switch players', () => {
-    gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYERS.LEFT });
     store.dispatch(rollDice());
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 15 }));
     store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }));
@@ -211,7 +211,7 @@ describe('Backgammon Slice', () => {
     });
 
     it('should allow player to offer double', () => {
-      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYERS.LEFT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYERS.LEFT });
       store.dispatch(rollDice());
       store.dispatch(offerDouble());
       const newState = store.getState();
@@ -219,11 +219,11 @@ describe('Backgammon Slice', () => {
     });
 
     it('should double the value when accepted', () => {
-      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYERS.LEFT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYERS.LEFT });
       store.dispatch(rollDice());
       store.dispatch(offerDouble());
       // Switch to the other player to accept the double
-      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 5], player: PLAYERS.RIGHT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 5], player: PLAYERS.RIGHT });
       store.dispatch(rollDice());
       store.dispatch(acceptDouble());
       const newState = store.getState();
@@ -233,7 +233,7 @@ describe('Backgammon Slice', () => {
     });
 
     it('should end game when double is declined', () => {
-      gameLogic.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYERS.LEFT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYERS.LEFT });
       store.dispatch(rollDice());
       store.dispatch(offerDouble());
       store.dispatch(declineDouble());

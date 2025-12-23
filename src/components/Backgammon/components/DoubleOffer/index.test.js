@@ -45,7 +45,6 @@ describe('DoubleOffer', () => {
       </Provider>
     );
 
-    // When PLAYER_LEFT offers, PLAYER_RIGHT should be asked to accep
     const checker = screen.getByRole('checker');
     expect(checker).toHaveAttribute('id', 'player_left');
   });
@@ -58,7 +57,6 @@ describe('DoubleOffer', () => {
       </Provider>
     );
 
-    // When PLAYER_RIGHT offers, PLAYER_LEFT should be asked to accep
     const checker = screen.getByRole('checker');
     expect(checker).toHaveAttribute('id', 'player_left');
   });
