@@ -65,53 +65,53 @@ const MultiplayerSetup = ({ gameType }) => {
     <div className={styles.multiplayerSetup}>
       <h3>{LABELS.MULTIPLAYER_SETUP}</h3>
 
-      {error && <div className={styles.error}>{error}</div>}
-
-      {storedName ? (
-        <div className={styles.nameDisplay}>
-          <label>{LABELS.YOUR_NAME}</label>
-          <p className={styles.storedName}>{storedName}</p>
-        </div>
+      {!isConnected ? (
+        <p>Connecting to server...</p>
       ) : (
-        <div className={styles.inputGroup}>
-          <label>{LABELS.YOUR_NAME}</label>
-          <input
-            type="text"
-            value={inputName}
-            onChange={(e) => setInputName(e.target.value)}
-            placeholder={PLACEHOLDERS.ENTER_NAME}
-          />
-        </div>
-      )}
+        <>
+          {error && <div className={styles.error}>{error}</div>}
 
-      <div className={styles.actions}>
-        <button
-          onClick={() => handleRoomAction('createRoom')}
-          disabled={!isConnected}
-        >
-          {BUTTON_TEXT.CREATE_ROOM}
-        </button>
+          {storedName ? (
+            <div className={styles.nameDisplay}>
+              <label>{LABELS.YOUR_NAME}</label>
+              <p className={styles.storedName}>{storedName}</p>
+            </div>
+          ) : (
+            <div className={styles.inputGroup}>
+              <label>{LABELS.YOUR_NAME}</label>
+              <input
+                type="text"
+                value={inputName}
+                onChange={(e) => setInputName(e.target.value)}
+                placeholder={PLACEHOLDERS.ENTER_NAME}
+              />
+            </div>
+          )}
 
-        <div className={styles.joinSection}>
-          <input
-            type="text"
-            value={inputRoomId}
-            onChange={(e) => setInputRoomId(e.target.value)}
-            placeholder={PLACEHOLDERS.ROOM_ID}
-          />
-          <button
-            onClick={() => handleRoomAction('joinRoom', inputRoomId)}
-            disabled={!isConnected}
-          >
-            {BUTTON_TEXT.JOIN_ROOM}
-          </button>
-        </div>
-      </div>
+          <div className={styles.actions}>
+            <button
+              onClick={() => handleRoomAction('createRoom')}
+              disabled={!isConnected}
+            >
+              {BUTTON_TEXT.CREATE_ROOM}
+            </button>
 
-      {!isConnected && (
-        <p className={styles.connectionStatus}>
-          {LABELS.CONNECTING}
-        </p>
+            <div className={styles.joinSection}>
+              <input
+                type="text"
+                value={inputRoomId}
+                onChange={(e) => setInputRoomId(e.target.value)}
+                placeholder={PLACEHOLDERS.ROOM_ID}
+              />
+              <button
+                onClick={() => handleRoomAction('joinRoom', inputRoomId)}
+                disabled={!isConnected}
+              >
+                {BUTTON_TEXT.JOIN_ROOM}
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
