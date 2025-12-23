@@ -9,13 +9,11 @@ import styles from './MultiplayerSetup.module.css';
 
 const MultiplayerSetup = ({ gameType }) => {
   const dispatch = useDispatch();
-  const { isConnected, roomId, playerName, error, currentGameType } = useSelector(state => state.multiplayer);
+  const { isConnected, error } = useSelector(state => state.multiplayer);
+  const currentRoom = useSelector(state => state.multiplayer.rooms?.[gameType]);
   const storedName = useSelector(state => state.main.name);
-  const [inputName, setInputName] = useState(playerName || '');
+  const [inputName, setInputName] = useState('');
   const [inputRoomId, setInputRoomId] = useState('');
-
-  // Check if there's a current room for this game type
-  const currentRoom = roomId && currentGameType === gameType ? { roomId } : null;
 
   const handleRoomAction = (action, roomId = null) => {
     console.log('handleRoomAction called:', { action, roomId, isConnected });

@@ -66,3 +66,37 @@
   font-size: 0.9em;
   color: #2d5a2d;
 }
+.playerNames {
+  display: flex;
+  gap: 1em;
+  margin-left: 1em;
+}
+
+.playerNames span {
+  font-weight: bold;
+}
+.startGameSection {
+  text-align: center;
+  margin: 1em 0;
+}
+
+.startGameButton {
+  padding: 1em 2em;
+  font-size: 1.2em;
+  background-color: var(--primary-green);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.startGameButton:hover {
+  background-color: var(--primary-green-hover);
+}
+.startGameText {
+  margin-top: 0.5em;
+  font-size: 0.9em;
+  color: #666;
+  font-style: italic;
+}

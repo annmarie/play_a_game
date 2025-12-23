@@ -1,12 +1,13 @@
 import { PLAYERS } from '../globals';
-import { makeMultiplayerMove, syncGameState, setMultiplayerMode } from '../slice';
+import { makeMultiplayerMove, syncGameState, setMultiplayerMode, startGame } from '../slice';
 import { useWebSocketHandlers as useSharedWebSocketHandlers } from '@/hooks/useWebSocketHandlers';
 
 export const useWebSocketHandlers = () => {
   const gameActions = {
     makeMultiplayerMove,
     syncGameState,
-    setMultiplayerMode
+    setMultiplayerMode,
+    startGame
   };
 
   const playerConstants = {

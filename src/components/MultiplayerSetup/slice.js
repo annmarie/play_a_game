@@ -2,15 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const initialState = {
   isConnected: false,
-  roomId: null,
   playerId: null,
   playerName: '',
-  isHost: false,
-  opponent: null,
-  gameMode: 'local', // 'local' or 'multiplayer'
   connectionStatus: 'disconnected', // 'disconnected', 'connecting', 'connected'
   error: null,
-  currentGameType: null, // track which game created the room
+  rooms: {}, // { gameType: { roomId, isHost, opponent } }
 };
 
 export const slice = createSlice({
@@ -28,24 +24,17 @@ export const slice = createSlice({
     },
     joinRoom: (state, action) => {
       const { roomId, isHost, gameType } = action.payload;
-      state.roomId = roomId;
-      state.isHost = isHost;
-      state.gameMode = 'multiplayer';
-      state.currentGameType = gameType;
+      state.rooms[gameType] = { roomId, isHost, opponent: null };
     },
     setOpponent: (state, action) => {
-      state.opponent = action.payload;
+      const { gameType, opponent } = action.payload;
+      if (state.rooms[gameType]) {
+        state.rooms[gameType].opponent = opponent;
+      }
     },
     leaveRoom: (state, action) => {
-      // Only clear room if leaving the current game or no gameType specified
-      const { gameType } = action.payload || {};
-      if (!gameType || !state.currentGameType || gameType === state.currentGameType) {
-        state.roomId = null;
-        state.isHost = false;
-        state.opponent = null;
-        state.gameMode = 'local';
-        state.currentGameType = null;
-      }
+      const { gameType } = action.payload;
+      delete state.rooms[gameType];
     },
     setError: (state, action) => {
       state.error = action.payload;

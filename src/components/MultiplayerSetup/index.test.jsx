@@ -19,14 +19,11 @@ const createMockStore = (initialState = {}) => {
     preloadedState: {
       multiplayer: {
         isConnected: false,
-        roomId: null,
         playerId: null,
         playerName: '',
-        isHost: false,
-        opponent: null,
-        gameMode: 'local',
         connectionStatus: 'disconnected',
         error: null,
+        rooms: {},
         ...initialState,
       },
       main: {
@@ -116,8 +113,13 @@ describe('MultiplayerSetup', () => {
   it('shows room info when connected to room', () => {
     const store = createMockStore({
       isConnected: true,
-      roomId: 'ABC123',
-      currentGameType: 'connect4'
+      rooms: {
+        connect4: {
+          roomId: 'ABC123',
+          isHost: true,
+          opponent: null
+        }
+      }
     });
     renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
 

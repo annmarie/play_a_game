@@ -17,8 +17,8 @@ const Connect4 = () => {
 
   useWebSocketHandlers();
 
-  const showGame = state.isMultiplayer === false || (multiplayer.roomId && multiplayer.currentGameType === 'connect4' && multiplayer.opponent);
-  const showMultiplayerSetup = state.isMultiplayer === null || (state.isMultiplayer === true && (!multiplayer.opponent || multiplayer.currentGameType !== 'connect4'));
+  const showGame = state.isMultiplayer === false || (multiplayer.rooms.connect4?.roomId && multiplayer.rooms.connect4?.opponent);
+  const showMultiplayerSetup = state.isMultiplayer === null || (state.isMultiplayer === true && !multiplayer.rooms.connect4?.opponent);
 
   return (
     <Layout showHeader={true}>
@@ -35,16 +35,16 @@ const Connect4 = () => {
 
         {showGame && (
           <>
-            {state.isMultiplayer && multiplayer.roomId && (
+            {state.isMultiplayer && multiplayer.rooms.connect4?.roomId && (
               <div className={styles.multiplayerInfo}>
-                <span>Room: {multiplayer.roomId}</span>
-                {multiplayer.opponent && (
+                <span>Room: {multiplayer.rooms.connect4.roomId}</span>
+                {multiplayer.rooms.connect4.opponent && (
                   <div className={styles.playerNames}>
                     <PlayerText player={PLAYERS.ONE}>
-                      {state.myPlayer === PLAYERS.ONE ? multiplayer.playerName || 'You' : (multiplayer.opponent?.name || 'Opponent')} (Red)
+                      {state.myPlayer === PLAYERS.ONE ? multiplayer.playerName || 'You' : (multiplayer.rooms.connect4.opponent?.name || 'Opponent')} (Red)
                     </PlayerText>
                     <PlayerText player={PLAYERS.TWO}>
-                      {state.myPlayer === PLAYERS.TWO ? multiplayer.playerName || 'You' : (multiplayer.opponent?.name || 'Opponent')} (Yellow)
+                      {state.myPlayer === PLAYERS.TWO ? multiplayer.playerName || 'You' : (multiplayer.rooms.connect4.opponent?.name || 'Opponent')} (Yellow)
                     </PlayerText>
                   </div>
                 )}

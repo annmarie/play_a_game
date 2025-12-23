@@ -3,6 +3,7 @@ import { initializeBoard, getPointIdToIndexMap } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gameLogic';
 import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveValidation';
 import { PLAYERS, BOARD_CONFIG } from './globals';
+import { wsService } from '@services/websocket';
 
 export const initialState = {
   points: initializeBoard(),
@@ -30,6 +31,7 @@ export const initialState = {
   isMultiplayer: null,
   myPlayer: null,
   isMyTurn: false,
+  gameStarted: false,
 };
 
 export const slice = createSlice({
@@ -54,10 +56,15 @@ export const slice = createSlice({
     makeMove: (state, action) => reduceMakeMove(state, action),
 
     rollDice: (state) => {
+      // Prevent rolling if it's multiplayer and not the player's turn
+      if (state.isMultiplayer && !state.isMyTurn) {
+        return state;
+      }
+      
       const { diceValue, player } = rollDiceLogic(state.player);
       const potentialMoves = findPotentialMoves(state.points, player, diceValue, state.checkersOnBar);
 
-      return {
+      const newState = {
         ...state,
         diceValue,
         player,
@@ -65,6 +72,16 @@ export const slice = createSlice({
         selectedSpot: null,
         potentialSpots: []
       };
+
+      // Send to WebSocket if multiplayer
+      if (state.isMultiplayer && typeof wsService !== 'undefined') {
+        wsService.send('gameMove', {
+          gameType: 'backgammon',
+          gameState: newState
+        });
+      }
+
+      return newState;
     },
 
     undoRoll: (state) => {
@@ -113,19 +130,31 @@ export const slice = createSlice({
 
     offerDouble: (state) => {
       if (state.doublingCube.owner === state.player || state.doublingCube.pendingOffer) return state;
-      return {
+      const newState = {
         ...state,
         doublingCube: {
           ...state.doublingCube,
           pendingOffer: state.player
         }
       };
+
+      // Send to WebSocket if multiplayer
+      if (state.isMultiplayer) {
+        import('@services/websocket').then(({ wsService }) => {
+          wsService.send('gameMove', {
+            gameType: 'backgammon',
+            gameState: newState
+          });
+        });
+      }
+
+      return newState;
     },
 
     acceptDouble: (state) => {
       if (!state.doublingCube.pendingOffer) return state;
       const offeringPlayer = state.doublingCube.pendingOffer;
-      return {
+      const newState = {
         ...state,
         doublingCube: {
           value: state.doublingCube.value * 2,
@@ -138,12 +167,24 @@ export const slice = createSlice({
         potentialSpots: [],
         potentialMoves: {}
       };
+
+      // Send to WebSocket if multiplayer
+      if (state.isMultiplayer) {
+        import('@services/websocket').then(({ wsService }) => {
+          wsService.send('gameMove', {
+            gameType: 'backgammon',
+            gameState: newState
+          });
+        });
+      }
+
+      return newState;
     },
 
     declineDouble: (state) => {
       if (!state.doublingCube.pendingOffer) return state;
       const offeringPlayer = state.doublingCube.pendingOffer;
-      return {
+      const newState = {
         ...state,
         winner: offeringPlayer,
         gamesWon: {
@@ -157,10 +198,22 @@ export const slice = createSlice({
         },
         turnEnding: false
       };
+
+      // Send to WebSocket if multiplayer
+      if (state.isMultiplayer) {
+        import('@services/websocket').then(({ wsService }) => {
+          wsService.send('gameMove', {
+            gameType: 'backgammon',
+            gameState: newState
+          });
+        });
+      }
+
+      return newState;
     },
 
     endTurn: (state) => {
-      return {
+      const newState = {
         ...state,
         player: togglePlayer(state.player),
         diceValue: null,
@@ -170,6 +223,18 @@ export const slice = createSlice({
         potentialMoves: {},
         isMyTurn: state.isMultiplayer ? state.myPlayer === togglePlayer(state.player) : true
       };
+
+      // Send to WebSocket if multiplayer
+      if (state.isMultiplayer) {
+        import('@services/websocket').then(({ wsService }) => {
+          wsService.send('gameMove', {
+            gameType: 'backgammon',
+            gameState: newState
+          });
+        });
+      }
+
+      return newState;
     },
 
     setMultiplayerMode: (state, action) => {
@@ -182,9 +247,13 @@ export const slice = createSlice({
       };
     },
 
-    makeMultiplayerMove: (state) => {
-      // Handle moves from other players
-      return state;
+    makeMultiplayerMove: (state, action) => {
+      const { gameState } = action.payload;
+      return {
+        ...state,
+        ...gameState,
+        isMyTurn: state.myPlayer === gameState.player
+      };
     },
 
     syncGameState: (state, action) => {
@@ -195,12 +264,41 @@ export const slice = createSlice({
         isMyTurn: state.isMultiplayer ? state.myPlayer === syncedState.player : true
       };
     },
+
+    startGame: (state) => {
+      const { diceValue, player } = rollDiceLogic(null);
+      const potentialMoves = findPotentialMoves(state.points, player, diceValue, state.checkersOnBar);
+      
+      const newState = {
+        ...state,
+        gameStarted: true,
+        diceValue,
+        player,
+        potentialMoves,
+        isMyTurn: state.isMultiplayer ? state.myPlayer === player : true
+      };
+
+      // Send to WebSocket if multiplayer
+      if (state.isMultiplayer && typeof wsService !== 'undefined') {
+        wsService.send('gameMove', {
+          gameType: 'backgammon',
+          gameState: newState
+        });
+      }
+
+      return newState;
+    },
   },
 });
 
 const reduceMakeMove = (state, { payload: { fromPointId, toPointId } }) => {
   const { player, diceValue, points } = state;
   if (!player || !diceValue?.length) return state;
+  
+  // Prevent moves if it's multiplayer and not the player's turn
+  if (state.isMultiplayer && !state.isMyTurn) {
+    return state;
+  }
 
   const fromIndex = points.findIndex(point => point.id === fromPointId);
   if (fromIndex === -1 || points[fromIndex].checkers < 1) return state;
@@ -261,7 +359,7 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) => {
   const updatedGamesWon = winner ? { ...state.gamesWon, [winner]: state.gamesWon[winner] + gameValue } : state.gamesWon;
   const turnShouldEnd = !moveInProcess && !winner;
 
-  return {
+  const newState = {
     ...state,
     points: updatedPoints,
     checkersOnBar: updatedCheckersOnBar,
@@ -281,6 +379,16 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) => {
     playerHistory: [...state.playerHistory, state.player].slice(-BOARD_CONFIG.MAX_HISTORY),
     potentialMovesHistory: [...state.potentialMovesHistory, state.potentialMoves].slice(-BOARD_CONFIG.MAX_HISTORY),
   };
+
+  // Send to WebSocket if multiplayer
+  if (state.isMultiplayer && typeof wsService !== 'undefined') {
+    wsService.send('gameMove', {
+      gameType: 'backgammon',
+      gameState: newState
+    });
+  }
+
+  return newState;
 }
 
 export const {
@@ -298,7 +406,8 @@ export const {
   endTurn,
   setMultiplayerMode,
   makeMultiplayerMove,
-  syncGameState
+  syncGameState,
+  startGame
 } = slice.actions;
 
 export default slice.reducer;

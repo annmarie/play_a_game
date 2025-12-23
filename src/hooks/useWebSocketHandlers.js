@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setConnectionStatus, joinRoom, setOpponent, setError } from '@components/MultiplayerSetup/slice';
 import { wsService } from '@services/websocket';
 
 export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => {
   const dispatch = useDispatch();
+  const multiplayer = useSelector((state) => state.multiplayer);
+  const gameState = useSelector((state) => state[gameType]);
 
   useEffect(() => {
     wsService.connect();
@@ -21,14 +23,14 @@ export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => 
       dispatch(joinRoom({ roomId: data.roomId, isHost: true, gameType }));
       dispatch(gameActions.setMultiplayerMode({
         isMultiplayer: true,
-        myPlayer: null
+        myPlayer: playerConstants.FIRST
       }));
     };
 
     const handleRoomJoined = (data) => {
       dispatch(joinRoom({ roomId: data.roomId, isHost: false, gameType }));
       if (data.opponent) {
-        dispatch(setOpponent(data.opponent));
+        dispatch(setOpponent({ gameType, opponent: data.opponent }));
         dispatch(gameActions.setMultiplayerMode({
           isMultiplayer: true,
           myPlayer: playerConstants.SECOND
@@ -41,7 +43,7 @@ export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => 
     };
 
     const handleOpponentJoined = (data) => {
-      dispatch(setOpponent(data.opponent));
+      dispatch(setOpponent({ gameType, opponent: data.opponent }));
       dispatch(gameActions.setMultiplayerMode({
         isMultiplayer: true,
         myPlayer: playerConstants.FIRST
@@ -49,11 +51,17 @@ export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => 
     };
 
     const handleGameMove = (data) => {
-      dispatch(gameActions.makeMultiplayerMove(data));
+      // Only handle moves for the current game type
+      if (data.gameType === gameType) {
+        dispatch(gameActions.makeMultiplayerMove(data));
+      }
     };
 
     const handleGameSync = (data) => {
-      dispatch(gameActions.syncGameState(data.gameState));
+      // Only handle sync for the current game type
+      if (data.gameType === gameType) {
+        dispatch(gameActions.syncGameState(data.gameState));
+      }
     };
 
     const handleError = (error) => {
@@ -80,4 +88,11 @@ export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => 
       wsService.off('error', handleError);
     };
   }, [dispatch, gameActions, playerConstants, gameType]);
+
+  // Set multiplayer mode if room exists
+  useEffect(() => {
+    if (multiplayer.rooms?.[gameType]?.roomId && gameState.isMultiplayer === null) {
+      dispatch(gameActions.setMultiplayerMode({ isMultiplayer: true, myPlayer: null }));
+    }
+  }, [multiplayer.rooms, gameType, gameState.isMultiplayer, dispatch, gameActions]);
 };
