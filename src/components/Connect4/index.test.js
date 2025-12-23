@@ -48,7 +48,8 @@ describe('Connect4 Component', () => {
 
       expect(cells).toHaveLength(BOARD_SIZE);
       cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
-      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText('Current Player:')).toBeInTheDocument();
+      expect(screen.getByText(PLAYERS.ONE)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /undo move/i })).toBeDisabled();
     });
   });
@@ -59,18 +60,21 @@ describe('Connect4 Component', () => {
 
       await clickCells(cells, [4]);
       expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
-      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText('Current Player:')).toBeInTheDocument();
+      expect(screen.getByText(PLAYERS.TWO)).toBeInTheDocument();
 
       await clickCells(cells, [4]);
       expect(screen.getByLabelText(new RegExp(`Spot row 4 and col 4 with ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
-      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText('Current Player:')).toBeInTheDocument();
+      expect(screen.getByText(PLAYERS.ONE)).toBeInTheDocument();
     });
 
     it('should declare winner when four in a row achieved', async () => {
       const cells = await setupGame();
 
       await clickCells(cells, WINNING_SEQUENCE);
-      expect(screen.getByText(new RegExp(`Winner: ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText(/Winner:/)).toBeInTheDocument();
+      expect(screen.getByText(PLAYERS.ONE)).toBeInTheDocument();
     });
 
     it('should declare draw when board is full', async () => {
@@ -90,7 +94,8 @@ describe('Connect4 Component', () => {
 
       await clickCells(cells, [4]);
       expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
-      expect(screen.getByText(new RegExp(`Current Player: ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByText('Current Player:')).toBeInTheDocument();
+      expect(screen.getByText(PLAYERS.TWO)).toBeInTheDocument();
       expect(undoButton).toBeDisabled();
     });
   });

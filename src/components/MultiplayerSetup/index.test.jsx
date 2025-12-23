@@ -125,14 +125,12 @@ describe('MultiplayerSetup', () => {
     expect(screen.getByText('Leave Room')).toBeInTheDocument();
   });
 
-  it('disables buttons when not connected', () => {
+  it('shows connecting message when not connected', () => {
     const store = createMockStore({ isConnected: false });
     renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
 
-    const createButton = screen.getByText('Create Room');
-    const joinButton = screen.getByText('Join Room');
-
-    expect(createButton).toBeDisabled();
-    expect(joinButton).toBeDisabled();
+    expect(screen.getByText('Connecting to server...')).toBeInTheDocument();
+    expect(screen.queryByText('Create Room')).not.toBeInTheDocument();
+    expect(screen.queryByText('Join Room')).not.toBeInTheDocument();
   });
 });
