@@ -5,6 +5,7 @@ import { makeMove, undoMove, playAgain, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import StatusBox from './components/StatusBox';
 import Board from './components/Board';
+import PlayerText from './components/PlayerText';
 import styles from './Connect4.module.css';
 import Layout from '@/components/Layout';
 
@@ -37,13 +38,23 @@ const Connect4 = () => {
             {state.isMultiplayer && multiplayer.roomId && (
               <div className={styles.multiplayerInfo}>
                 <span>Room: {multiplayer.roomId}</span>
+                {multiplayer.opponent && (
+                  <div className={styles.playerNames}>
+                    <PlayerText player={PLAYERS.ONE}>
+                      {state.myPlayer === PLAYERS.ONE ? multiplayer.playerName || 'You' : (multiplayer.opponent?.name || 'Opponent')} (Red)
+                    </PlayerText>
+                    <PlayerText player={PLAYERS.TWO}>
+                      {state.myPlayer === PLAYERS.TWO ? multiplayer.playerName || 'You' : (multiplayer.opponent?.name || 'Opponent')} (Yellow)
+                    </PlayerText>
+                  </div>
+                )}
               </div>
             )}
 
             <div className={styles.gameScore}>
               <div>Games Won:</div>
-              <div style={{ color: 'red' }}>{PLAYERS.ONE}: {state.gamesWon?.[PLAYERS.ONE] || 0}</div>
-              <div style={{ color: 'yellow' }}>{PLAYERS.TWO}: {state.gamesWon?.[PLAYERS.TWO] || 0}</div>
+              <PlayerText player={PLAYERS.ONE}>{PLAYERS.ONE}: {state.gamesWon?.[PLAYERS.ONE] || 0}</PlayerText>
+              <PlayerText player={PLAYERS.TWO}>{PLAYERS.TWO}: {state.gamesWon?.[PLAYERS.TWO] || 0}</PlayerText>
             </div>
 
             <StatusBox

@@ -1,0 +1,7 @@
+.playerOne {
+  color: var(--player-red);
+}
+
+.playerTwo {
+  color: var(--player-yellow);
+}

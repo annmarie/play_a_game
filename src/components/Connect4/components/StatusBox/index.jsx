@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { MESSAGES } from '../../globals';
 import styles from './StatusBox.module.css';
+import PlayerText from '../PlayerText';
 
 const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player = 'Unknown', onPlayAgain }) => {
   const normalizedBoardFull = Boolean(boardFull);
@@ -14,10 +15,10 @@ const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player =
       aria-live="polite"
     >
       {winner
-        ? `Winner: ${winner} Winning move (${winnerDesc})`
+        ? <>🎉 Winner: <PlayerText player={winner} /> Winning move ({winnerDesc})</>
         : normalizedBoardFull
         ? MESSAGES.DRAW
-        : `Current Player: ${player}`}
+        : <>Current Player: <PlayerText player={player} /></>}
 
       {gameEnded && onPlayAgain && (
         <button

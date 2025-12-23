@@ -22,9 +22,9 @@
 }
 
 .playerOne {
-  background-color: red;
+  background-color: var(--player-red);
 }
 
 .playerTwo {
-  background-color: yellow;
+  background-color: var(--player-yellow);
 }
