@@ -33,7 +33,7 @@ const Backgammon = () => {
     [state.selectedSpot, dispatch]
   );
 
-  const showGame = state.isMultiplayer === false || multiplayer.roomId;
+  const showGame = state.isMultiplayer === false || (multiplayer.roomId && multiplayer.currentGameType === 'backgammon');
   const showMultiplayerSetup = state.isMultiplayer === null;
 
   return (

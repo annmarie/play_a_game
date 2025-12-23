@@ -17,8 +17,8 @@ const Connect4 = () => {
 
   useWebSocketHandlers();
 
-  const showGame = state.isMultiplayer === false || (multiplayer.roomId && multiplayer.opponent);
-  const showMultiplayerSetup = state.isMultiplayer === null || (state.isMultiplayer === true && !multiplayer.opponent);
+  const showGame = state.isMultiplayer === false || (multiplayer.roomId && multiplayer.currentGameType === 'connect4' && multiplayer.opponent);
+  const showMultiplayerSetup = state.isMultiplayer === null || (state.isMultiplayer === true && (!multiplayer.opponent || multiplayer.currentGameType !== 'connect4'));
 
   return (
     <Layout showHeader={true}>

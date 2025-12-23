@@ -18,7 +18,7 @@ export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => 
     };
 
     const handleRoomCreated = (data) => {
-      dispatch(joinRoom({ roomId: data.roomId, isHost: true }));
+      dispatch(joinRoom({ roomId: data.roomId, isHost: true, gameType }));
       dispatch(gameActions.setMultiplayerMode({
         isMultiplayer: true,
         myPlayer: null
@@ -26,7 +26,7 @@ export const useWebSocketHandlers = (gameActions, playerConstants, gameType) => 
     };
 
     const handleRoomJoined = (data) => {
-      dispatch(joinRoom({ roomId: data.roomId, isHost: false }));
+      dispatch(joinRoom({ roomId: data.roomId, isHost: false, gameType }));
       if (data.opponent) {
         dispatch(setOpponent(data.opponent));
         dispatch(gameActions.setMultiplayerMode({

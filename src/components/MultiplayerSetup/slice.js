@@ -10,6 +10,7 @@ export const initialState = {
   gameMode: 'local', // 'local' or 'multiplayer'
   connectionStatus: 'disconnected', // 'disconnected', 'connecting', 'connected'
   error: null,
+  currentGameType: null, // track which game created the room
 };
 
 export const slice = createSlice({
@@ -26,19 +27,25 @@ export const slice = createSlice({
       state.playerName = playerName;
     },
     joinRoom: (state, action) => {
-      const { roomId, isHost } = action.payload;
+      const { roomId, isHost, gameType } = action.payload;
       state.roomId = roomId;
       state.isHost = isHost;
       state.gameMode = 'multiplayer';
+      state.currentGameType = gameType;
     },
     setOpponent: (state, action) => {
       state.opponent = action.payload;
     },
-    leaveRoom: (state) => {
-      state.roomId = null;
-      state.isHost = false;
-      state.opponent = null;
-      state.gameMode = 'local';
+    leaveRoom: (state, action) => {
+      // Only clear room if leaving the current game or no gameType specified
+      const { gameType } = action.payload || {};
+      if (!gameType || !state.currentGameType || gameType === state.currentGameType) {
+        state.roomId = null;
+        state.isHost = false;
+        state.opponent = null;
+        state.gameMode = 'local';
+        state.currentGameType = null;
+      }
     },
     setError: (state, action) => {
       state.error = action.payload;

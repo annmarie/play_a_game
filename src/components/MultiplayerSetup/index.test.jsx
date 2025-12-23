@@ -116,7 +116,8 @@ describe('MultiplayerSetup', () => {
   it('shows room info when connected to room', () => {
     const store = createMockStore({
       isConnected: true,
-      roomId: 'ABC123'
+      roomId: 'ABC123',
+      currentGameType: 'connect4'
     });
     renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
 
