@@ -12,6 +12,8 @@ import GameStatus from './components/GameStatus';
 import Board from './components/Board';
 import Layout from '@/components/Layout';
 import styles from './Backgammon.module.css';
+import Checker from './components/Checker';
+import { PLAYERS } from './globals';
 
 const Backgammon = () => {
   const dispatch = useDispatch();
@@ -27,7 +29,7 @@ const Backgammon = () => {
       if (state.isMultiplayer && !state.isMyTurn) {
         return;
       }
-      
+
       if (state.selectedSpot) {
         const fromPointId = state.selectedSpot;
         const toPointId = point.id;
@@ -62,10 +64,10 @@ const Backgammon = () => {
                 {multiplayer.rooms.backgammon.opponent && (
                   <div className={styles.playerNames}>
                     <span>
-                      {state.myPlayer === 'left' ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} (Dark)
+                      {state.myPlayer === PLAYERS.LEFT ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} <Checker player={PLAYERS.LEFT} />
                     </span>
                     <span>
-                      {state.myPlayer === 'right' ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} (Light)
+                      {state.myPlayer === PLAYERS.RIGHT ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} <Checker player={PLAYERS.RIGHT} />
                     </span>
                   </div>
                 )}
@@ -74,7 +76,7 @@ const Backgammon = () => {
 
             {state.isMultiplayer && multiplayer.rooms.backgammon?.opponent && !state.gameStarted && (
               <div className={styles.startGameSection}>
-                <button 
+                <button
                   onClick={() => dispatch(startGame())}
                   className={styles.startGameButton}
                 >

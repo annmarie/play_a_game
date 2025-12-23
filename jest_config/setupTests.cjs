@@ -15,7 +15,7 @@ beforeEach(() => {
     }
     originalConsoleError(...args);
   };
-  
+
   console.log = (...args) => {
     if (args[0]?.includes?.('WebSocket')) {
       return; // Suppress WebSocket logs

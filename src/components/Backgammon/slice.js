@@ -60,7 +60,7 @@ export const slice = createSlice({
       if (state.isMultiplayer && !state.isMyTurn) {
         return state;
       }
-      
+
       const { diceValue, player } = rollDiceLogic(state.player);
       const potentialMoves = findPotentialMoves(state.points, player, diceValue, state.checkersOnBar);
 
@@ -268,7 +268,7 @@ export const slice = createSlice({
     startGame: (state) => {
       const { diceValue, player } = rollDiceLogic(null);
       const potentialMoves = findPotentialMoves(state.points, player, diceValue, state.checkersOnBar);
-      
+
       const newState = {
         ...state,
         gameStarted: true,
@@ -294,7 +294,7 @@ export const slice = createSlice({
 const reduceMakeMove = (state, { payload: { fromPointId, toPointId } }) => {
   const { player, diceValue, points } = state;
   if (!player || !diceValue?.length) return state;
-  
+
   // Prevent moves if it's multiplayer and not the player's turn
   if (state.isMultiplayer && !state.isMyTurn) {
     return state;

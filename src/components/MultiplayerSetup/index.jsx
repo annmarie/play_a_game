@@ -16,7 +16,6 @@ const MultiplayerSetup = ({ gameType }) => {
   const [inputRoomId, setInputRoomId] = useState('');
 
   const handleRoomAction = (action, roomId = null) => {
-    console.log('handleRoomAction called:', { action, roomId, isConnected });
     const name = storedName || inputName.trim();
     const room = roomId?.trim();
 
@@ -32,14 +31,6 @@ const MultiplayerSetup = ({ gameType }) => {
 
     const playerId = Math.random().toString(36).substr(2, 9);
     dispatch(setPlayerInfo({ playerId, playerName: name }));
-
-    console.log('Sending WebSocket message:', {
-      action,
-      gameType,
-      playerId,
-      playerName: name,
-      ...(room && { roomId: room })
-    });
 
     wsService.send(action, {
       gameType,
