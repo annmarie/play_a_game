@@ -1,4 +1,3 @@
-/* Cell base */
 .connect4Cell {
   width: 3.125em;
   height: 3.125em;
@@ -7,10 +6,6 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-}
-
-.winner {
-  cursor: default;
 }
 
 .checker {
