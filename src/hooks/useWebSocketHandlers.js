@@ -36,7 +36,6 @@ export const useWebSocketHandlers = (gameType, gameActions, playerConstants) => 
           myPlayer: playerConstants.SECOND
         }));
       }
-      // Sync game state if available
       if (data.gameState) {
         dispatch(gameActions.syncGameState(data.gameState));
       }
@@ -51,14 +50,12 @@ export const useWebSocketHandlers = (gameType, gameActions, playerConstants) => 
     };
 
     const handleGameMove = (data) => {
-      // Only handle moves for the current game type
       if (data.gameType === gameType) {
         dispatch(gameActions.makeMultiplayerMove(data.gameState));
       }
     };
 
     const handleGameSync = (data) => {
-      // Only handle sync for the current game type
       if (data.gameType === gameType) {
         dispatch(gameActions.syncGameState(data.gameState));
       }
@@ -89,7 +86,6 @@ export const useWebSocketHandlers = (gameType, gameActions, playerConstants) => 
     };
   }, [dispatch, gameActions, playerConstants, gameType]);
 
-  // Set multiplayer mode if room exists
   useEffect(() => {
     if (multiplayer.rooms?.[gameType]?.roomId && gameState.isMultiplayer === null) {
       dispatch(gameActions.setMultiplayerMode({ isMultiplayer: true, myPlayer: null }));

@@ -23,7 +23,7 @@ const createMockStore = (initialState = {}) => {
 };
 
 describe('GameControls', () => {
-  it('renders roll dice button when no dice value', () => {
+  it('should render roll dice button when no dice value', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>
@@ -40,7 +40,7 @@ describe('GameControls', () => {
     expect(screen.getByLabelText('Roll Dice')).toBeInTheDocument();
   });
 
-  it('renders dice and end turn button when dice rolled', () => {
+  it('should render dice and end turn button when dice rolled', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>
@@ -57,7 +57,7 @@ describe('GameControls', () => {
     expect(screen.getByLabelText('End turn')).toBeInTheDocument();
   });
 
-  it('disables roll dice button when winner exists', () => {
+  it('should disable roll dice button when winner exists', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>

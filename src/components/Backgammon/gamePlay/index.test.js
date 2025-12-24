@@ -40,22 +40,22 @@ describe('Game Logic', () => {
       mockState.potentialMoves = { 1: [4, 5] };
     });
 
-    it('returns null when no player', () => {
+    it('should return null when no player', () => {
       const state = { ...mockState, player: null };
       expect(selectSpotLogic(state, 1)).toBeNull();
     });
 
-    it('returns null when no dice value', () => {
+    it('should return null when no dice value', () => {
       const state = { ...mockState, diceValue: null };
       expect(selectSpotLogic(state, 1)).toBeNull();
     });
 
-    it('returns null when empty dice array', () => {
+    it('should return null when empty dice array', () => {
       const state = { ...mockState, diceValue: [] };
       expect(selectSpotLogic(state, 1)).toBeNull();
     });
 
-    it('handles checker on bar move', () => {
+    it('should handle checker on bar move', () => {
       const state = {
         ...mockState,
         checkersOnBar: { [PLAYER.LEFT]: 1, [PLAYER.RIGHT]: 0 },
@@ -71,7 +71,7 @@ describe('Game Logic', () => {
       });
     });
 
-    it('returns null for invalid bar move', () => {
+    it('should return null for invalid bar move', () => {
       const state = {
         ...mockState,
         checkersOnBar: { [PLAYER.LEFT]: 1, [PLAYER.RIGHT]: 0 },
@@ -81,16 +81,16 @@ describe('Game Logic', () => {
       expect(selectSpotLogic(state, 22)).toBeNull();
     });
 
-    it('returns null for invalid point selection', () => {
+    it('should return null for invalid point selection', () => {
       expect(selectSpotLogic(mockState, 0)).toBeNull();
     });
 
-    it('returns null when point has no checkers', () => {
+    it('should return null when point has no checkers', () => {
       mockState.points[1] = { id: 2, checkers: 0, player: null };
       expect(selectSpotLogic(mockState, 2)).toBeNull();
     });
 
-    it('returns null when point belongs to opponent', () => {
+    it('should return null when point belongs to opponent', () => {
       mockState.points[1] = { id: 2, checkers: 2, player: PLAYER.RIGHT };
       expect(selectSpotLogic(mockState, 2)).toBeNull();
     });
@@ -104,7 +104,7 @@ describe('Game Logic', () => {
       });
     });
 
-    it('returns empty potential spots when no moves available', () => {
+    it('should return empty potential spots when no moves available', () => {
       const state = { ...mockState, potentialMoves: {} };
       const result = selectSpotLogic(state, 1);
       expect(result).toEqual({

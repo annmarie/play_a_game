@@ -8,8 +8,6 @@ import { wsService } from '@services/websocket';
 
 jest.mock('@services/websocket');
 
-
-
 const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
@@ -46,7 +44,7 @@ describe('MultiplayerSetup', () => {
     jest.clearAllMocks();
   });
 
-  it('renders room creation form when not connected to room', () => {
+  it('should render room creation form when not connected to room', () => {
     const store = createMockStore({ isConnected: true });
     renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
 
@@ -63,7 +61,7 @@ describe('MultiplayerSetup', () => {
     expect(screen.getByText('Connecting to server...')).toBeInTheDocument();
   });
 
-  it('displays error message when present', () => {
+  it('should display error message when present', () => {
     const store = createMockStore({
       isConnected: true,
       error: 'Test error message'
@@ -73,7 +71,7 @@ describe('MultiplayerSetup', () => {
     expect(screen.getByText('Test error message')).toBeInTheDocument();
   });
 
-  it('creates room when create button clicked with valid name', () => {
+  it('should create room when create button clicked with valid name', () => {
     const store = createMockStore({ isConnected: true });
     renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
 
@@ -90,7 +88,7 @@ describe('MultiplayerSetup', () => {
     });
   });
 
-  it('joins room when join button clicked with valid inputs', () => {
+  it('should join room when join button clicked with valid inputs', () => {
     const store = createMockStore({ isConnected: true });
     renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
 
@@ -110,7 +108,7 @@ describe('MultiplayerSetup', () => {
     });
   });
 
-  it('shows room info when connected to room', () => {
+  it('should show room info when connected to room', () => {
     const store = createMockStore({
       isConnected: true,
       rooms: {
@@ -128,7 +126,7 @@ describe('MultiplayerSetup', () => {
     expect(screen.getByText('Leave Room')).toBeInTheDocument();
   });
 
-  it('shows connecting message when not connected', () => {
+  it('should show connecting message when not connected', () => {
     const store = createMockStore({ isConnected: false });
     renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
 

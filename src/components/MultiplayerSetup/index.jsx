@@ -24,7 +24,6 @@ const MultiplayerSetup = ({ gameType }) => {
       return;
     }
 
-    // Save name to storage if entered in this form
     if (!storedName && inputName.trim()) {
       dispatch(setName(inputName.trim()));
     }

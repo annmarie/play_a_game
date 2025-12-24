@@ -23,7 +23,7 @@ const defaultProps = {
 };
 
 describe('GameStatus', () => {
-  it('renders current player when no winner', () => {
+  it('should render current player when no winner', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>
@@ -34,7 +34,7 @@ describe('GameStatus', () => {
     expect(screen.getByLabelText('Current player PLAYER_LEFT')).toBeInTheDocument();
   });
 
-  it('renders undo button', () => {
+  it('should render undo button', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>
@@ -45,7 +45,7 @@ describe('GameStatus', () => {
     expect(screen.getByLabelText('Undo last move')).toBeInTheDocument();
   });
 
-  it('shows borne off checkers when present', () => {
+  it('should show borne off checkers when present', () => {
     const store = createMockStore();
     const props = {
       ...defaultProps,
@@ -63,7 +63,7 @@ describe('GameStatus', () => {
     expect(borneOffSection).toBeInTheDocument();
   });
 
-  it('shows checkers on bar when present', () => {
+  it('should show checkers on bar when present', () => {
     const store = createMockStore();
     const props = {
       ...defaultProps,
@@ -81,7 +81,7 @@ describe('GameStatus', () => {
     expect(barSection).toBeInTheDocument();
   });
 
-  it('disables undo button in multiplayer mode', () => {
+  it('should disable undo button in multiplayer mode', () => {
     const store = createMockStore();
     const props = { ...defaultProps, isMultiplayer: true };
 

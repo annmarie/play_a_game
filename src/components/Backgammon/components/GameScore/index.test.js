@@ -25,7 +25,7 @@ const defaultProps = {
 };
 
 describe('GameScore', () => {
-  it('renders games won title', () => {
+  it('should render games won title', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>
@@ -36,7 +36,7 @@ describe('GameScore', () => {
     expect(screen.getByText('Games Won:')).toBeInTheDocument();
   });
 
-  it('displays player scores', () => {
+  it('should display player scores', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>
@@ -48,7 +48,7 @@ describe('GameScore', () => {
     expect(screen.getByText('2')).toBeInTheDocument(); // Both scores show as 0 in tes
   });
 
-  it('handles null gamesWon gracefully', () => {
+  it('should handle null gamesWon gracefully', () => {
     const store = createMockStore();
     const props = { ...defaultProps, gamesWon: null };
 
@@ -61,7 +61,7 @@ describe('GameScore', () => {
     expect(screen.getAllByText('0')).toHaveLength(2);
   });
 
-  it('renders DoublesCube component', () => {
+  it('should render DoublesCube component', () => {
     const store = createMockStore();
     render(
       <Provider store={store}>

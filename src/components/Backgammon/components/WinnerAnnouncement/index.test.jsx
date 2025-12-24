@@ -19,7 +19,7 @@ const createMockStore = (initialState = {}) => {
 };
 
 describe('WinnerAnnouncement', () => {
-  it('renders winner announcement with player', async () => {
+  it('should render winner announcement with player', async () => {
     const store = createMockStore();
 
     await act(async () => render(
@@ -32,7 +32,7 @@ describe('WinnerAnnouncement', () => {
     expect(screen.getByRole('button', { name: 'Play another game' })).toBeInTheDocument();
   });
 
-  it('dispatches playAgain action when button is clicked', async () => {
+  it('should dispatch playAgain action when button is clicked', async () => {
     const store = createMockStore();
     const dispatchSpy = jest.spyOn(store, 'dispatch');
 
