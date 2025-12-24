@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { BUTTON_TEXT, PLAYERS } from '../../globals';
+import { BUTTON_TEXT, PLAYER } from '../../globals';
 import { undoRoll } from '../../slice';
 import Checker from '../Checker';
 import styles from './GameStatus.module.css';
@@ -35,7 +35,7 @@ const GameStatus = ({
       </div>
 
       <div className={styles.borneOff}>
-        {[PLAYERS.LEFT, PLAYERS.RIGHT].map(player =>
+        {[PLAYER.LEFT, PLAYER.RIGHT].map(player =>
           checkersBorneOff[player] > 0 && (
             <div key={player} className={styles.statusItem} aria-label={`Borne Off for ${player}`}>
               <Checker player={player} /> Borne Off: {checkersBorneOff[player]}
@@ -45,7 +45,7 @@ const GameStatus = ({
       </div>
 
       <div className={styles.bar}>
-        {[PLAYERS.LEFT, PLAYERS.RIGHT].map(player =>
+        {[PLAYER.LEFT, PLAYER.RIGHT].map(player =>
           checkersOnBar[player] > 0 && (
             <div key={player} className={styles.statusItem} aria-label={`Checkers Bar for ${player}`}>
               <Checker player={player} /> Bar: {checkersOnBar[player]}

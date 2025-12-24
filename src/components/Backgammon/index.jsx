@@ -13,7 +13,7 @@ import Board from './components/Board';
 import Layout from '@/components/Layout';
 import styles from './Backgammon.module.css';
 import Checker from './components/Checker';
-import { PLAYERS } from './globals';
+import { PLAYER } from './globals';
 
 const Backgammon = () => {
   const dispatch = useDispatch();
@@ -64,10 +64,10 @@ const Backgammon = () => {
                 {multiplayer.rooms.backgammon.opponent && (
                   <div className={styles.playerNames}>
                     <span>
-                      {state.myPlayer === PLAYERS.LEFT ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} <Checker player={PLAYERS.LEFT} />
+                      {state.myPlayer === PLAYER.LEFT ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} <Checker player={PLAYER.LEFT} />
                     </span>
                     <span>
-                      {state.myPlayer === PLAYERS.RIGHT ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} <Checker player={PLAYERS.RIGHT} />
+                      {state.myPlayer === PLAYER.RIGHT ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} <Checker player={PLAYER.RIGHT} />
                     </span>
                   </div>
                 )}

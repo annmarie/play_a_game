@@ -1,6 +1,6 @@
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { PLAYERS } from './globals';
+import { PLAYER } from './globals';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../../store';
@@ -48,7 +48,7 @@ const DEFAULT_GAME_STATE = {
   checkersOnBar: { left: 0, right: 0 },
   checkersBorneOff: { left: 0, right: 0 },
   diceValue: null,
-  player: PLAYERS.LEFT,
+  player: PLAYER.LEFT,
   winner: null,
   selectedSpot: null,
   potentialSpots: [],
@@ -86,16 +86,16 @@ const validateInitialBoard = (points) => {
 
 const createBearOffTestBoard = () => {
   const config = {
-    7: { checkers: 5, player: PLAYERS.RIGHT },
-    8: { checkers: 5, player: PLAYERS.RIGHT },
-    9: { checkers: 2, player: PLAYERS.RIGHT },
-    10: { checkers: 2, player: PLAYERS.RIGHT },
-    11: { checkers: 1, player: PLAYERS.RIGHT },
-    19: { checkers: 5, player: PLAYERS.LEFT },
-    20: { checkers: 3, player: PLAYERS.LEFT },
-    21: { checkers: 2, player: PLAYERS.LEFT },
-    22: { checkers: 3, player: PLAYERS.LEFT },
-    23: { checkers: 1, player: PLAYERS.LEFT }
+    7: { checkers: 5, player: PLAYER.RIGHT },
+    8: { checkers: 5, player: PLAYER.RIGHT },
+    9: { checkers: 2, player: PLAYER.RIGHT },
+    10: { checkers: 2, player: PLAYER.RIGHT },
+    11: { checkers: 1, player: PLAYER.RIGHT },
+    19: { checkers: 5, player: PLAYER.LEFT },
+    20: { checkers: 3, player: PLAYER.LEFT },
+    21: { checkers: 2, player: PLAYER.LEFT },
+    22: { checkers: 3, player: PLAYER.LEFT },
+    23: { checkers: 1, player: PLAYER.LEFT }
   };
 
   return Array.from({ length: 24 }, (_, i) => {
@@ -130,7 +130,7 @@ describe('Backgammon Component Tests', () => {
   describe('Point Selection and Movement', () => {
     it('should highlight selected and potential points', async () => {
       await act(async () => renderGame(store));
-      await rollDice([3, 5], PLAYERS.RIGHT);
+      await rollDice([3, 5], PLAYER.RIGHT);
 
       const points = screen.queryAllByRole('point');
       await clickPoints(points, [4]);
@@ -144,7 +144,7 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
       const points = screen.queryAllByRole('point');
 
-      await rollDice([6, 3], PLAYERS.LEFT);
+      await rollDice([6, 3], PLAYER.LEFT);
       await clickPoints(points, [0, 14, 0, 17]);
 
       expect(points[0].getAttribute('aria-label')).toContain('3 left checkers');
@@ -157,7 +157,7 @@ describe('Backgammon Component Tests', () => {
   describe('Dice Rolling', () => {
     it('should display dice dots correctly', async () => {
       await act(async () => renderGame(store));
-      await rollDice([5, 3], PLAYERS.LEFT);
+      await rollDice([5, 3], PLAYER.LEFT);
 
       expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(5);
       expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(3);
@@ -166,7 +166,7 @@ describe('Backgammon Component Tests', () => {
 
     it('should handle keyboard dice rolling', async () => {
       await act(async () => renderGame(store));
-      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYER.RIGHT });
 
       await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
 
@@ -176,10 +176,10 @@ describe('Backgammon Component Tests', () => {
 
     it('should prevent rolling when dice already rolled', async () => {
       await act(async () => renderGame(store));
-      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYERS.RIGHT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYER.RIGHT });
       await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
 
-      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 3], player: PLAYERS.LEFT });
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 3], player: PLAYER.LEFT });
       await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
 
       expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
@@ -192,7 +192,7 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
       const points = screen.queryAllByRole('point');
 
-      await rollDice([1, 6], PLAYERS.RIGHT);
+      await rollDice([1, 6], PLAYER.RIGHT);
       await clickPoints(points, [23, 22, 23, 17]);
 
       expect(points[17].getAttribute('aria-label')).toContain('1 right checkers');
@@ -202,10 +202,10 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
       const points = screen.queryAllByRole('point');
 
-      await rollDice([6, 3], PLAYERS.LEFT);
+      await rollDice([6, 3], PLAYER.LEFT);
       await clickPoints(points, [0, 14, 0, 17]);
 
-      await rollDice([6, 1], PLAYERS.RIGHT);
+      await rollDice([6, 1], PLAYER.RIGHT);
       await clickPoints(points, [23, 22, 23, 17]);
 
       expect(points[17].getAttribute('aria-label')).toContain('1 left checkers');
@@ -240,13 +240,13 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
       const points = screen.queryAllByRole('point');
 
-      await rollDice([6, 3], PLAYERS.LEFT);
+      await rollDice([6, 3], PLAYER.LEFT);
       await clickPoints(points, [0, 14, 0, 17]);
 
       const endTurnButton = screen.getByRole('button', { name: /end turn/i });
       await act(async () => fireEvent.click(endTurnButton));
 
-      expect(screen.getByLabelText(/current player/i).getAttribute('aria-label')).toContain(PLAYERS.RIGHT);
+      expect(screen.getByLabelText(/current player/i).getAttribute('aria-label')).toContain(PLAYER.RIGHT);
     });
   });
 
@@ -256,7 +256,7 @@ describe('Backgammon Component Tests', () => {
         points: createBearOffTestBoard(),
         checkersBorneOff: { left: 1, right: 4 },
         diceValue: [4, 4, 4],
-        player: PLAYERS.RIGHT,
+        player: PLAYER.RIGHT,
         potentialMoves: { '7': [11], '8': [12], '9': [-1, -1] }
       });
 
@@ -272,7 +272,7 @@ describe('Backgammon Component Tests', () => {
     it('should show bear off button when possible', async () => {
       const customStore = createCustomStore({
         diceValue: [6, 5],
-        player: PLAYERS.RIGHT,
+        player: PLAYER.RIGHT,
         potentialSpots: [-1],
         potentialMoves: { '19': [-1] }
       });
@@ -286,20 +286,20 @@ describe('Backgammon Component Tests', () => {
       const customStore = createCustomStore({
         points: Array.from({ length: 24 }, (_, i) => {
           const id = i + 1;
-          return id === 24 ? { id, checkers: 1, player: PLAYERS.LEFT } : { id, checkers: 0, player: null };
+          return id === 24 ? { id, checkers: 1, player: PLAYER.LEFT } : { id, checkers: 0, player: null };
         }),
-        checkersBorneOff: { [PLAYERS.LEFT]: 3, [PLAYERS.RIGHT]: 0 },
+        checkersBorneOff: { [PLAYER.LEFT]: 3, [PLAYER.RIGHT]: 0 },
         diceValue: [6, 4],
         potentialSpots: [-1],
         potentialMoves: { '24': [-1] },
         pointsHistory: [Array.from({ length: 24 }, (_, i) => {
           const id = i + 1;
-          return id === 24 ? { id, checkers: 2, player: PLAYERS.LEFT } : { id, checkers: 0, player: null };
+          return id === 24 ? { id, checkers: 2, player: PLAYER.LEFT } : { id, checkers: 0, player: null };
         })],
         diceHistory: [[6, 4, 4]],
-        playerHistory: [PLAYERS.LEFT],
-        checkersOnBarHistory: [{ [PLAYERS.LEFT]: 0, [PLAYERS.RIGHT]: 0 }],
-        checkersBorneOffHistory: [{ [PLAYERS.LEFT]: 2, [PLAYERS.RIGHT]: 0 }],
+        playerHistory: [PLAYER.LEFT],
+        checkersOnBarHistory: [{ [PLAYER.LEFT]: 0, [PLAYER.RIGHT]: 0 }],
+        checkersBorneOffHistory: [{ [PLAYER.LEFT]: 2, [PLAYER.RIGHT]: 0 }],
         potentialMovesHistory: [{ '24': [-1, -1] }]
       });
 
@@ -324,11 +324,11 @@ describe('Backgammon Component Tests', () => {
   describe('Doubling Cube', () => {
     it('should render doubling cube with correct props', async () => {
       const customStore = createCustomStore({
-        player: PLAYERS.RIGHT,
+        player: PLAYER.RIGHT,
         turnEnding: true,
         doublingCube: {
           value: 2,
-          owner: PLAYERS.LEFT,
+          owner: PLAYER.LEFT,
           pendingOffer: null
         }
       });
@@ -346,10 +346,10 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
       const points = screen.queryAllByRole('point');
 
-      await rollDice([6, 3], PLAYERS.LEFT);
+      await rollDice([6, 3], PLAYER.LEFT);
       await clickPoints(points, [0, 14, 0, 17]);
 
-      await rollDice([4, 4, 4, 4], PLAYERS.RIGHT);
+      await rollDice([4, 4, 4, 4], PLAYER.RIGHT);
 
       // Verify the mock was called for doubles
       expect(gamePlay.rollDiceLogic).toHaveBeenCalled();

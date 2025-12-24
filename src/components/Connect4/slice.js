@@ -1,17 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
 import { makeMoveLogic, togglePlayer } from './gamePlay';
-import { PLAYERS, GAME_CONFIG } from './globals';
+import { PLAYER, GAME_CONFIG } from './globals';
 import { sendMultiplayerMove, createMultiplayerReducers } from '@/utils/multiplayerUtils';
 
 export const initialState = {
   board: initializeBoard(),
-  player: PLAYERS.ONE,
+  player: PLAYER.ONE,
   winner: null,
   winnerDesc: '',
   boardFull: false,
   history: [],
-  gamesWon: { [PLAYERS.ONE]: 0, [PLAYERS.TWO]: 0 },
+  gamesWon: { [PLAYER.ONE]: 0, [PLAYER.TWO]: 0 },
   isMultiplayer: null,
   myPlayer: null,
   isMyTurn: true,
@@ -33,7 +33,7 @@ export const slice = createSlice({
       gamesWon: state.gamesWon,
       isMultiplayer: state.isMultiplayer,
       myPlayer: state.myPlayer,
-      isMyTurn: state.myPlayer === PLAYERS.ONE
+      isMyTurn: state.myPlayer === PLAYER.ONE
     }),
   },
 });

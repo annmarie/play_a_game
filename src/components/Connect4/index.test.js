@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../../store';
-import { PLAYERS, MESSAGES } from './globals';
+import { PLAYER, MESSAGES } from './globals';
 import Connect4 from '.';
 
 const renderGame = (store) => {
@@ -49,7 +49,7 @@ describe('Connect4 Component', () => {
       expect(cells).toHaveLength(BOARD_SIZE);
       cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
       expect(screen.getByText('Current Player:')).toBeInTheDocument();
-      expect(screen.getByText(PLAYERS.ONE)).toBeInTheDocument();
+      expect(screen.getByText(PLAYER.ONE)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /undo move/i })).toBeDisabled();
     });
   });
@@ -59,14 +59,14 @@ describe('Connect4 Component', () => {
       const cells = await setupGame();
 
       await clickCells(cells, [4]);
-      expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYER.ONE}`, 'i'))).toBeInTheDocument();
       expect(screen.getByText('Current Player:')).toBeInTheDocument();
-      expect(screen.getByText(PLAYERS.TWO)).toBeInTheDocument();
+      expect(screen.getByText(PLAYER.TWO)).toBeInTheDocument();
 
       await clickCells(cells, [4]);
-      expect(screen.getByLabelText(new RegExp(`Spot row 4 and col 4 with ${PLAYERS.TWO}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByLabelText(new RegExp(`Spot row 4 and col 4 with ${PLAYER.TWO}`, 'i'))).toBeInTheDocument();
       expect(screen.getByText('Current Player:')).toBeInTheDocument();
-      expect(screen.getByText(PLAYERS.ONE)).toBeInTheDocument();
+      expect(screen.getByText(PLAYER.ONE)).toBeInTheDocument();
     });
 
     it('should declare winner when four in a row achieved', async () => {
@@ -74,7 +74,7 @@ describe('Connect4 Component', () => {
 
       await clickCells(cells, WINNING_SEQUENCE);
       expect(screen.getByText(/Winner:/)).toBeInTheDocument();
-      expect(screen.getByText(PLAYERS.ONE)).toBeInTheDocument();
+      expect(screen.getByText(PLAYER.ONE)).toBeInTheDocument();
     });
 
     it('should declare draw when board is full', async () => {
@@ -93,9 +93,9 @@ describe('Connect4 Component', () => {
       const undoButton = screen.getByRole('button', { name: /undo move/i });
 
       await clickCells(cells, [4]);
-      expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYERS.ONE}`, 'i'))).toBeInTheDocument();
+      expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYER.ONE}`, 'i'))).toBeInTheDocument();
       expect(screen.getByText('Current Player:')).toBeInTheDocument();
-      expect(screen.getByText(PLAYERS.TWO)).toBeInTheDocument();
+      expect(screen.getByText(PLAYER.TWO)).toBeInTheDocument();
       expect(undoButton).toBeDisabled();
     });
   });

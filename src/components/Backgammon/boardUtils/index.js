@@ -1,5 +1,5 @@
 import {
-  PLAYERS, BOARD_CONFIG, POINT_ORDERS
+  PLAYER, BOARD_CONFIG, POINT_ORDERS
 } from '../globals';
 
 /**
@@ -11,14 +11,14 @@ export const initializeBoard = () => {
     const id = i + 1;
     let checkers = 0;
     let player = null;
-    if (id === 1) { checkers = 5; player = PLAYERS.LEFT; }
-    if (id === 5) { checkers = 3; player = PLAYERS.RIGHT; }
-    if (id === 7) { checkers = 5; player = PLAYERS.RIGHT; }
-    if (id === 12) { checkers = 2; player = PLAYERS.LEFT; }
-    if (id === 13) { checkers = 5; player = PLAYERS.RIGHT; }
-    if (id === 17) { checkers = 3; player = PLAYERS.LEFT; }
-    if (id === 19) { checkers = 5; player = PLAYERS.LEFT; }
-    if (id === 24) { checkers = 2; player = PLAYERS.RIGHT; }
+    if (id === 1) { checkers = 5; player = PLAYER.LEFT; }
+    if (id === 5) { checkers = 3; player = PLAYER.RIGHT; }
+    if (id === 7) { checkers = 5; player = PLAYER.RIGHT; }
+    if (id === 12) { checkers = 2; player = PLAYER.LEFT; }
+    if (id === 13) { checkers = 5; player = PLAYER.RIGHT; }
+    if (id === 17) { checkers = 3; player = PLAYER.LEFT; }
+    if (id === 19) { checkers = 5; player = PLAYER.LEFT; }
+    if (id === 24) { checkers = 2; player = PLAYER.RIGHT; }
     return { id, checkers, player };
   });
 };
@@ -29,7 +29,7 @@ export const initializeBoard = () => {
  * @returns {number[]} Array of point IDs in player's travel order
  */
 export const getPointOrder = (player) => (
-  player === PLAYERS.RIGHT ? POINT_ORDERS.RIGHT_PLAYER : POINT_ORDERS.LEFT_PLAYER
+  player === PLAYER.RIGHT ? POINT_ORDERS.RIGHT_PLAYER : POINT_ORDERS.LEFT_PLAYER
 );
 
 /**
@@ -56,7 +56,7 @@ export const getIndexToPointIdMap = (player) => (
  * @returns {number[]} [min, max] point IDs for home board
  */
 export const getHomeRange = (player) => {
-    return player === PLAYERS.LEFT ?
+    return player === PLAYER.LEFT ?
     [BOARD_CONFIG.START_KEY_RIGHT - 5, BOARD_CONFIG.START_KEY_RIGHT] :
     [BOARD_CONFIG.START_KEY_LEFT - 5, BOARD_CONFIG.START_KEY_LEFT];
 }

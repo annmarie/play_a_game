@@ -1,5 +1,5 @@
 // globals.js
-export const PLAYERS = {
+export const PLAYER = {
   RIGHT: 'right',
   LEFT: 'left',
 };

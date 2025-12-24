@@ -1,13 +1,13 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Point from './index';
-import { PLAYERS } from '../../globals';
+import { PLAYER } from '../../globals';
 
 describe('Point Component', () => {
   const mockOnClick = jest.fn();
   const mockPoint = {
     id: 1,
     checkers: 3,
-    player: PLAYERS.RIGHT
+    player: PLAYER.RIGHT
   };
 
   beforeEach(() => {

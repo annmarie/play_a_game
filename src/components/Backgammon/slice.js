@@ -2,13 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard, getPointIdToIndexMap } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gamePlay';
 import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveLogic';
-import { PLAYERS, BOARD_CONFIG } from './globals';
+import { PLAYER, BOARD_CONFIG } from './globals';
 import { sendMultiplayerMove, createMultiplayerReducers } from '@/utils/multiplayerUtils';
 
 export const initialState = {
   points: initializeBoard(),
-  checkersOnBar: { [PLAYERS.LEFT]: 0, [PLAYERS.RIGHT]: 0 },
-  checkersBorneOff: { [PLAYERS.LEFT]: 0, [PLAYERS.RIGHT]: 0 },
+  checkersOnBar: { [PLAYER.LEFT]: 0, [PLAYER.RIGHT]: 0 },
+  checkersBorneOff: { [PLAYER.LEFT]: 0, [PLAYER.RIGHT]: 0 },
   diceValue: null,
   player: null,
   winner: null,
@@ -21,7 +21,7 @@ export const initialState = {
   checkersOnBarHistory: [],
   checkersBorneOffHistory: [],
   potentialMovesHistory: [],
-  gamesWon: { [PLAYERS.LEFT]: 0, [PLAYERS.RIGHT]: 0 },
+  gamesWon: { [PLAYER.LEFT]: 0, [PLAYER.RIGHT]: 0 },
   doublingCube: {
     value: 1,
     owner: null,
@@ -115,7 +115,7 @@ export const slice = createSlice({
       gamesWon: state.gamesWon,
       isMultiplayer: state.isMultiplayer,
       myPlayer: state.myPlayer,
-      isMyTurn: state.isMultiplayer ? state.myPlayer === PLAYERS.LEFT : true
+      isMyTurn: state.isMultiplayer ? state.myPlayer === PLAYER.LEFT : true
     }),
 
     setCustomDice: (state, action) => ({

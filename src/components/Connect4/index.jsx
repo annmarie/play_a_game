@@ -1,5 +1,5 @@
 import GameModeSelector from '@/components/ModeSelector';
-import { BUTTON_TEXT, PLAYERS } from './globals';
+import { BUTTON_TEXT, PLAYER } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
@@ -40,11 +40,11 @@ const Connect4 = () => {
                 <span>Room: {multiplayer.rooms.connect4.roomId}</span>
                 {multiplayer.rooms.connect4.opponent && (
                   <div className={styles.playerNames}>
-                    <PlayerText player={PLAYERS.ONE}>
-                      {state.myPlayer === PLAYERS.ONE ? multiplayer.playerName || 'You' : (multiplayer.rooms.connect4.opponent?.name || 'Opponent')} (Red)
+                    <PlayerText player={PLAYER.ONE}>
+                      {state.myPlayer === PLAYER.ONE ? multiplayer.playerName || 'You' : (multiplayer.rooms.connect4.opponent?.name || 'Opponent')} (Red)
                     </PlayerText>
-                    <PlayerText player={PLAYERS.TWO}>
-                      {state.myPlayer === PLAYERS.TWO ? multiplayer.playerName || 'You' : (multiplayer.rooms.connect4.opponent?.name || 'Opponent')} (Yellow)
+                    <PlayerText player={PLAYER.TWO}>
+                      {state.myPlayer === PLAYER.TWO ? multiplayer.playerName || 'You' : (multiplayer.rooms.connect4.opponent?.name || 'Opponent')} (Yellow)
                     </PlayerText>
                   </div>
                 )}
@@ -53,8 +53,8 @@ const Connect4 = () => {
 
             <div className={styles.gameScore}>
               <div>Games Won:</div>
-              <PlayerText player={PLAYERS.ONE}>{PLAYERS.ONE}: {state.gamesWon?.[PLAYERS.ONE] || 0}</PlayerText>
-              <PlayerText player={PLAYERS.TWO}>{PLAYERS.TWO}: {state.gamesWon?.[PLAYERS.TWO] || 0}</PlayerText>
+              <PlayerText player={PLAYER.ONE}>{PLAYER.ONE}: {state.gamesWon?.[PLAYER.ONE] || 0}</PlayerText>
+              <PlayerText player={PLAYER.TWO}>{PLAYER.TWO}: {state.gamesWon?.[PLAYER.TWO] || 0}</PlayerText>
             </div>
 
             <StatusBox

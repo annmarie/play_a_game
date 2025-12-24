@@ -1,4 +1,4 @@
-import { PLAYERS } from '../globals';
+import { PLAYER } from '../globals';
 import { isBoardFull, dropChecker, checkWin } from '../boardUtils';
 import { isValidMove } from '../moveLogic';
 
@@ -8,7 +8,7 @@ import { isValidMove } from '../moveLogic';
  * @returns {string} The opposite player
  */
 export const togglePlayer = (player) => {
-  return player === PLAYERS.ONE ? PLAYERS.TWO : PLAYERS.ONE;
+  return player === PLAYER.ONE ? PLAYER.TWO : PLAYER.ONE;
 };
 
 /**

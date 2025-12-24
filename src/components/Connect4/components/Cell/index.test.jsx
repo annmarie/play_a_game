@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Cell from '../Cell';
-import { PLAYERS } from '../../globals';
+import { PLAYER } from '../../globals';
 
 describe('Cell Component', () => {
   const mockOnCellClick = jest.fn();
@@ -22,26 +22,26 @@ describe('Cell Component', () => {
   it('should render a cell with PLAYER_ONE correctly', async () => {
     render(
       <Cell
-        cell={PLAYERS.ONE}
+        cell={PLAYER.ONE}
         rowIndex={1}
         colIndex={2}
         onCellClick={mockOnCellClick}
       />
     );
-    const checkerElement = screen.getByTestId(`checker-${PLAYERS.ONE}`);
+    const checkerElement = screen.getByTestId(`checker-${PLAYER.ONE}`);
     expect(checkerElement).toBeInTheDocument();
   });
 
   it('should render a cell with PLAYER_TWO correctly', async () => {
     render(
       <Cell
-        cell={PLAYERS.TWO}
+        cell={PLAYER.TWO}
         rowIndex={2}
         colIndex={3}
         onCellClick={mockOnCellClick}
       />
     );
-    const checkerElement = screen.getByTestId(`checker-${PLAYERS.TWO}`);
+    const checkerElement = screen.getByTestId(`checker-${PLAYER.TWO}`);
     expect(checkerElement).toBeInTheDocument();
   });
 

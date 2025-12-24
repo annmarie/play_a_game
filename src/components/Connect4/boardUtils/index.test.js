@@ -1,5 +1,5 @@
 import { dropChecker, isBoardFull, checkWin, initializeBoard } from '.';
-import { PLAYERS } from '../globals';
+import { PLAYER } from '../globals';
 
 describe('initializeBoard', () => {
   it('should create a 6x7 board filled with null values', () => {
@@ -17,31 +17,31 @@ describe('dropChecker', () => {
       [null, null, null],
       [null, null, null],
     ];
-    const { currentMove, newBoard } = dropChecker(1, board, PLAYERS.ONE);
+    const { currentMove, newBoard } = dropChecker(1, board, PLAYER.ONE);
 
     expect(currentMove).toEqual({ row: 2, col: 1 });
-    expect(newBoard[2][1]).toBe(PLAYERS.ONE);
+    expect(newBoard[2][1]).toBe(PLAYER.ONE);
   });
 
   it('should not overwrite an already filled column', () => {
     const board = [
       [null, null, null],
-      [null, PLAYERS.ONE, null],
-      [null, PLAYERS.ONE, null],
+      [null, PLAYER.ONE, null],
+      [null, PLAYER.ONE, null],
     ];
-    const { currentMove, newBoard } = dropChecker(1, board, PLAYERS.TWO);
+    const { currentMove, newBoard } = dropChecker(1, board, PLAYER.TWO);
 
     expect(currentMove).toEqual({ row: 0, col: 1 });
-    expect(newBoard[0][1]).toBe(PLAYERS.TWO);
+    expect(newBoard[0][1]).toBe(PLAYER.TWO);
   });
 
   it('should return null for currentMove if the column is full', () => {
     const board = [
-      [PLAYERS.ONE, null, null],
-      [PLAYERS.ONE, null, null],
-      [PLAYERS.ONE, null, null],
+      [PLAYER.ONE, null, null],
+      [PLAYER.ONE, null, null],
+      [PLAYER.ONE, null, null],
     ];
-    const { currentMove } = dropChecker(0, board, PLAYERS.TWO);
+    const { currentMove } = dropChecker(0, board, PLAYER.TWO);
 
     expect(currentMove).toBeNull();
   });
@@ -50,18 +50,18 @@ describe('dropChecker', () => {
 describe('isBoardFull', () => {
   it('should return true if the board is completely filled', () => {
     const board = [
-      [PLAYERS.ONE, PLAYERS.TWO, PLAYERS.ONE],
-      [PLAYERS.TWO, PLAYERS.ONE, PLAYERS.TWO],
-      [PLAYERS.ONE, PLAYERS.TWO, PLAYERS.ONE],
+      [PLAYER.ONE, PLAYER.TWO, PLAYER.ONE],
+      [PLAYER.TWO, PLAYER.ONE, PLAYER.TWO],
+      [PLAYER.ONE, PLAYER.TWO, PLAYER.ONE],
     ];
     expect(isBoardFull(board)).toBe(true);
   });
 
   it('should return false if there are empty cells on the board', () => {
     const board = [
-      [PLAYERS.ONE, PLAYERS.TWO, null],
-      [PLAYERS.TWO, PLAYERS.ONE, PLAYERS.TWO],
-      [PLAYERS.ONE, PLAYERS.TWO, PLAYERS.ONE],
+      [PLAYER.ONE, PLAYER.TWO, null],
+      [PLAYER.TWO, PLAYER.ONE, PLAYER.TWO],
+      [PLAYER.ONE, PLAYER.TWO, PLAYER.ONE],
     ];
     expect(isBoardFull(board)).toBe(false);
   });
@@ -72,7 +72,7 @@ describe('checkWin', () => {
     const board = [
       [null, null, null, null],
       [null, null, null, null],
-      [PLAYERS.ONE, PLAYERS.ONE, PLAYERS.ONE, PLAYERS.ONE],
+      [PLAYER.ONE, PLAYER.ONE, PLAYER.ONE, PLAYER.ONE],
       [null, null, null, null],
     ];
     const move = { row: 2, col: 0 };
@@ -83,10 +83,10 @@ describe('checkWin', () => {
 
   it('should detect a vertical win', () => {
     const board = [
-      [null, null, PLAYERS.ONE],
-      [null, null, PLAYERS.ONE],
-      [null, null, PLAYERS.ONE],
-      [null, null, PLAYERS.ONE],
+      [null, null, PLAYER.ONE],
+      [null, null, PLAYER.ONE],
+      [null, null, PLAYER.ONE],
+      [null, null, PLAYER.ONE],
     ];
     const move = { row: 0, col: 2 };
     const result = checkWin(board, move);
@@ -96,10 +96,10 @@ describe('checkWin', () => {
 
   it('should detect a diagonal win (top-left to bottom-right)', () => {
     const board = [
-      [PLAYERS.ONE, null, null, null],
-      [null, PLAYERS.ONE, null, null],
-      [null, null, PLAYERS.ONE, null],
-      [null, null, null, PLAYERS.ONE],
+      [PLAYER.ONE, null, null, null],
+      [null, PLAYER.ONE, null, null],
+      [null, null, PLAYER.ONE, null],
+      [null, null, null, PLAYER.ONE],
     ];
     const move = { row: 0, col: 0 };
     const result = checkWin(board, move);
@@ -109,10 +109,10 @@ describe('checkWin', () => {
 
   it('should detect a diagonal win (top-right to bottom-left)', () => {
     const board = [
-      [null, null, null, PLAYERS.ONE],
-      [null, null, PLAYERS.ONE, null],
-      [null, PLAYERS.ONE, null, null],
-      [PLAYERS.ONE, null, null, null],
+      [null, null, null, PLAYER.ONE],
+      [null, null, PLAYER.ONE, null],
+      [null, PLAYER.ONE, null, null],
+      [PLAYER.ONE, null, null, null],
     ];
     const move = { row: 0, col: 3 };
     const result = checkWin(board, move);
@@ -124,7 +124,7 @@ describe('checkWin', () => {
     const board = [
       [null, null, null, null],
       [null, null, null, null],
-      [PLAYERS.ONE, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.TWO],
+      [PLAYER.ONE, PLAYER.TWO, PLAYER.ONE, PLAYER.TWO],
       [null, null, null, null],
     ];
     const move = { row: 2, col: 0 };
@@ -135,10 +135,10 @@ describe('checkWin', () => {
 
   it('should prioritize diagonal win over horizontal or vertical win', () => {
     const board = [
-      [PLAYERS.ONE, null, null, null],
-      [PLAYERS.ONE, PLAYERS.ONE, PLAYERS.TWO, null],
-      [PLAYERS.ONE, PLAYERS.ONE, PLAYERS.ONE, PLAYERS.TWO],
-      [PLAYERS.ONE, PLAYERS.TWO, PLAYERS.ONE, PLAYERS.ONE],
+      [PLAYER.ONE, null, null, null],
+      [PLAYER.ONE, PLAYER.ONE, PLAYER.TWO, null],
+      [PLAYER.ONE, PLAYER.ONE, PLAYER.ONE, PLAYER.TWO],
+      [PLAYER.ONE, PLAYER.TWO, PLAYER.ONE, PLAYER.ONE],
     ];
     const move = { row: 0, col: 0 };
 

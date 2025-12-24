@@ -1,4 +1,4 @@
-import { PLAYERS } from '../globals';
+import { PLAYER } from '../globals';
 import { makeMultiplayerMove, syncGameState, setMultiplayerMode, startGame } from '../slice';
 import { useWebSocketHandlers as useSharedWebSocketHandlers } from '@/hooks/useWebSocketHandlers';
 
@@ -9,7 +9,7 @@ export const useWebSocketHandlers = () => {
     setMultiplayerMode,
     startGame
   }, {
-    FIRST: PLAYERS.LEFT,
-    SECOND: PLAYERS.RIGHT
+    FIRST: PLAYER.LEFT,
+    SECOND: PLAYER.RIGHT
   });
 };

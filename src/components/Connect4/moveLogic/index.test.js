@@ -1,5 +1,5 @@
 import { isValidColumn, isValidMove } from '.';
-import { PLAYERS } from '../globals';
+import { PLAYER } from '../globals';
 
 describe('isValidColumn', () => {
   it('should return valid for empty column', () => {
@@ -14,9 +14,9 @@ describe('isValidColumn', () => {
 
   it('should return invalid for full column', () => {
     const board = [
-      [PLAYERS.ONE, null, null],
-      [PLAYERS.TWO, null, null],
-      [PLAYERS.ONE, null, null],
+      [PLAYER.ONE, null, null],
+      [PLAYER.TWO, null, null],
+      [PLAYER.ONE, null, null],
     ];
     const result = isValidColumn(0, board);
     expect(result).toEqual({ isValid: false, error: 'Column is full' });
@@ -68,7 +68,7 @@ describe('isValidMove', () => {
   it('should return invalid when game has winner', () => {
     const state = {
       board: mockBoard,
-      winner: PLAYERS.ONE,
+      winner: PLAYER.ONE,
       isMultiplayer: false,
     };
     const result = isValidMove(state, 1);
