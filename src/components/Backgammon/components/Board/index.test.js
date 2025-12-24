@@ -25,7 +25,8 @@ describe('Board Component', () => {
       />
     );
     mockPoints.forEach((point) => {
-      expect(screen.getByLabelText(`Point ${point.id} with ${point.checkers} ${point.player ? point.player + ' ' : ''}checkers`)).toBeInTheDocument();
+      const labelText = `Point ${point.id} with ${point.checkers} ${point.player ? point.player + ' ' : ''}checkers`;
+      expect(screen.getByLabelText(labelText)).toBeInTheDocument();
     });
   });
 

@@ -10,10 +10,12 @@ const RoomStatus = ({ roomId, opponent, myPlayer, playerName }) => {
       {opponent && (
         <div className={styles.playerNames}>
           <span>
-            {myPlayer === PLAYER.LEFT ? playerName || 'You' : (opponent?.name || 'Opponent')} <Checker player={PLAYER.LEFT} />
+            {myPlayer === PLAYER.LEFT ? playerName || 'You' :
+              (opponent?.name || 'Opponent')} <Checker player={PLAYER.LEFT} />
           </span>
           <span>
-            {myPlayer === PLAYER.RIGHT ? playerName || 'You' : (opponent?.name || 'Opponent')} <Checker player={PLAYER.RIGHT} />
+            {myPlayer === PLAYER.RIGHT ? playerName || 'You' :
+              (opponent?.name || 'Opponent')} <Checker player={PLAYER.RIGHT} />
           </span>
         </div>
       )}

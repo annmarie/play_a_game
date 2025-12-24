@@ -14,6 +14,7 @@ import Layout from '@/components/Layout';
 import styles from './Backgammon.module.css';
 import RoomStatus from './components/RoomStatus';
 import StartGame from './components/StartGame';
+import { shouldShowGame, shouldShowMultiplayerSetup } from '@/utils/multiplayerUtils';
 import { GAME_TEXT } from './globals';
 
 const Backgammon = () => {
@@ -41,15 +42,12 @@ const Backgammon = () => {
     [state.selectedSpot, state.isMultiplayer, state.isMyTurn, dispatch]
   );
 
-  const showGame = state.isMultiplayer === false || (multiplayer.rooms.backgammon?.roomId && multiplayer.rooms.backgammon?.opponent);
-  const showMultiplayerSetup = state.isMultiplayer === null || (state.isMultiplayer === true && !multiplayer.rooms.backgammon?.opponent);
-
   return (
     <Layout showHeader={true}>
       <div className={styles.backgammonGame}>
         <h3 className={styles.backgammonTitle}>{GAME_TEXT.TITLE}</h3>
 
-        {showMultiplayerSetup && (
+        {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms.backgammon?.opponent) && (
           <ModeSelector
             gameType="backgammon"
             isMultiplayer={null}
@@ -57,7 +55,7 @@ const Backgammon = () => {
           />
         )}
 
-        {showGame && (
+        {shouldShowGame(state.isMultiplayer, multiplayer.rooms.backgammon?.roomId, multiplayer.rooms.backgammon?.opponent) && (
           <>
             {state.isMultiplayer && multiplayer.rooms.backgammon?.roomId && (
               <RoomStatus

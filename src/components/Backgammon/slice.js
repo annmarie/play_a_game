@@ -3,7 +3,7 @@ import { initializeBoard, getPointIdToIndexMap } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gamePlay';
 import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveLogic';
 import { PLAYER, BOARD_CONFIG } from './globals';
-import { sendMultiplayerMove, createMultiplayerReducers } from '@/utils/multiplayerUtils';
+import { sendMultiplayerMove, setMultiplayerMode, makeMultiplayerMove, syncGameState } from '@/utils/multiplayerUtils';
 
 export const initialState = {
   points: initializeBoard(),
@@ -211,9 +211,9 @@ export const slice = createSlice({
       return newState;
     },
 
-    setMultiplayerMode: createMultiplayerReducers().setMultiplayerMode,
-    makeMultiplayerMove: createMultiplayerReducers().makeMultiplayerMove,
-    syncGameState: createMultiplayerReducers().syncGameState,
+    setMultiplayerMode,
+    makeMultiplayerMove,
+    syncGameState,
 
     startGame: (state) => {
       const { diceValue, player } = rollDiceLogic(null);

@@ -21,7 +21,7 @@ const DoubleOffer = ({ pendingOffer }) => {
           onClick={() => dispatch(acceptDouble())}
           aria-label="Accept the double"
         >
-          Accep
+          Accept
         </button>
         <button
           className={styles.declineButton}

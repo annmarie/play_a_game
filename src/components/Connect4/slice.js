@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard } from './boardUtils';
 import { makeMoveLogic, togglePlayer } from './gamePlay';
 import { PLAYER, GAME_CONFIG } from './globals';
-import { sendMultiplayerMove, createMultiplayerReducers } from '@/utils/multiplayerUtils';
+import { sendMultiplayerMove, setMultiplayerMode, makeMultiplayerMove, syncGameState } from '@/utils/multiplayerUtils';
 
 export const initialState = {
   board: initializeBoard(),
@@ -22,9 +22,9 @@ export const slice = createSlice({
   initialState,
   reducers: {
     makeMove: (state, action) => reduceMakeMove(state, action),
-    makeMultiplayerMove: (state, action) => reduceMultiplayerMove(state, action),
-    syncGameState: createMultiplayerReducers().syncGameState,
-    setMultiplayerMode: createMultiplayerReducers().setMultiplayerMode,
+    makeMultiplayerMove,
+    syncGameState,
+    setMultiplayerMode,
     undoMove: (state, action) => reduceUndoMove(state, action),
     resetGame: (state) => ({ ...initialState, board: initializeBoard(), gamesWon: state.gamesWon }),
     playAgain: (state) => ({
@@ -72,16 +72,6 @@ const reduceMakeMove = (state, action) => {
   }
 
   return newState;
-};
-
-const reduceMultiplayerMove = (state, action) => {
-  const { gameState } = action.payload;
-
-  return {
-    ...state,
-    ...gameState,
-    isMyTurn: true,
-  };
 };
 
 const reduceUndoMove = (state) => {

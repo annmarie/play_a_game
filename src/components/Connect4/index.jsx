@@ -7,6 +7,7 @@ import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import PlayerText from './components/PlayerText';
 import RoomStatus from './components/RoomStatus';
+import { shouldShowGame, shouldShowMultiplayerSetup } from '@/utils/multiplayerUtils';
 import styles from './Connect4.module.css';
 import Layout from '@/components/Layout';
 
@@ -18,15 +19,12 @@ const Connect4 = () => {
 
   useWebSocketHandlers();
 
-  const showGame = state.isMultiplayer === false || (multiplayer.rooms.connect4?.roomId && multiplayer.rooms.connect4?.opponent);
-  const showMultiplayerSetup = state.isMultiplayer === null || (state.isMultiplayer === true && !multiplayer.rooms.connect4?.opponent);
-
   return (
     <Layout showHeader={true}>
       <div className={styles.connect4Game}>
         <h3 className={styles.connect4Title}>Connect Four</h3>
 
-        {showMultiplayerSetup && (
+        {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms.connect4?.opponent) && (
           <ModeSelector
             gameType="connect4"
             isMultiplayer={state.isMultiplayer}
@@ -34,7 +32,7 @@ const Connect4 = () => {
           />
         )}
 
-        {showGame && (
+        {shouldShowGame(state.isMultiplayer, multiplayer.rooms.connect4?.roomId, multiplayer.rooms.connect4?.opponent) && (
           <>
             {state.isMultiplayer && multiplayer.rooms.connect4?.roomId && (
               <RoomStatus
