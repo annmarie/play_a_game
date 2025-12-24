@@ -7,7 +7,7 @@ import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import PlayerText from './components/PlayerText';
 import RoomStatus from './components/RoomStatus';
-import { shouldShowGame, shouldShowMultiplayerSetup } from '@/utils/multiplayerUtils';
+import { shouldShowGame, shouldShowMultiplayerSetup } from '@/components/MultiplayerSetup/multiplayerUtils';
 import styles from './Connect4.module.css';
 import Layout from '@/components/Layout';
 

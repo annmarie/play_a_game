@@ -53,7 +53,7 @@ export const useWebSocketHandlers = (gameType, gameActions, playerConstants) => 
     const handleGameMove = (data) => {
       // Only handle moves for the current game type
       if (data.gameType === gameType) {
-        dispatch(gameActions.makeMultiplayerMove(data));
+        dispatch(gameActions.makeMultiplayerMove(data.gameState));
       }
     };
 
