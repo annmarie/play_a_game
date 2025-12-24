@@ -14,7 +14,7 @@ import Layout from '@/components/Layout';
 import styles from './Backgammon.module.css';
 import RoomStatus from './components/RoomStatus';
 import StartGame from './components/StartGame';
-import { shouldShowGame, shouldShowMultiplayerSetup } from '@/components/MultiplayerSetup/multiplayerUtils';
+import { shouldShowGame, shouldShowMultiplayerSetup } from '@/components/Multiplayer/multiplayerUtils';
 import { GAME_TEXT } from './globals';
 
 const Backgammon = () => {

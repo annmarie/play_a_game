@@ -104,4 +104,3 @@ export const checkWin = (board, move) => {
 
   return { haveWinner: false, desc: '' };
 };
-

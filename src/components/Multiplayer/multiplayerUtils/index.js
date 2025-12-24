@@ -30,7 +30,6 @@ export const setMultiplayerModeReducer = (state, action) => {
     ...state,
     isMultiplayer,
     myPlayer,
-    isMyTurn: isMultiplayer ? myPlayer === state.player : true
   };
 };
 
@@ -38,21 +37,9 @@ export const makeMultiplayerMoveReducer = (state, action) => {
   const gameState = action.payload;
   if (!gameState) return state;
 
-  const gameTurnFlow = {
-    connect4: 'auto-switch', // Turn switches automatically after each move
-    backgammon: 'explicit',  // Player explicitly ends turn
-  };
-  const gameType = action.type.split('/')[0];
-  const turnMechanic = gameTurnFlow[gameType] || 'explicit';
-
   return {
     ...state,
     ...gameState,
-    isMyTurn: state.isMultiplayer ?
-      (turnMechanic === 'auto-switch' ?
-        state.myPlayer === gameState.player :
-        state.myPlayer !== gameState.player
-      ) : true
   };
 };
 
@@ -63,6 +50,5 @@ export const syncGameStateReducer = (state, action) => {
   return {
     ...state,
     ...syncedState,
-    isMyTurn: state.isMultiplayer ? state.myPlayer === syncedState.player : true
   };
 };

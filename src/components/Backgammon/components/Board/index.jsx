@@ -1,6 +1,6 @@
 // backgammon board
 import PropTypes from 'prop-types';
-import Point from '../Point'
+import Point from './Point'
 import styles from './Board.module.css'
 
 const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {

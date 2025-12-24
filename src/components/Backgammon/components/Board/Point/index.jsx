@@ -1,9 +1,9 @@
 // backgammon point componen
 import PropTypes from 'prop-types'
 import { useMemo } from 'react'
-import Checker from '../Checker'
+import Checker from '../../Checker'
 import styles from './Point.module.css'
-import { BOARD_CONFIG } from '../../globals';
+import { BOARD_CONFIG } from '../../../globals';
 
 const Point = ({ point, onClick, selected, potential }) => {
   const pointClasses = useMemo(() => {

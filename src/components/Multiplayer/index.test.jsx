@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import MultiplayerSetup from './index';
+import Multiplayer from './index';
 import multiplayerReducer from './slice';
 import mainReducer from '@/slice';
 import { wsService } from '@services/websocket';
@@ -39,14 +39,14 @@ const renderWithStore = (component, store) => {
   );
 };
 
-describe('MultiplayerSetup', () => {
+describe('Multiplayer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should render room creation form when not connected to room', () => {
     const store = createMockStore({ isConnected: true });
-    renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
+    renderWithStore(<Multiplayer gameType="connect4" />, store);
 
     expect(screen.getByText('Multiplayer Setup')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Enter your name')).toBeInTheDocument();
@@ -56,7 +56,7 @@ describe('MultiplayerSetup', () => {
 
   it('shows connection status when disconnected', () => {
     const store = createMockStore({ isConnected: false });
-    renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
+    renderWithStore(<Multiplayer gameType="connect4" />, store);
 
     expect(screen.getByText('Connecting to server...')).toBeInTheDocument();
   });
@@ -66,14 +66,14 @@ describe('MultiplayerSetup', () => {
       isConnected: true,
       error: 'Test error message'
     });
-    renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
+    renderWithStore(<Multiplayer gameType="connect4" />, store);
 
     expect(screen.getByText('Test error message')).toBeInTheDocument();
   });
 
   it('should create room when create button clicked with valid name', () => {
     const store = createMockStore({ isConnected: true });
-    renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
+    renderWithStore(<Multiplayer gameType="connect4" />, store);
 
     const nameInput = screen.getByPlaceholderText('Enter your name');
     const createButton = screen.getByText('Create Room');
@@ -90,7 +90,7 @@ describe('MultiplayerSetup', () => {
 
   it('should join room when join button clicked with valid inputs', () => {
     const store = createMockStore({ isConnected: true });
-    renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
+    renderWithStore(<Multiplayer gameType="connect4" />, store);
 
     const nameInput = screen.getByPlaceholderText('Enter your name');
     const roomInput = screen.getByPlaceholderText('Room ID');
@@ -119,7 +119,7 @@ describe('MultiplayerSetup', () => {
         }
       }
     });
-    renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
+    renderWithStore(<Multiplayer gameType="connect4" />, store);
 
     expect(screen.getByText('Room: ABC123')).toBeInTheDocument();
     expect(screen.getByText('Waiting for opponent...')).toBeInTheDocument();
@@ -128,7 +128,7 @@ describe('MultiplayerSetup', () => {
 
   it('should show connecting message when not connected', () => {
     const store = createMockStore({ isConnected: false });
-    renderWithStore(<MultiplayerSetup gameType="connect4" />, store);
+    renderWithStore(<Multiplayer gameType="connect4" />, store);
 
     expect(screen.getByText('Connecting to server...')).toBeInTheDocument();
     expect(screen.queryByText('Create Room')).not.toBeInTheDocument();

@@ -5,9 +5,9 @@ import { wsService } from '@services/websocket';
 import { setPlayerInfo, setError, leaveRoom } from './slice';
 import { setName } from '@/slice';
 import { BUTTON_TEXT, LABELS, PLACEHOLDERS, ERROR_MESSAGES } from './globals';
-import styles from './MultiplayerSetup.module.css';
+import styles from './Multiplayer.module.css';
 
-const MultiplayerSetup = ({ gameType }) => {
+const Multiplayer = ({ gameType }) => {
   const dispatch = useDispatch();
   const { isConnected, error } = useSelector(state => state.multiplayer);
   const currentRoom = useSelector(state => state.multiplayer.rooms?.[gameType]);
@@ -105,8 +105,8 @@ const MultiplayerSetup = ({ gameType }) => {
   );
 };
 
-MultiplayerSetup.propTypes = {
+Multiplayer.propTypes = {
   gameType: PropTypes.string.isRequired,
 };
 
-export default MultiplayerSetup;
+export default Multiplayer;

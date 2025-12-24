@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { PLAYER } from '../../globals';
 import Checker from '../Checker';
-import DoublesCube from '../DoublesCube';
+import DoublesCube from './DoublesCube';
 import styles from './GameScore.module.css';
 
 const GameScore = ({ gamesWon, doublingCube, currentPlayer, winner, turnEnding }) => {

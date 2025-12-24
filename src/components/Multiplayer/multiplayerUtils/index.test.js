@@ -50,7 +50,7 @@ describe('multiplayerUtils', () => {
   });
 
   describe('makeMultiplayerMoveReducer', () => {
-    it('should handle connect4 auto-switch turn logic correctly', () => {
+    it('should merge game state without turn logic', () => {
       const state = {
         isMultiplayer: true,
         myPlayer: 'X',
@@ -63,28 +63,13 @@ describe('multiplayerUtils', () => {
 
       const result = makeMultiplayerMoveReducer(state, action);
 
-      expect(result.isMyTurn).toBe(false); // Not my turn since next player is O
       expect(result.player).toBe('O');
+      expect(result.board).toEqual([[]]);
+      expect(result.isMultiplayer).toBe(true);
+      expect(result.myPlayer).toBe('X');
     });
 
-    it('should set turn correctly when it becomes my turn', () => {
-      const state = {
-        isMultiplayer: true,
-        myPlayer: 'X',
-        player: 'O'
-      };
-      const action = {
-        type: 'connect4/makeMultiplayerMove',
-        payload: { player: 'X', board: [[]] }
-      };
-
-      const result = makeMultiplayerMoveReducer(state, action);
-
-      expect(result.isMyTurn).toBe(true); // My turn since next player is X
-      expect(result.player).toBe('X');
-    });
-
-    it('should always allows turns in single player mode', () => {
+    it('should return unchanged state for empty payload', () => {
       const state = {
         isMultiplayer: false,
         myPlayer: 'X',
@@ -92,18 +77,18 @@ describe('multiplayerUtils', () => {
       };
       const action = {
         type: 'connect4/makeMultiplayerMove',
-        payload: { player: 'O', board: [[]] }
+        payload: null
       };
 
       const result = makeMultiplayerMoveReducer(state, action);
 
-      expect(result.isMyTurn).toBe(true);
+      expect(result).toBe(state);
     });
   });
 
   describe('setMultiplayerModeReducer', () => {
     it('should set multiplayer mode and player correctly', () => {
-      const state = { player: 'X', isMyTurn: false };
+      const state = { player: 'X' };
       const action = {
         payload: { isMultiplayer: true, myPlayer: 'O' }
       };
@@ -112,7 +97,7 @@ describe('multiplayerUtils', () => {
 
       expect(result.isMultiplayer).toBe(true);
       expect(result.myPlayer).toBe('O');
-      expect(result.isMyTurn).toBe(false); // Not my turn since I'm O but current player is X
+      expect(result.player).toBe('X');
     });
 
     it('should return unchanged state for invalid payload', () => {
@@ -126,7 +111,7 @@ describe('multiplayerUtils', () => {
   });
 
   describe('syncGameStateReducer', () => {
-    it('should sync game state and sets turn correctly', () => {
+    it('should sync game state without turn logic', () => {
       const state = {
         isMultiplayer: true,
         myPlayer: 'X',
@@ -142,7 +127,8 @@ describe('multiplayerUtils', () => {
       expect(result.board).toEqual([[]]);
       expect(result.newData).toBe('updated');
       expect(result.oldData).toBe('preserved');
-      expect(result.isMyTurn).toBe(true); // My turn since synced player is X
+      expect(result.isMultiplayer).toBe(true);
+      expect(result.myPlayer).toBe('X');
     });
   });
 });

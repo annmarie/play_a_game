@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import styles from './PlayerText.module.css';
+import { PLAYER } from '../../globals';
 
 const PlayerText = ({ player, children }) => {
-  const playerClass = player === 'Red' ? styles.playerOne : styles.playerTwo;
+  const playerClass = player === PLAYER.ONE ? styles.playerOne : styles.playerTwo;
 
   return (
     <span className={playerClass}>

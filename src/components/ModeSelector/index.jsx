@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import MultiplayerSetup from '@components/MultiplayerSetup';
+import Multiplayer from '@/components/Multiplayer';
 import styles from './ModeSelector.module.css';
 
 const ModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
@@ -16,7 +16,7 @@ const ModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
 
   return (
     <div className={styles.modeSelector}>
-      {isMultiplayer === null && <MultiplayerSetup gameType={gameType} />}
+      {isMultiplayer === null && <Multiplayer gameType={gameType} />}
       {isMultiplayer === false && (
         <>
           <button
@@ -27,7 +27,7 @@ const ModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
           </button>
         </>
       )}
-      {isMultiplayer === true && <MultiplayerSetup gameType={gameType} />}
+      {isMultiplayer === true && <Multiplayer gameType={gameType} />}
     </div>
   );
 };

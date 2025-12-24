@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { BUTTON_TEXT } from '../../globals';
 import { rollDice, endTurn, togglePlayerRoll } from '../../slice';
-import Dice from '../Dice';
+import Dice from './Dice';
 import styles from './GameControls.module.css';
 
 const GameControls = ({ diceValue, potentialMoves, turnEnding, winner, doublingCube, disabled = false }) => {

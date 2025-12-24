@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setConnectionStatus, joinRoom, setOpponent, setError } from '@components/MultiplayerSetup/slice';
+import { setConnectionStatus, joinRoom, setOpponent, setError } from '@/components/Multiplayer/slice';
 import { wsService } from '@services/websocket';
 
 export const useWebSocketHandlers = (gameType, gameActions, playerConstants) => {
@@ -43,10 +43,7 @@ export const useWebSocketHandlers = (gameType, gameActions, playerConstants) => 
 
     const handleOpponentJoined = (data) => {
       dispatch(setOpponent({ gameType, opponent: data.opponent }));
-      dispatch(gameActions.setMultiplayerMode({
-        isMultiplayer: true,
-        myPlayer: playerConstants.FIRST
-      }));
+      // Host is already FIRST from room creation, don't reassign
     };
 
     const handleGameMove = (data) => {

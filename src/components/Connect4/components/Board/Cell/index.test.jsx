@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Cell from '../Cell';
-import { PLAYER } from '../../globals';
+import { PLAYER } from '../../../globals';
 
 describe('Cell Component', () => {
   const mockOnCellClick = jest.fn();

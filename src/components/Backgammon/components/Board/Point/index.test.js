@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Point from './index';
-import { PLAYER } from '../../globals';
+import { PLAYER } from '../../../globals';
 
 describe('Point Component', () => {
   const mockOnClick = jest.fn();

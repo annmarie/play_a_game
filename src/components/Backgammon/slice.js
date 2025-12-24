@@ -3,7 +3,7 @@ import { initializeBoard, getPointIdToIndexMap } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gamePlay';
 import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveLogic';
 import { PLAYER, BOARD_CONFIG } from './globals';
-import { sendMultiplayerMove, setMultiplayerModeReducer, makeMultiplayerMoveReducer, syncGameStateReducer } from '@/components/MultiplayerSetup/multiplayerUtils';
+import { sendMultiplayerMove } from '@/components/Multiplayer/multiplayerUtils';
 
 export const initialState = {
   points: initializeBoard(),
@@ -56,10 +56,7 @@ export const slice = createSlice({
     makeMove: (state, action) => reduceMakeMove(state, action),
 
     rollDice: (state) => {
-      // Prevent rolling if it's multiplayer and not the player's turn
-      if (state.isMultiplayer && !state.isMyTurn) {
-        return state;
-      }
+      if (state.isMultiplayer && !state.isMyTurn) return state;
 
       const { diceValue, player } = rollDiceLogic(state.player);
       const potentialMoves = findPotentialMoves(state.points, player, diceValue, state.checkersOnBar);
@@ -70,12 +67,12 @@ export const slice = createSlice({
         player,
         potentialMoves,
         selectedSpot: null,
-        potentialSpots: []
+        potentialSpots: [],
+        isMyTurn: !state.isMultiplayer || state.myPlayer === player
       };
 
-      // Send to WebSocket if multiplayer
       if (state.isMultiplayer) {
-        sendMultiplayerMove('backgammon', newState);
+        sendMultiplayerMove('backgammon', { diceValue, player, potentialMoves });
       }
 
       return newState;
@@ -115,7 +112,7 @@ export const slice = createSlice({
       gamesWon: state.gamesWon,
       isMultiplayer: state.isMultiplayer,
       myPlayer: state.myPlayer,
-      isMyTurn: state.isMultiplayer ? state.myPlayer === PLAYER.LEFT : true
+      isMyTurn: !state.isMultiplayer || state.myPlayer === PLAYER.LEFT
     }),
 
     setCustomDice: (state, action) => ({
@@ -135,9 +132,8 @@ export const slice = createSlice({
         }
       };
 
-      // Send to WebSocket if multiplayer
       if (state.isMultiplayer) {
-        sendMultiplayerMove('backgammon', newState);
+        sendMultiplayerMove('backgammon', { doublingCube: newState.doublingCube });
       }
 
       return newState;
@@ -157,11 +153,12 @@ export const slice = createSlice({
         diceValue: null,
         selectedSpot: null,
         potentialSpots: [],
-        potentialMoves: {}
+        potentialMoves: {},
+        isMyTurn: !state.isMultiplayer || state.myPlayer === offeringPlayer
       };
 
       if (state.isMultiplayer) {
-        sendMultiplayerMove('backgammon', newState);
+        sendMultiplayerMove('backgammon', { doublingCube: newState.doublingCube, player: offeringPlayer, diceValue: null, potentialMoves: {} });
       }
 
       return newState;
@@ -170,13 +167,14 @@ export const slice = createSlice({
     declineDouble: (state) => {
       if (!state.doublingCube.pendingOffer) return state;
       const offeringPlayer = state.doublingCube.pendingOffer;
+      const newGamesWon = {
+        ...state.gamesWon,
+        [offeringPlayer]: state.gamesWon[offeringPlayer] + state.doublingCube.value
+      };
       const newState = {
         ...state,
         winner: offeringPlayer,
-        gamesWon: {
-          ...state.gamesWon,
-          [offeringPlayer]: state.gamesWon[offeringPlayer] + state.doublingCube.value
-        },
+        gamesWon: newGamesWon,
         doublingCube: {
           value: 1,
           owner: null,
@@ -186,34 +184,63 @@ export const slice = createSlice({
       };
 
       if (state.isMultiplayer) {
-        sendMultiplayerMove('backgammon', newState);
+        sendMultiplayerMove('backgammon', { winner: offeringPlayer, gamesWon: newGamesWon, doublingCube: newState.doublingCube, turnEnding: false });
       }
 
       return newState;
     },
 
     endTurn: (state) => {
+      const nextPlayer = togglePlayer(state.player);
       const newState = {
         ...state,
-        player: togglePlayer(state.player),
+        player: nextPlayer,
         diceValue: null,
         turnEnding: false,
         selectedSpot: null,
         potentialSpots: [],
         potentialMoves: {},
-        isMyTurn: state.isMultiplayer ? state.myPlayer === togglePlayer(state.player) : true
+        isMyTurn: !state.isMultiplayer || state.myPlayer === nextPlayer
       };
 
       if (state.isMultiplayer) {
-        sendMultiplayerMove('backgammon', newState);
+        sendMultiplayerMove('backgammon', { player: nextPlayer, diceValue: null, potentialMoves: {}, turnEnding: false });
       }
 
       return newState;
     },
 
-    setMultiplayerMode: setMultiplayerModeReducer,
-    makeMultiplayerMove: makeMultiplayerMoveReducer,
-    syncGameState: syncGameStateReducer,
+    setMultiplayerMode: (state, action) => {
+      const { isMultiplayer, myPlayer } = action.payload || {};
+      if (typeof isMultiplayer !== 'boolean') return state;
+
+      return {
+        ...state,
+        isMultiplayer,
+        myPlayer,
+        isMyTurn: !isMultiplayer || myPlayer === state.player
+      };
+    },
+    makeMultiplayerMove: (state, action) => {
+      const gameState = action.payload;
+      if (!gameState) return state;
+
+      return {
+        ...state,
+        ...gameState,
+        isMyTurn: !state.isMultiplayer || state.myPlayer === gameState.player
+      };
+    },
+    syncGameState: (state, action) => {
+      const syncedState = action.payload;
+      if (!syncedState) return state;
+
+      return {
+        ...state,
+        ...syncedState,
+        isMyTurn: !state.isMultiplayer || state.myPlayer === syncedState.player
+      };
+    },
 
     startGame: (state) => {
       const { diceValue, player } = rollDiceLogic(null);
@@ -225,11 +252,11 @@ export const slice = createSlice({
         diceValue,
         player,
         potentialMoves,
-        isMyTurn: state.isMultiplayer ? state.myPlayer === player : true
+        isMyTurn: !state.isMultiplayer || state.myPlayer === player
       };
 
       if (state.isMultiplayer) {
-        sendMultiplayerMove('backgammon', newState);
+        sendMultiplayerMove('backgammon', { gameStarted: true, diceValue, player, potentialMoves });
       }
 
       return newState;
@@ -327,7 +354,7 @@ const updateMoveCheckerState = (state, fromIndex, toIndex, moveDistance) => {
   };
 
   if (state.isMultiplayer) {
-    sendMultiplayerMove('backgammon', newState);
+    sendMultiplayerMove('backgammon', { points: newState.points, checkersOnBar: newState.checkersOnBar, checkersBorneOff: newState.checkersBorneOff, winner, gamesWon: newState.gamesWon, diceValue: newState.diceValue, player: newState.player, potentialMoves: newState.potentialMoves, turnEnding: newState.turnEnding });
   }
 
   return newState;

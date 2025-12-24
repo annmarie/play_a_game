@@ -7,7 +7,7 @@ import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import PlayerText from './components/PlayerText';
 import RoomStatus from './components/RoomStatus';
-import { shouldShowGame, shouldShowMultiplayerSetup } from '@/components/MultiplayerSetup/multiplayerUtils';
+import { shouldShowGame, shouldShowMultiplayerSetup } from '@/components/Multiplayer/multiplayerUtils';
 import styles from './Connect4.module.css';
 import Layout from '@/components/Layout';
 
@@ -15,7 +15,11 @@ const Connect4 = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.connect4);
   const multiplayer = useSelector((state) => state.multiplayer);
-  const handleCellClick = (col) => dispatch(makeMove({ col }));
+  const handleCellClick = (col) => {
+    if (state.isMultiplayer && !state.isMyTurn) return;
+    if (state.winner || state.boardFull) return;
+    dispatch(makeMove({ col }));
+  };
 
   useWebSocketHandlers();
 
@@ -63,7 +67,6 @@ const Connect4 = () => {
             <Board
               board={state.board}
               handleCellClick={handleCellClick}
-              disabled={state.isMultiplayer && !state.isMyTurn}
             />
 
             <div className={styles.connect4Actions}>

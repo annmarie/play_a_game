@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import DoublesCube from './index';
-import backgammonSlice from '../../slice';
+import backgammonSlice from '../../../slice';
 
 const createMockStore = () => {
   return configureStore({

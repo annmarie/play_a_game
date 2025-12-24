@@ -10,10 +10,10 @@ const RoomStatus = ({ roomId, opponent, myPlayer, playerName }) => {
       {opponent && (
         <div className={styles.playerNames}>
           <PlayerText player={PLAYER.ONE}>
-            {myPlayer === PLAYER.ONE ? playerName || 'You' : (opponent?.name || 'Opponent')} (Red)
+            {myPlayer === PLAYER.ONE ? playerName || 'You' : (opponent?.name || 'Opponent')} ({PLAYER.ONE})
           </PlayerText>
           <PlayerText player={PLAYER.TWO}>
-            {myPlayer === PLAYER.TWO ? playerName || 'You' : (opponent?.name || 'Opponent')} (Yellow)
+            {myPlayer === PLAYER.TWO ? playerName || 'You' : (opponent?.name || 'Opponent')} ({PLAYER.TWO})
           </PlayerText>
         </div>
       )}

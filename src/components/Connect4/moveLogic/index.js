@@ -25,13 +25,14 @@ export const isValidColumn = (col, board) => {
  * Validates if a move can be made in the current game state
  * @param {Object} state - Current game state
  * @param {number} col - Column to validate
- * @returns {Object} Validation resul
+ * @returns {Object} Validation result
  */
 export const isValidMove = (state, col) => {
   if (state.winner) {
     return { isValid: false, error: 'Game already has a winner' };
   }
 
+  // Only check turn in multiplayer mode
   if (state.isMultiplayer && !state.isMyTurn) {
     return { isValid: false, error: 'Not your turn' };
   }
