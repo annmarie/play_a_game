@@ -1,4 +1,4 @@
-import GameModeSelector from '@/components/ModeSelector';
+import ModeSelector from '@/components/ModeSelector';
 import { BUTTON_TEXT, PLAYER } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain, setMultiplayerMode } from './slice';
@@ -6,6 +6,7 @@ import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import PlayerText from './components/PlayerText';
+import RoomStatus from './components/RoomStatus';
 import styles from './Connect4.module.css';
 import Layout from '@/components/Layout';
 
@@ -26,7 +27,7 @@ const Connect4 = () => {
         <h3 className={styles.connect4Title}>Connect Four</h3>
 
         {showMultiplayerSetup && (
-          <GameModeSelector
+          <ModeSelector
             gameType="connect4"
             isMultiplayer={state.isMultiplayer}
             setMultiplayerMode={setMultiplayerMode}
@@ -36,19 +37,12 @@ const Connect4 = () => {
         {showGame && (
           <>
             {state.isMultiplayer && multiplayer.rooms.connect4?.roomId && (
-              <div className={styles.multiplayerInfo}>
-                <span>Room: {multiplayer.rooms.connect4.roomId}</span>
-                {multiplayer.rooms.connect4.opponent && (
-                  <div className={styles.playerNames}>
-                    <PlayerText player={PLAYER.ONE}>
-                      {state.myPlayer === PLAYER.ONE ? multiplayer.playerName || 'You' : (multiplayer.rooms.connect4.opponent?.name || 'Opponent')} (Red)
-                    </PlayerText>
-                    <PlayerText player={PLAYER.TWO}>
-                      {state.myPlayer === PLAYER.TWO ? multiplayer.playerName || 'You' : (multiplayer.rooms.connect4.opponent?.name || 'Opponent')} (Yellow)
-                    </PlayerText>
-                  </div>
-                )}
-              </div>
+              <RoomStatus
+                roomId={multiplayer.rooms.connect4.roomId}
+                opponent={multiplayer.rooms.connect4.opponent}
+                myPlayer={state.myPlayer}
+                playerName={multiplayer.playerName}
+              />
             )}
 
             <div className={styles.gameScore}>

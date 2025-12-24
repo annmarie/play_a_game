@@ -27,3 +27,7 @@ export const BUTTON_TEXT = {
   ROLL_DICE: 'Roll Dice',
   END_TURN: 'End Turn',
 };
+
+export const GAME_TEXT = {
+  TITLE: 'Backgammon',
+};

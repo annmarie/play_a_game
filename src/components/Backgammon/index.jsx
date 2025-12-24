@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, selectSpot, setMultiplayerMode, startGame } from './slice';
+import { makeMove, selectSpot, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
-import GameModeSelector from '@/components/ModeSelector';
+import ModeSelector from '@/components/ModeSelector';
 import GameScore from './components/GameScore';
 import WinnerAnnouncement from './components/WinnerAnnouncement';
 import DoubleOffer from './components/DoubleOffer';
@@ -12,8 +12,9 @@ import GameStatus from './components/GameStatus';
 import Board from './components/Board';
 import Layout from '@/components/Layout';
 import styles from './Backgammon.module.css';
-import Checker from './components/Checker';
-import { PLAYER } from './globals';
+import RoomStatus from './components/RoomStatus';
+import StartGame from './components/StartGame';
+import { GAME_TEXT } from './globals';
 
 const Backgammon = () => {
   const dispatch = useDispatch();
@@ -46,10 +47,10 @@ const Backgammon = () => {
   return (
     <Layout showHeader={true}>
       <div className={styles.backgammonGame}>
-        <h3 className={styles.backgammonTitle}>Backgammon</h3>
+        <h3 className={styles.backgammonTitle}>{GAME_TEXT.TITLE}</h3>
 
         {showMultiplayerSetup && (
-          <GameModeSelector
+          <ModeSelector
             gameType="backgammon"
             isMultiplayer={null}
             setMultiplayerMode={setMultiplayerMode}
@@ -59,32 +60,19 @@ const Backgammon = () => {
         {showGame && (
           <>
             {state.isMultiplayer && multiplayer.rooms.backgammon?.roomId && (
-              <div className={styles.multiplayerInfo}>
-                <span>Room: {multiplayer.rooms.backgammon.roomId}</span>
-                {multiplayer.rooms.backgammon.opponent && (
-                  <div className={styles.playerNames}>
-                    <span>
-                      {state.myPlayer === PLAYER.LEFT ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} <Checker player={PLAYER.LEFT} />
-                    </span>
-                    <span>
-                      {state.myPlayer === PLAYER.RIGHT ? multiplayer.playerName || 'You' : (multiplayer.rooms.backgammon.opponent?.name || 'Opponent')} <Checker player={PLAYER.RIGHT} />
-                    </span>
-                  </div>
-                )}
-              </div>
+              <RoomStatus
+                roomId={multiplayer.rooms.backgammon.roomId}
+                opponent={multiplayer.rooms.backgammon.opponent}
+                myPlayer={state.myPlayer}
+                playerName={multiplayer.playerName}
+              />
             )}
 
-            {state.isMultiplayer && multiplayer.rooms.backgammon?.opponent && !state.gameStarted && (
-              <div className={styles.startGameSection}>
-                <button
-                  onClick={() => dispatch(startGame())}
-                  className={styles.startGameButton}
-                >
-                  Roll Dice to Start Game
-                </button>
-                <p className={styles.startGameText}>First roll determines who goes first</p>
-              </div>
-            )}
+            <StartGame
+              isMultiplayer={state.isMultiplayer}
+              hasOpponent={!!multiplayer.rooms.backgammon?.opponent}
+              gameStarted={state.gameStarted}
+            />
 
             <GameScore
               gamesWon={state.gamesWon}

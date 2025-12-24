@@ -1,0 +1,11 @@
+.multiplayerInfo {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.playerNames {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  gap: 1rem;
+}

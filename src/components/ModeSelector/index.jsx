@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import MultiplayerSetup from '@components/MultiplayerSetup';
 import styles from './ModeSelector.module.css';
 
-const GameModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
+const ModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const GameModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
   }, [dispatch, setMultiplayerMode]);
 
   return (
-    <div className={styles.gameModeSelector}>
+    <div className={styles.modeSelector}>
       {isMultiplayer === null && <MultiplayerSetup gameType={gameType} />}
       {isMultiplayer === false && (
         <>
@@ -32,10 +32,10 @@ const GameModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
   );
 };
 
-GameModeSelector.propTypes = {
+ModeSelector.propTypes = {
   gameType: PropTypes.string.isRequired,
   isMultiplayer: PropTypes.oneOf([null, true, false]),
   setMultiplayerMode: PropTypes.func.isRequired
 };
 
-export default GameModeSelector;
+export default ModeSelector;
