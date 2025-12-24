@@ -92,6 +92,26 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (req.method === 'GET' && req.url === '/api/rooms') {
+    const origin = req.headers.origin;
+    if (!isOriginAllowed(origin)) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Origin not allowed' }));
+      return;
+    }
+
+    const { getRooms } = require('./message-handlers');
+    const rooms = getRooms();
+
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Credentials': 'true'
+    });
+    res.end(JSON.stringify({ rooms }));
+    return;
+  }
+
   // Reject all other HTTP methods for state-changing operations
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
     res.writeHead(405, { 'Allow': 'GET, OPTIONS' });

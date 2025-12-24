@@ -1,0 +1,75 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.loading, .noRooms {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.roomsList {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.roomCard {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.roomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.roomId {
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
+.gameType {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.players {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+.players div {
+  margin-bottom: 4px;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status.waiting {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.status.full {
+  background: #e8f5e8;
+  color: #2e7d32;
+}

@@ -58,6 +58,9 @@ const Home = () => {
           <Link to="/connect4" className={styles.gameLink}>
             <h2>Connect Four</h2>
           </Link>
+          <Link to="/rooms" className={styles.gameLink}>
+            <h2>Active Rooms</h2>
+          </Link>
         </div>
       </div>
     </Layout>

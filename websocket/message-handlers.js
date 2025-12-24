@@ -197,7 +197,24 @@ function handleDisconnect(ws) {
   }
 }
 
+/**
+ * Gets all active rooms with their current status
+ * @returns {Array} Array of room objects with sanitized player info
+ */
+function getRooms() {
+  return Array.from(rooms.values()).map(room => ({
+    id: room.id,
+    gameType: room.gameType,
+    players: {
+      host: room.host.playerName,
+      guest: room.guest?.playerName || null
+    },
+    isFull: !!room.guest
+  }));
+}
+
 module.exports = {
   handleMessage,
-  handleDisconnect
+  handleDisconnect,
+  getRooms
 };
