@@ -50,8 +50,8 @@ export const makeMultiplayerMoveReducer = (state, action) => {
     ...gameState,
     isMyTurn: state.isMultiplayer ?
       (turnMechanic === 'auto-switch' ?
-        state.myPlayer !== gameState.player :
-        state.myPlayer === gameState.player
+        state.myPlayer === gameState.player :
+        state.myPlayer !== gameState.player
       ) : true
   };
 };
