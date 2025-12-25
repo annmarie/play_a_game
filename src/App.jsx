@@ -22,9 +22,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/backgammon" element={<Backgammon />} />
-          <Route path="/backgammon/local" element={<Backgammon isLocal={true} />} />
           <Route path="/connect4" element={<Connect4 />} />
-          <Route path="/connect4/local" element={<Connect4 isLocal={true} />} />
           <Route path="/rooms" element={<Rooms />} />
         </Routes>
       </Router>

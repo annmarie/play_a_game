@@ -4,7 +4,7 @@ import { PLAYER } from './globals';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../../store';
-import Backgammon from '.';
+import Backgammon, { BackgammonGame } from '.';
 import * as gamePlay from './gamePlay';
 
 const SPACEBAR = ' ';
@@ -15,13 +15,10 @@ jest.mock('./gamePlay', () => ({
 }));
 
 const renderGame = (store) => {
-  // Set initial state to local mode to render game interface
-  store.dispatch({ type: 'backgammon/setMultiplayerMode', payload: { isMultiplayer: false, myPlayer: null } });
-
   return render(
     <BrowserRouter>
       <Provider store={store}>
-        <Backgammon />
+        <BackgammonGame isLocal={true} />
       </Provider>
     </BrowserRouter>
   );

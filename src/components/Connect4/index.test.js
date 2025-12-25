@@ -4,16 +4,13 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../../store';
 import { PLAYER, MESSAGES } from './globals';
-import Connect4 from '.';
+import Connect4, { Connect4Game } from '.';
 
 const renderGame = (store) => {
-  // Set initial state to local mode to render game interface
-  store.dispatch({ type: 'connect4/setMultiplayerMode', payload: { isMultiplayer: false, myPlayer: null } });
-
   return render(
     <BrowserRouter>
       <Provider store={store}>
-        <Connect4 />
+        <Connect4Game isLocal={true} />
       </Provider>
     </BrowserRouter>
   );

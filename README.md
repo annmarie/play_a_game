@@ -38,7 +38,3 @@
 ### Multiplayer Mode
 - Requires WebSocket server running on port 8080
 - Real-time synchronization between players
-
-### Single Player Mode
-- Players take turns using the same interface
-- Access via `/connect4/local` or `/backgammon/local` URLs

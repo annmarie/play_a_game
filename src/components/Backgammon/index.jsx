@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, selectSpot, setMultiplayerMode } from './slice';
+import { makeMove, selectSpot } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import Multiplayer from '@/components/Multiplayer';
@@ -16,26 +15,19 @@ import Layout from '@/components/Layout';
 import styles from './Backgammon.module.css';
 import RoomStatus from './components/RoomStatus';
 import StartGame from './components/StartGame';
-import { shouldShowGame, shouldShowMultiplayerSetup } from '@/components/Multiplayer/multiplayerUtils';
+import { shouldShowMultiplayerSetup } from '@/components/Multiplayer/multiplayerUtils';
 import { GAME_TEXT } from './globals';
 
-const Backgammon = ({ isLocal = false }) => {
+const Backgammon = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.backgammon);
-  const multiplayer = useSelector((state) => state.multiplayer);
-
-  useEffect(() => {
-    if (isLocal) {
-      dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }));
-    }
-  }, [dispatch, isLocal]);
+  const multiplayer = useSelector((state) => state.multiplayer || {});
 
   useWebSocketHandlers();
   useKeyboardControls(state.diceValue, state.turnEnding);
 
   const handleSpotClick = useCallback(
     (point) => {
-      // Prevent moves if it's multiplayer and not the player's turn
       if (state.isMultiplayer && !state.isMyTurn) {
         return;
       }
@@ -55,37 +47,24 @@ const Backgammon = ({ isLocal = false }) => {
       <div className={styles.backgammonGame}>
         <h3 className={styles.backgammonTitle}>{GAME_TEXT.TITLE}</h3>
 
-        {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms.backgammon?.opponent) && (
-          isLocal ? (
-            <div className={styles.localMode}>
-              <h4>Local Game Mode</h4>
-              <p>Players take turns on the same device</p>
-            </div>
-          ) : (
-            <>
-              <Multiplayer gameType="backgammon" />
-
-              <div className={styles.localGameLink}>
-                <Link to="/backgammon/local">Play Local Game</Link>
-              </div>
-            </>
-          )
+        {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms?.backgammon?.opponent) && (
+          <Multiplayer gameType="backgammon" />
         )}
 
-        {shouldShowGame(state.isMultiplayer, multiplayer.rooms.backgammon?.roomId, multiplayer.rooms.backgammon?.opponent) && (
-          <>
-            {state.isMultiplayer && multiplayer.rooms.backgammon?.roomId && (
-              <RoomStatus
-                roomId={multiplayer.rooms.backgammon.roomId}
-                opponent={multiplayer.rooms.backgammon.opponent}
-                myPlayer={state.myPlayer}
-                playerName={multiplayer.playerName}
-              />
-            )}
+        {state.isMultiplayer && multiplayer.rooms?.backgammon?.roomId && (
+          <RoomStatus
+            roomId={multiplayer.rooms.backgammon.roomId}
+            opponent={multiplayer.rooms.backgammon.opponent}
+            myPlayer={state.myPlayer}
+            playerName={multiplayer.playerName}
+          />
+        )}
 
+        {(state.isMultiplayer && multiplayer.rooms?.backgammon?.opponent) && (
+          <>
             <StartGame
               isMultiplayer={state.isMultiplayer}
-              hasOpponent={!!multiplayer.rooms.backgammon?.opponent}
+              hasOpponent={!!multiplayer.rooms?.backgammon?.opponent}
               gameStarted={state.gameStarted}
             />
 
@@ -128,7 +107,7 @@ const Backgammon = ({ isLocal = false }) => {
                 isMultiplayer={state.isMultiplayer}
                 checkersBorneOff={state.checkersBorneOff}
                 checkersOnBar={state.checkersOnBar}
-                roomId={multiplayer.rooms.backgammon?.roomId}
+                roomId={multiplayer.rooms?.backgammon?.roomId}
               />
             </div>
           </>
@@ -136,10 +115,6 @@ const Backgammon = ({ isLocal = false }) => {
       </div>
     </Layout>
   );
-};
-
-Backgammon.propTypes = {
-  isLocal: PropTypes.bool
 };
 
 export default Backgammon;
