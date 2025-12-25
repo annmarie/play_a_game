@@ -1,4 +1,4 @@
-import ModeSelector from '@/components/ModeSelector';
+import PlayMode from '@/components/PlayMode';
 import { BUTTON_TEXT, PLAYER } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain, setMultiplayerMode } from './slice';
@@ -29,7 +29,7 @@ const Connect4 = () => {
         <h3 className={styles.connect4Title}>Connect Four</h3>
 
         {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms.connect4?.opponent) && (
-          <ModeSelector
+          <PlayMode
             gameType="connect4"
             isMultiplayer={state.isMultiplayer}
             setMultiplayerMode={setMultiplayerMode}

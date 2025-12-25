@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import Multiplayer from '@/components/Multiplayer';
-import styles from './ModeSelector.module.css';
+import styles from './PlayMode.module.css';
 
-const ModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
+const PlayMode = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -32,10 +32,10 @@ const ModeSelector = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
   );
 };
 
-ModeSelector.propTypes = {
+PlayMode.propTypes = {
   gameType: PropTypes.string.isRequired,
   isMultiplayer: PropTypes.oneOf([null, true, false]),
   setMultiplayerMode: PropTypes.func.isRequired
 };
 
-export default ModeSelector;
+export default PlayMode;

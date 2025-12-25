@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, selectSpot, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
-import ModeSelector from '@/components/ModeSelector';
+import PlayMode from '@/components/PlayMode';
 import GameScore from './components/GameScore';
 import WinnerAnnouncement from './components/WinnerAnnouncement';
 import DoubleOffer from './components/DoubleOffer';
@@ -48,7 +48,7 @@ const Backgammon = () => {
         <h3 className={styles.backgammonTitle}>{GAME_TEXT.TITLE}</h3>
 
         {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms.backgammon?.opponent) && (
-          <ModeSelector
+          <PlayMode
             gameType="backgammon"
             isMultiplayer={null}
             setMultiplayerMode={setMultiplayerMode}
