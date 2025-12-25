@@ -50,17 +50,15 @@ const Backgammon = () => {
           <Multiplayer gameType="backgammon" />
         )}
 
-        {state.isMultiplayer && multiplayer.rooms?.backgammon?.roomId && (
-          <RoomStatus
-            roomId={multiplayer.rooms.backgammon.roomId}
-            opponent={multiplayer.rooms.backgammon.opponent}
-            myPlayer={state.myPlayer}
-            playerName={multiplayer.playerName}
-          />
-        )}
-
         {(state.isMultiplayer && multiplayer.rooms?.backgammon?.opponent) && (
           <>
+            <RoomStatus
+              roomId={multiplayer.rooms.backgammon.roomId}
+              opponent={multiplayer.rooms.backgammon.opponent}
+              myPlayer={state.myPlayer}
+              playerName={multiplayer.playerName}
+            />
+
             <StartGame
               isMultiplayer={state.isMultiplayer}
               hasOpponent={!!multiplayer.rooms?.backgammon?.opponent}

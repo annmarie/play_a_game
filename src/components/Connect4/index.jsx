@@ -33,17 +33,15 @@ const Connect4 = () => {
           <Multiplayer gameType="connect4" />
         )}
 
-        {state.isMultiplayer && multiplayer.rooms?.connect4?.roomId && (
-          <RoomStatus
-            roomId={multiplayer.rooms.connect4.roomId}
-            opponent={multiplayer.rooms.connect4.opponent}
-            myPlayer={state.myPlayer}
-            playerName={multiplayer.playerName}
-          />
-        )}
-
         {(state.isMultiplayer && multiplayer.rooms?.connect4?.opponent) && (
           <>
+            <RoomStatus
+              roomId={multiplayer.rooms.connect4.roomId}
+              opponent={multiplayer.rooms.connect4.opponent}
+              myPlayer={state.myPlayer}
+              playerName={multiplayer.playerName}
+            />
+
             <div className={styles.gameScore}>
               <div>Games Won:</div>
               <PlayerText player={PLAYER.ONE}>{PLAYER.ONE}: {state.gamesWon?.[PLAYER.ONE] || 0}</PlayerText>
