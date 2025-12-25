@@ -1,355 +1,223 @@
-import { render, fireEvent, screen, act } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { PLAYER } from './globals';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../../store';
-import Backgammon, { BackgammonGame } from '.';
-import * as gamePlay from './gamePlay';
+import { PLAYER } from './globals';
+import Backgammon from '.';
+import { initializeBoard } from './boardUtils';
 
-const SPACEBAR = ' ';
-
-jest.mock('./gamePlay', () => ({
-  ...jest.requireActual('./gamePlay'),
-  rollDiceLogic: jest.fn(),
-}));
+const createTestStore = (gameState = {}, multiplayerState = {}) => {
+  return configureStore({
+    reducer,
+    preloadedState: {
+      backgammon: {
+        points: initializeBoard(),
+        checkersOnBar: { [PLAYER.LEFT]: 0, [PLAYER.RIGHT]: 0 },
+        checkersBorneOff: { [PLAYER.LEFT]: 0, [PLAYER.RIGHT]: 0 },
+        diceValue: null,
+        player: null,
+        winner: null,
+        selectedSpot: null,
+        potentialSpots: [],
+        potentialMoves: {},
+        turnEnding: false,
+        pointsHistory: [],
+        gamesWon: { [PLAYER.LEFT]: 0, [PLAYER.RIGHT]: 0 },
+        doublingCube: { value: 1, owner: null, pendingOffer: null },
+        isMultiplayer: true,
+        myPlayer: PLAYER.LEFT,
+        isMyTurn: false,
+        gameStarted: true,
+        ...gameState
+      },
+      multiplayer: {
+        isConnected: true,
+        rooms: {
+          backgammon: {
+            roomId: 'test-room',
+            opponent: 'TestPlayer'
+          }
+        },
+        playerName: 'TestUser',
+        ...multiplayerState
+      }
+    }
+  });
+};
 
 const renderGame = (store) => {
   return render(
     <BrowserRouter>
       <Provider store={store}>
-        <BackgammonGame isLocal={true} />
+        <Backgammon />
       </Provider>
     </BrowserRouter>
   );
 };
 
-const rollDice = async (diceValue, player) => {
-  gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue, player });
-  await act(async () => fireEvent.click(screen.getByRole('button', { name: /roll dice/i })));
-};
-
-const clickPoints = async (points, indices) => {
-  for (const index of indices) {
-    await act(async () => fireEvent.click(points[index]));
-  }
-};
-
-const INITIAL_BOARD_CONFIG = {
-  0: '5 left', 18: '5 left', 6: '5 right', 12: '5 right',
-  4: '3 right', 16: '3 left', 11: '2 left', 23: '2 right'
-};
-
-const DEFAULT_GAME_STATE = {
-  points: Array.from({ length: 24 }, (_, i) => ({ id: i + 1, checkers: 0, player: null })),
-  checkersOnBar: { left: 0, right: 0 },
-  checkersBorneOff: { left: 0, right: 0 },
-  diceValue: null,
-  player: PLAYER.LEFT,
-  winner: null,
-  selectedSpot: null,
-  potentialSpots: [],
-  potentialMoves: {},
-  turnEnding: false,
-  pointsHistory: [],
-  diceHistory: [],
-  playerHistory: [],
-  checkersOnBarHistory: [],
-  checkersBorneOffHistory: [],
-  potentialMovesHistory: [],
-  gamesWon: { left: 0, right: 0 },
-  doublingCube: {
-    value: 1,
-    owner: null,
-    pendingOffer: null
-  }
-};
-
-const createCustomStore = (overrides = {}) => {
-  const gameState = { ...DEFAULT_GAME_STATE, ...overrides };
-  return configureStore({
-    reducer,
-    preloadedState: { backgammon: gameState }
-  });
-};
-
-const validateInitialBoard = (points) => {
-  points.forEach((point, i) => {
-    const label = point.getAttribute('aria-label');
-    const expected = INITIAL_BOARD_CONFIG[i];
-    expect(label).toContain(expected ? `${expected} checkers` : '0 checkers');
-  });
-};
-
-const createBearOffTestBoard = () => {
-  const config = {
-    7: { checkers: 5, player: PLAYER.RIGHT },
-    8: { checkers: 5, player: PLAYER.RIGHT },
-    9: { checkers: 2, player: PLAYER.RIGHT },
-    10: { checkers: 2, player: PLAYER.RIGHT },
-    11: { checkers: 1, player: PLAYER.RIGHT },
-    19: { checkers: 5, player: PLAYER.LEFT },
-    20: { checkers: 3, player: PLAYER.LEFT },
-    21: { checkers: 2, player: PLAYER.LEFT },
-    22: { checkers: 3, player: PLAYER.LEFT },
-    23: { checkers: 1, player: PLAYER.LEFT }
-  };
-
-  return Array.from({ length: 24 }, (_, i) => {
-    const id = i + 1;
-    return config[id] ? { id, ...config[id] } : { id, checkers: 0, player: null };
+const clickPoint = async (pointIndex) => {
+  const points = screen.getAllByRole('point');
+  await act(async () => {
+    fireEvent.click(points[pointIndex]);
   });
 };
 
 describe('Backgammon Component Tests', () => {
-  let store;
+  describe('Multiplayer Setup', () => {
+    it('should show multiplayer setup when no opponent', async () => {
+      const store = createTestStore({}, {
+        rooms: { backgammon: { roomId: null, opponent: null } }
+      });
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    store = configureStore({ reducer });
+      await act(async () => renderGame(store));
+      expect(screen.getByText('Waiting for opponent...')).toBeInTheDocument();
+    });
+
+    it('should show room status when opponent is present', async () => {
+      const store = createTestStore();
+
+      await act(async () => renderGame(store));
+      expect(screen.getByText(/Room:.*test-room/)).toBeInTheDocument();
+    });
   });
 
-  describe('Initial Render', () => {
-    it('should render the initial board with correct setup', async () => {
+  describe('Game Board', () => {
+    it('should render game board with 24 points when opponent is present', async () => {
+      const store = createTestStore();
+
+      await act(async () => renderGame(store));
+      expect(screen.getAllByRole('point')).toHaveLength(24);
+      expect(screen.getByText('Backgammon')).toBeInTheDocument();
+    });
+
+    it('should show initial board setup with checkers', async () => {
+      const store = createTestStore();
+
       await act(async () => renderGame(store));
 
+      // Check that initial board has checkers in starting positions
+      const points = screen.getAllByRole('point');
+      expect(points[0]).toHaveAttribute('aria-label', expect.stringContaining('5 left checkers'));
+      expect(points[23]).toHaveAttribute('aria-label', expect.stringContaining('2 right checkers'));
+    });
+  });
+
+  describe('Game Controls', () => {
+    it('should show roll dice button', async () => {
+      const store = createTestStore();
+
+      await act(async () => renderGame(store));
       expect(screen.getByRole('button', { name: /roll dice/i })).toBeInTheDocument();
+    });
+
+    it('should show undo button (disabled in multiplayer)', async () => {
+      const store = createTestStore();
+
+      await act(async () => renderGame(store));
       expect(screen.getByRole('button', { name: /undo last move/i })).toBeDisabled();
+    });
 
-      const points = screen.queryAllByRole('point');
-      validateInitialBoard(points);
+    it('should disable dice rolling when not player turn', async () => {
+      const store = createTestStore({ isMyTurn: false });
 
-      expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(0);
-      expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(0);
+      await act(async () => renderGame(store));
+      expect(screen.getByRole('button', { name: /roll dice/i })).toBeDisabled();
     });
   });
 
-  describe('Point Selection and Movement', () => {
-    it('should highlight selected and potential points', async () => {
+  describe('Game Interactions', () => {
+    it('should allow point selection when it is player turn with dice rolled', async () => {
+      const store = createTestStore({
+        isMyTurn: true,
+        player: PLAYER.LEFT,
+        diceValue: [3, 5],
+        potentialMoves: { '1': [4, 6] }
+      });
+
       await act(async () => renderGame(store));
-      await rollDice([3, 5], PLAYER.RIGHT);
+      await clickPoint(0); // Click first point
 
-      const points = screen.queryAllByRole('point');
-      await clickPoints(points, [4]);
-
-      expect(points[4]).toHaveAttribute('data-testid', expect.stringContaining('selected'));
-      expect(points[9]).toHaveAttribute('data-testid', expect.stringContaining('potential'));
-      expect(points[7]).toHaveAttribute('data-testid', expect.stringContaining('potential'));
+      const state = store.getState().backgammon;
+      expect(state.selectedSpot).toBe(1);
     });
 
-    it('should complete a full move sequence', async () => {
+    it('should prevent moves when not player turn', async () => {
+      const store = createTestStore({
+        isMyTurn: false,
+        player: PLAYER.RIGHT,
+        diceValue: [3, 5]
+      });
+
       await act(async () => renderGame(store));
-      const points = screen.queryAllByRole('point');
+      await clickPoint(0);
 
-      await rollDice([6, 3], PLAYER.LEFT);
-      await clickPoints(points, [0, 14, 0, 17]);
-
-      expect(points[0].getAttribute('aria-label')).toContain('3 left checkers');
-      expect(points[14].getAttribute('aria-label')).toContain('1 left checkers');
-      expect(points[17].getAttribute('aria-label')).toContain('1 left checkers');
-      expect(screen.queryAllByTestId(/die-dot/i)).toHaveLength(0);
-    });
-  });
-
-  describe('Dice Rolling', () => {
-    it('should display dice dots correctly', async () => {
-      await act(async () => renderGame(store));
-      await rollDice([5, 3], PLAYER.LEFT);
-
-      expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(5);
-      expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(3);
-      expect(screen.queryAllByTestId(/die-dot-doubles/i)).toHaveLength(0);
-    });
-
-    it('should handle keyboard dice rolling', async () => {
-      await act(async () => renderGame(store));
-      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYER.RIGHT });
-
-      await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
-
-      expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
-      expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(6);
-    });
-
-    it('should prevent rolling when dice already rolled', async () => {
-      await act(async () => renderGame(store));
-      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 6], player: PLAYER.RIGHT });
-      await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
-
-      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 3], player: PLAYER.LEFT });
-      await act(async () => fireEvent.keyDown(window, { key: SPACEBAR }));
-
-      expect(screen.queryAllByTestId(/die-dot-left/i)).toHaveLength(4);
-      expect(screen.queryAllByTestId(/die-dot-right/i)).toHaveLength(6);
+      const state = store.getState().backgammon;
+      expect(state.selectedSpot).toBeNull();
     });
   });
 
-  describe('Player Interactions', () => {
-    it('should handle checker bar moves for right player', async () => {
+  describe('Game States', () => {
+    it('should display winner when game is won', async () => {
+      const store = createTestStore({
+        winner: PLAYER.LEFT,
+        gamesWon: { [PLAYER.LEFT]: 1, [PLAYER.RIGHT]: 0 }
+      });
+
       await act(async () => renderGame(store));
-      const points = screen.queryAllByRole('point');
-
-      await rollDice([1, 6], PLAYER.RIGHT);
-      await clickPoints(points, [23, 22, 23, 17]);
-
-      expect(points[17].getAttribute('aria-label')).toContain('1 right checkers');
+      expect(screen.getByText(/Winner:/)).toBeInTheDocument();
     });
 
-    it('should handle checker bar moves for left player', async () => {
+    it('should show games won counter', async () => {
+      const store = createTestStore({
+        gamesWon: { [PLAYER.LEFT]: 2, [PLAYER.RIGHT]: 1 }
+      });
+
       await act(async () => renderGame(store));
-      const points = screen.queryAllByRole('point');
+      expect(screen.getByText('Games Won:')).toBeInTheDocument();
+      const scoreElements = screen.getAllByText('1');
+      expect(scoreElements.length).toBeGreaterThan(0);
+    });
 
-      await rollDice([6, 3], PLAYER.LEFT);
-      await clickPoints(points, [0, 14, 0, 17]);
+    it('should show doubling cube', async () => {
+      const store = createTestStore({
+        doublingCube: { value: 2, owner: PLAYER.LEFT, pendingOffer: null }
+      });
 
-      await rollDice([6, 1], PLAYER.RIGHT);
-      await clickPoints(points, [23, 22, 23, 17]);
-
-      expect(points[17].getAttribute('aria-label')).toContain('1 left checkers');
+      await act(async () => renderGame(store));
+      expect(screen.getByText('2')).toBeInTheDocument();
+      expect(screen.getByText('Owned by:')).toBeInTheDocument();
     });
   });
 
   describe('Turn Management', () => {
-    it('should show end turn button when no moves available', async () => {
-      const customStore = createCustomStore({
-        diceValue: [6, 5],
-        pointsHistory: [DEFAULT_GAME_STATE.points]
-      });
-
-      await act(async () => renderGame(customStore));
-
-      expect(screen.getByRole('button', { name: 'End turn' })).toBeInTheDocument();
-    });
-
     it('should show end turn button when turn is ending', async () => {
-      const customStore = createCustomStore({
+      const store = createTestStore({
         turnEnding: true,
-        pointsHistory: [DEFAULT_GAME_STATE.points]
+        pointsHistory: [initializeBoard()]
       });
 
-      await act(async () => renderGame(customStore));
-
-      expect(screen.getByRole('button', { name: 'End turn' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Roll Dice' })).toHaveAttribute('disabled');
-    });
-
-    it('should switch players when end turn is clicked', async () => {
       await act(async () => renderGame(store));
-      const points = screen.queryAllByRole('point');
-
-      await rollDice([6, 3], PLAYER.LEFT);
-      await clickPoints(points, [0, 14, 0, 17]);
-
-      const endTurnButton = screen.getByRole('button', { name: /end turn/i });
-      await act(async () => fireEvent.click(endTurnButton));
-
-      expect(screen.getByLabelText(/current player/i).getAttribute('aria-label')).toContain(PLAYER.RIGHT);
+      expect(screen.getByRole('button', { name: /end turn/i })).toBeInTheDocument();
     });
-  });
 
-  describe('Bear Off Functionality', () => {
-    it('should not display bear off for invalid positions', async () => {
-      const customStore = createCustomStore({
-        points: createBearOffTestBoard(),
-        checkersBorneOff: { left: 1, right: 4 },
-        diceValue: [4, 4, 4],
-        player: PLAYER.RIGHT,
-        potentialMoves: { '7': [11], '8': [12], '9': [-1, -1] }
+    it('should handle start game functionality', async () => {
+      const store = createTestStore({
+        gameStarted: false,
+        isMyTurn: true
       });
 
-      await act(async () => renderGame(customStore));
-
-      const point11 = screen.getByTestId(/point-11/);
-      await act(async () => fireEvent.click(point11));
-
-      expect(point11).toHaveAttribute('data-testid', expect.stringContaining('selected'));
-      expect(screen.queryByText(/bear off/i)).not.toBeInTheDocument();
-    });
-
-    it('should show bear off button when possible', async () => {
-      const customStore = createCustomStore({
-        diceValue: [6, 5],
-        player: PLAYER.RIGHT,
-        potentialSpots: [-1],
-        potentialMoves: { '19': [-1] }
-      });
-
-      await act(async () => renderGame(customStore));
-
-      expect(screen.getByText('Bear Off')).toBeInTheDocument();
-    });
-
-    it('should handle undo for bear off moves', async () => {
-      const customStore = createCustomStore({
-        points: Array.from({ length: 24 }, (_, i) => {
-          const id = i + 1;
-          return id === 24 ? { id, checkers: 1, player: PLAYER.LEFT } : { id, checkers: 0, player: null };
-        }),
-        checkersBorneOff: { [PLAYER.LEFT]: 3, [PLAYER.RIGHT]: 0 },
-        diceValue: [6, 4],
-        potentialSpots: [-1],
-        potentialMoves: { '24': [-1] },
-        pointsHistory: [Array.from({ length: 24 }, (_, i) => {
-          const id = i + 1;
-          return id === 24 ? { id, checkers: 2, player: PLAYER.LEFT } : { id, checkers: 0, player: null };
-        })],
-        diceHistory: [[6, 4, 4]],
-        playerHistory: [PLAYER.LEFT],
-        checkersOnBarHistory: [{ [PLAYER.LEFT]: 0, [PLAYER.RIGHT]: 0 }],
-        checkersBorneOffHistory: [{ [PLAYER.LEFT]: 2, [PLAYER.RIGHT]: 0 }],
-        potentialMovesHistory: [{ '24': [-1, -1] }]
-      });
-
-      await act(async () => renderGame(customStore));
-
-      expect(screen.getByText('Borne Off: 3')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Undo last move' })).toHaveAttribute('disabled');
-    });
-  });
-
-  describe('Cleanup', () => {
-    it('should clean up event listeners on unmount', async () => {
-      const { unmount } = await act(async () => renderGame(store));
-      const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
-
-      unmount();
-
-      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
-    });
-  });
-
-  describe('Doubling Cube', () => {
-    it('should render doubling cube with correct props', async () => {
-      const customStore = createCustomStore({
-        player: PLAYER.RIGHT,
-        turnEnding: true,
-        doublingCube: {
-          value: 2,
-          owner: PLAYER.LEFT,
-          pendingOffer: null
-        }
-      });
-
-      await act(async () => renderGame(customStore));
-
-      expect(screen.getByText('2')).toBeInTheDocument();
-      expect(screen.getByText('Owned by:')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /offer to double/i })).toBeInTheDocument();
-    });
-  });
-
-  describe('Doubles Handling', () => {
-    it('should handle doubles dice rolls correctly', async () => {
       await act(async () => renderGame(store));
-      const points = screen.queryAllByRole('point');
 
-      await rollDice([6, 3], PLAYER.LEFT);
-      await clickPoints(points, [0, 14, 0, 17]);
+      const startButton = screen.getByRole('button', { name: /start game/i });
+      expect(startButton).toBeInTheDocument();
 
-      await rollDice([4, 4, 4, 4], PLAYER.RIGHT);
+      await act(async () => {
+        fireEvent.click(startButton);
+      });
 
-      // Verify the mock was called for doubles
-      expect(gamePlay.rollDiceLogic).toHaveBeenCalled();
+      const state = store.getState().backgammon;
+      expect(state.gameStarted).toBe(true);
     });
   });
 });

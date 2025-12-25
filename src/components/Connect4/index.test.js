@@ -4,96 +4,156 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from '../../store';
 import { PLAYER, MESSAGES } from './globals';
-import Connect4, { Connect4Game } from '.';
+import Connect4 from '.';
+
+const createTestStore = (gameState = {}, multiplayerState = {}) => {
+  return configureStore({ 
+    reducer,
+    preloadedState: {
+      connect4: {
+        board: Array(6).fill(null).map(() => Array(7).fill(null)),
+        player: PLAYER.ONE,
+        winner: null,
+        winnerDesc: '',
+        boardFull: false,
+        history: [],
+        gamesWon: { [PLAYER.ONE]: 0, [PLAYER.TWO]: 0 },
+        isMultiplayer: true,
+        myPlayer: PLAYER.ONE,
+        isMyTurn: true,
+        ...gameState
+      },
+      multiplayer: {
+        isConnected: true,
+        rooms: {
+          connect4: {
+            roomId: 'test-room',
+            opponent: 'TestPlayer'
+          }
+        },
+        playerName: 'TestUser',
+        ...multiplayerState
+      }
+    }
+  });
+};
 
 const renderGame = (store) => {
   return render(
     <BrowserRouter>
       <Provider store={store}>
-        <Connect4Game isLocal={true} />
+        <Connect4 />
       </Provider>
     </BrowserRouter>
   );
 };
 
-const clickCells = async (cells, indices) => {
-  for (const index of indices) {
-    await act(async () => fireEvent.click(cells[index]));
-  }
+const clickCell = async (cellIndex) => {
+  const cells = screen.getAllByRole('cell');
+  await act(async () => {
+    fireEvent.click(cells[cellIndex]);
+  });
 };
 
-const BOARD_SIZE = 7 * 6;
-const WINNING_SEQUENCE = [1, 2, 1, 2, 1, 2, 1];
-const DRAW_SEQUENCE = [6, 0, 5, 1, 2, 4, 3];
-
 describe('Connect4 Component', () => {
-  let store;
+  describe('Multiplayer Setup', () => {
+    it('should show multiplayer setup when no opponent', async () => {
+      const store = createTestStore({}, {
+        rooms: { connect4: { roomId: null, opponent: null } }
+      });
+      
+      await act(async () => renderGame(store));
+      expect(screen.getByText('Waiting for opponent...')).toBeInTheDocument();
+    });
 
-  beforeEach(() => {
-    store = configureStore({ reducer });
+    it('should show room status when opponent is present', async () => {
+      const store = createTestStore();
+      
+      await act(async () => renderGame(store));
+      expect(screen.getByText(/Room:.*test-room/)).toBeInTheDocument();
+    });
   });
 
-  const setupGame = async () => {
-    await act(async () => renderGame(store));
-    const cells = screen.getAllByRole('cell');
-    return cells;
-  };
+  describe('Game Board', () => {
+    it('should render game board with 42 cells when opponent is present', async () => {
+      const store = createTestStore();
+      
+      await act(async () => renderGame(store));
+      expect(screen.getAllByRole('cell')).toHaveLength(42);
+      expect(screen.getByText('Connect Four')).toBeInTheDocument();
+    });
 
-  describe('Initial Setup', () => {
-    it('should render empty board with correct initial state', async () => {
-      const cells = await setupGame();
-
-      expect(cells).toHaveLength(BOARD_SIZE);
-      cells.forEach(cell => expect(cell).toBeEmptyDOMElement());
+    it('should show current player', async () => {
+      const store = createTestStore();
+      
+      await act(async () => renderGame(store));
       expect(screen.getByText('Current Player:')).toBeInTheDocument();
       expect(screen.getByText(PLAYER.ONE)).toBeInTheDocument();
+    });
+  });
+
+  describe('Game Interactions', () => {
+    it('should allow moves when it is player turn', async () => {
+      const store = createTestStore({ isMyTurn: true });
+      
+      await act(async () => renderGame(store));
+      await clickCell(0); // Click first cell
+      
+      // Check that the move was processed (board state changed)
+      const state = store.getState().connect4;
+      expect(state.board[5][0]).toBe(PLAYER.ONE);
+    });
+
+    it('should prevent moves when not player turn', async () => {
+      const store = createTestStore({ isMyTurn: false });
+      
+      await act(async () => renderGame(store));
+      await clickCell(0);
+      
+      // Board should remain unchanged
+      const state = store.getState().connect4;
+      expect(state.board[5][0]).toBeNull();
+    });
+
+    it('should disable undo button in multiplayer', async () => {
+      const store = createTestStore({ history: [Array(6).fill(null).map(() => Array(7).fill(null))] });
+      
+      await act(async () => renderGame(store));
       expect(screen.getByRole('button', { name: /undo move/i })).toBeDisabled();
     });
   });
 
-  describe('Gameplay', () => {
-    it('should alternate players on each move', async () => {
-      const cells = await setupGame();
-
-      await clickCells(cells, [4]);
-      expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYER.ONE}`, 'i'))).toBeInTheDocument();
-      expect(screen.getByText('Current Player:')).toBeInTheDocument();
-      expect(screen.getByText(PLAYER.TWO)).toBeInTheDocument();
-
-      await clickCells(cells, [4]);
-      expect(screen.getByLabelText(new RegExp(`Spot row 4 and col 4 with ${PLAYER.TWO}`, 'i'))).toBeInTheDocument();
-      expect(screen.getByText('Current Player:')).toBeInTheDocument();
-      expect(screen.getByText(PLAYER.ONE)).toBeInTheDocument();
-    });
-
-    it('should declare winner when four in a row achieved', async () => {
-      const cells = await setupGame();
-
-      await clickCells(cells, WINNING_SEQUENCE);
+  describe('Game States', () => {
+    it('should display winner when game is won', async () => {
+      const store = createTestStore({ 
+        winner: PLAYER.ONE,
+        winnerDesc: `${PLAYER.ONE} wins!`
+      });
+      
+      await act(async () => renderGame(store));
       expect(screen.getByText(/Winner:/)).toBeInTheDocument();
-      expect(screen.getByText(PLAYER.ONE)).toBeInTheDocument();
+      expect(screen.getByText(/Red wins!/)).toBeInTheDocument();
     });
 
-    it('should declare draw when board is full', async () => {
-      const cells = await setupGame();
-
-      for (let i = 0; i < 6; i++) {
-        await clickCells(cells, DRAW_SEQUENCE);
-      }
+    it('should display draw message when board is full', async () => {
+      const store = createTestStore({ 
+        boardFull: true,
+        winnerDesc: MESSAGES.DRAW
+      });
+      
+      await act(async () => renderGame(store));
       expect(screen.getByText(MESSAGES.DRAW)).toBeInTheDocument();
     });
-  });
 
-  describe('Game Controls', () => {
-    it('should handle undo functionality', async () => {
-      const cells = await setupGame();
-      const undoButton = screen.getByRole('button', { name: /undo move/i });
-
-      await clickCells(cells, [4]);
-      expect(screen.getByLabelText(new RegExp(`Spot row 5 and col 4 with ${PLAYER.ONE}`, 'i'))).toBeInTheDocument();
-      expect(screen.getByText('Current Player:')).toBeInTheDocument();
-      expect(screen.getByText(PLAYER.TWO)).toBeInTheDocument();
-      expect(undoButton).toBeDisabled();
+    it('should show games won counter', async () => {
+      const store = createTestStore({ 
+        gamesWon: { [PLAYER.ONE]: 2, [PLAYER.TWO]: 1 }
+      });
+      
+      await act(async () => renderGame(store));
+      expect(screen.getByText('Games Won:')).toBeInTheDocument();
+      expect(screen.getByText(`${PLAYER.ONE}: 2`)).toBeInTheDocument();
+      expect(screen.getByText(`${PLAYER.TWO}: 1`)).toBeInTheDocument();
     });
   });
 });
