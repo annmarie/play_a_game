@@ -31,3 +31,29 @@ export const BUTTON_TEXT = {
 export const GAME_TEXT = {
   TITLE: 'Backgammon',
 };
+
+export const CSS_CLASSES = {
+  POINT: 'point',
+  LIGHT: 'light',
+  DARK: 'dark',
+  BOTTOM: 'bottom',
+  TOP: 'top',
+  SELECTED: 'selected',
+  POTENTIAL: 'potential',
+};
+
+export const ARIA_LABELS = {
+  POINT: (id, checkers, player) => `Point ${id} with ${checkers} ${player ? player + ' ' : ''}checkers`,
+  CURRENT_PLAYER: (player) => `Current player ${player}`,
+  ROLL_DICE: 'Roll Dice',
+  END_TURN: 'End turn',
+  UNDO_MOVE: 'Undo last move',
+  DICE: (id, value) => `Dice ${id} showing ${value || 0}`,
+  PLAY_AGAIN: 'Play another game',
+};
+
+export const GAME_STATES = {
+  WAITING: 'waiting',
+  PLAYING: 'playing',
+  FINISHED: 'finished',
+};

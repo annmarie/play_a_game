@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { PLAYER } from '../../../globals';
+import { PLAYER, ARIA_LABELS } from '../../../globals';
 import styles from './Cell.module.css'
 
 const Cell = ({ cell, rowIndex, colIndex, onCellClick }) => {
@@ -12,7 +12,7 @@ const Cell = ({ cell, rowIndex, colIndex, onCellClick }) => {
       className={styles.connect4Cell}
       onClick={() => onCellClick(colIndex)}
       role="cell"
-      aria-label={`Spot row ${rowIndex} and col ${colIndex} with ${cell || 'empty'}`}
+      aria-label={ARIA_LABELS.CELL(rowIndex, colIndex, cell)}
       data-testid="connect4-cell"
     >
       {isOccupied && (

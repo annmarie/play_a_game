@@ -6,6 +6,7 @@ class WebSocketService {
     this.listeners = new Map();
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 5;
+    this.reconnectDelay = 2000;
   }
 
   async connect(url = 'ws://localhost:8080') {
@@ -48,7 +49,7 @@ class WebSocketService {
       this.reconnectAttempts++;
       setTimeout(() => {
         this.connect();
-      }, 2000 * this.reconnectAttempts);
+      }, this.reconnectDelay * this.reconnectAttempts);
     }
   }
 

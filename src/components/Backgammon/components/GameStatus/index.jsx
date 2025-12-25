@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { BUTTON_TEXT, PLAYER } from '../../globals';
+import { BUTTON_TEXT, PLAYER, ARIA_LABELS } from '../../globals';
 import { undoRoll } from '../../slice';
 import Checker from '../Checker';
 import styles from './GameStatus.module.css';
@@ -18,7 +18,7 @@ const GameStatus = ({
   return (
     <div className={styles.gameStatus}>
       {player && !winner && (
-        <div className={styles.currentPlayer} aria-label={`Current player ${player}`}>
+        <div className={styles.currentPlayer} aria-label={ARIA_LABELS.CURRENT_PLAYER(player)}>
           Current Player <Checker player={player} />
         </div>
       )}
@@ -28,7 +28,7 @@ const GameStatus = ({
           className={styles.actionButton}
           onClick={() => dispatch(undoRoll())}
           disabled={!player || pointsHistory.length <= 1 || winner || isMultiplayer}
-          aria-label="Undo last move"
+          aria-label={ARIA_LABELS.UNDO_MOVE}
         >
           {BUTTON_TEXT.UNDO_MOVE}
         </button>

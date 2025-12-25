@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useMemo } from 'react'
 import Checker from '../../Checker'
 import styles from './Point.module.css'
-import { BOARD_CONFIG } from '../../../globals';
+import { BOARD_CONFIG, CSS_CLASSES, ARIA_LABELS } from '../../../globals';
 
 const Point = ({ point, onClick, selected, potential }) => {
   const pointClasses = useMemo(() => {
@@ -19,11 +19,11 @@ const Point = ({ point, onClick, selected, potential }) => {
 
   const testData = useMemo(() => {
     const testClasses = [
-      'point',
-      point.id % 2 === 0 ? 'light' : 'dark',
-      point.id > BOARD_CONFIG.START_KEY_LEFT ? 'bottom' : 'top',
-      selected ? 'selected' : '',
-      potential ? 'potential' : ''
+      CSS_CLASSES.POINT,
+      point.id % 2 === 0 ? CSS_CLASSES.LIGHT : CSS_CLASSES.DARK,
+      point.id > BOARD_CONFIG.START_KEY_LEFT ? CSS_CLASSES.BOTTOM : CSS_CLASSES.TOP,
+      selected ? CSS_CLASSES.SELECTED : '',
+      potential ? CSS_CLASSES.POTENTIAL : ''
     ];
     return `point-${point.id} ${testClasses.filter(Boolean).join(' ')}`;
   }, [point.id, selected, potential]);
@@ -41,7 +41,7 @@ const Point = ({ point, onClick, selected, potential }) => {
       className={pointClasses}
       onClick={() => onClick(point)}
       data-testid={testData}
-      aria-label={`Point ${point.id} with ${point.checkers} ${point.player ? point.player + ' ' : ''}checkers`}
+      aria-label={ARIA_LABELS.POINT(point.id, point.checkers, point.player)}
     >
       {checkers}
     </div>

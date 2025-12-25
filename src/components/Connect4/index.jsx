@@ -1,5 +1,5 @@
 import PlayMode from '@/components/PlayMode';
-import { BUTTON_TEXT, PLAYER } from './globals';
+import { BUTTON_TEXT, PLAYER, ARIA_LABELS } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
@@ -71,7 +71,7 @@ const Connect4 = () => {
 
             <div className={styles.connect4Actions}>
               <button
-                aria-label="Undo Move"
+                aria-label={ARIA_LABELS.UNDO_MOVE}
                 onClick={() => dispatch(undoMove())}
                 disabled={state.history.length <= 1 || state.winner || state.isMultiplayer}
               >

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { MESSAGES } from '../../globals';
+import { MESSAGES, ARIA_LABELS } from '../../globals';
 import styles from './StatusBox.module.css';
 import PlayerText from '../PlayerText';
 
@@ -9,7 +9,7 @@ const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player =
 
   return (
     <div
-      aria-label="Game Status"
+      aria-label={ARIA_LABELS.GAME_STATUS}
       className={styles.connect4Status}
       role="status"
       aria-live="polite"
@@ -24,7 +24,7 @@ const StatusBox = ({ winner = null, winnerDesc = '', boardFull = false, player =
         <button
           className={styles.playAgainButton}
           onClick={onPlayAgain}
-          aria-label="Play another game"
+          aria-label={ARIA_LABELS.PLAY_AGAIN}
         >
           Play Again
         </button>

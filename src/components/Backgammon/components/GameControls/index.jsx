@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { BUTTON_TEXT } from '../../globals';
+import { BUTTON_TEXT, ARIA_LABELS } from '../../globals';
 import { rollDice, endTurn, togglePlayerRoll } from '../../slice';
 import Dice from './Dice';
 import styles from './GameControls.module.css';
@@ -16,7 +16,7 @@ const GameControls = ({ diceValue, potentialMoves, turnEnding, winner, doublingC
           {(Object.keys(potentialMoves || {}).length < 1 || turnEnding) && (
             <button
               className={styles.endTurnButton}
-              aria-label="End turn"
+              aria-label={ARIA_LABELS.END_TURN}
               onClick={() => dispatch(turnEnding ? endTurn() : togglePlayerRoll())}
               disabled={disabled}
             >
@@ -27,7 +27,7 @@ const GameControls = ({ diceValue, potentialMoves, turnEnding, winner, doublingC
       ) : (
         <button
           className={styles.diceButton}
-          aria-label="Roll Dice"
+          aria-label={ARIA_LABELS.ROLL_DICE}
           onClick={() => dispatch(rollDice())}
           disabled={disabled || winner || doublingCube.pendingOffer || turnEnding}
         >
@@ -37,7 +37,7 @@ const GameControls = ({ diceValue, potentialMoves, turnEnding, winner, doublingC
       {turnEnding && !diceValue && (
         <button
           className={styles.endTurnButton}
-          aria-label="End turn"
+          aria-label={ARIA_LABELS.END_TURN}
           onClick={() => dispatch(endTurn())}
           disabled={disabled}
         >
