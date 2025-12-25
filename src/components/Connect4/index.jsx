@@ -1,5 +1,7 @@
-import PlayMode from '@/components/PlayMode';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { BUTTON_TEXT, PLAYER, ARIA_LABELS } from './globals';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
@@ -7,14 +9,21 @@ import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import PlayerText from './components/PlayerText';
 import RoomStatus from './components/RoomStatus';
+import Multiplayer from '@/components/Multiplayer';
 import { shouldShowGame, shouldShowMultiplayerSetup } from '@/components/Multiplayer/multiplayerUtils';
 import styles from './Connect4.module.css';
 import Layout from '@/components/Layout';
 
-const Connect4 = () => {
+const Connect4 = ({ isLocal = false }) => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.connect4);
   const multiplayer = useSelector((state) => state.multiplayer);
+  useEffect(() => {
+    if (isLocal) {
+      dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }));
+    }
+  }, [dispatch, isLocal]);
+
   const handleCellClick = (col) => {
     if (state.isMultiplayer && !state.isMyTurn) return;
     if (state.winner || state.boardFull) return;
@@ -29,11 +38,20 @@ const Connect4 = () => {
         <h3 className={styles.connect4Title}>Connect Four</h3>
 
         {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms.connect4?.opponent) && (
-          <PlayMode
-            gameType="connect4"
-            isMultiplayer={state.isMultiplayer}
-            setMultiplayerMode={setMultiplayerMode}
-          />
+          isLocal ? (
+            <div className={styles.localMode}>
+              <h4>Local Game Mode</h4>
+              <p>Players take turns on the same device</p>
+            </div>
+          ) : (
+            <>
+              <Multiplayer gameType="connect4" />
+
+              <div className={styles.localGameLink}>
+                <Link to="/connect4/local">Play Local Game</Link>
+              </div>
+            </>
+          )
         )}
 
         {shouldShowGame(state.isMultiplayer, multiplayer.rooms.connect4?.roomId, multiplayer.rooms.connect4?.opponent) && (
@@ -83,6 +101,10 @@ const Connect4 = () => {
       </div>
     </Layout>
   );
+};
+
+Connect4.propTypes = {
+  isLocal: PropTypes.bool
 };
 
 export default Connect4;

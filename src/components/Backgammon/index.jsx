@@ -1,9 +1,11 @@
-import { useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, selectSpot, setMultiplayerMode } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
-import PlayMode from '@/components/PlayMode';
+import Multiplayer from '@/components/Multiplayer';
 import GameScore from './components/GameScore';
 import WinnerAnnouncement from './components/WinnerAnnouncement';
 import DoubleOffer from './components/DoubleOffer';
@@ -17,10 +19,16 @@ import StartGame from './components/StartGame';
 import { shouldShowGame, shouldShowMultiplayerSetup } from '@/components/Multiplayer/multiplayerUtils';
 import { GAME_TEXT } from './globals';
 
-const Backgammon = () => {
+const Backgammon = ({ isLocal = false }) => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.backgammon);
   const multiplayer = useSelector((state) => state.multiplayer);
+
+  useEffect(() => {
+    if (isLocal) {
+      dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }));
+    }
+  }, [dispatch, isLocal]);
 
   useWebSocketHandlers();
   useKeyboardControls(state.diceValue, state.turnEnding);
@@ -48,11 +56,20 @@ const Backgammon = () => {
         <h3 className={styles.backgammonTitle}>{GAME_TEXT.TITLE}</h3>
 
         {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms.backgammon?.opponent) && (
-          <PlayMode
-            gameType="backgammon"
-            isMultiplayer={null}
-            setMultiplayerMode={setMultiplayerMode}
-          />
+          isLocal ? (
+            <div className={styles.localMode}>
+              <h4>Local Game Mode</h4>
+              <p>Players take turns on the same device</p>
+            </div>
+          ) : (
+            <>
+              <Multiplayer gameType="backgammon" />
+
+              <div className={styles.localGameLink}>
+                <Link to="/backgammon/local">Play Local Game</Link>
+              </div>
+            </>
+          )
         )}
 
         {shouldShowGame(state.isMultiplayer, multiplayer.rooms.backgammon?.roomId, multiplayer.rooms.backgammon?.opponent) && (
@@ -119,6 +136,10 @@ const Backgammon = () => {
       </div>
     </Layout>
   );
+};
+
+Backgammon.propTypes = {
+  isLocal: PropTypes.bool
 };
 
 export default Backgammon;

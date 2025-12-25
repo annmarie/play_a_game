@@ -41,4 +41,4 @@
 
 ### Single Player Mode
 - Players take turns using the same interface
-- Accessed by adding ?local=1 to the end of game url
+- Access via `/connect4/local` or `/backgammon/local` URLs

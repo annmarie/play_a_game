@@ -53,11 +53,14 @@ const Multiplayer = ({ gameType }) => {
     <div className={styles.multiplayerSetup}>
       <h3>{LABELS.MULTIPLAYER_SETUP}</h3>
 
+      {error && <div className={styles.error}>{error}</div>}
+
       {!isConnected ? (
-        <p>Connecting to server...</p>
+        <div className={styles.connectionStatus}>
+          <p>Connecting to server...</p>
+        </div>
       ) : (
         <>
-          {error && <div className={styles.error}>{error}</div>}
 
           {storedName ? (
             <div className={styles.nameDisplay}>

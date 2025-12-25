@@ -1,6 +1,9 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
+import { wsService } from '@services/websocket';
+import { setupWebSocketListeners } from '@services/websocketSetup';
 import Home from '@components/Home';
 import Backgammon from '@components/Backgammon';
 import Connect4 from '@components/Connect4';
@@ -8,13 +11,20 @@ import Rooms from '@components/Rooms';
 import './App.module.css'
 
 const App = () => {
+  useEffect(() => {
+    setupWebSocketListeners(store);
+    wsService.connect();
+  }, []);
+
   return (
     <Provider store={store}>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/backgammon" element={<Backgammon />} />
+          <Route path="/backgammon/local" element={<Backgammon isLocal={true} />} />
           <Route path="/connect4" element={<Connect4 />} />
+          <Route path="/connect4/local" element={<Connect4 isLocal={true} />} />
           <Route path="/rooms" element={<Rooms />} />
         </Routes>
       </Router>

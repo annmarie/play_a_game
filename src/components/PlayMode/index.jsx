@@ -4,15 +4,14 @@ import { useEffect } from 'react';
 import Multiplayer from '@/components/Multiplayer';
 import styles from './PlayMode.module.css';
 
-const PlayMode = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
+const PlayMode = ({ gameType, isMultiplayer, setMultiplayerMode, isLocal = false }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('local') === '1') {
+    if (isLocal) {
       dispatch(setMultiplayerMode({ isMultiplayer: false, myPlayer: null }));
     }
-  }, [dispatch, setMultiplayerMode]);
+  }, [dispatch, setMultiplayerMode, isLocal]);
 
   return (
     <div className={styles.modeSelector}>
@@ -35,7 +34,8 @@ const PlayMode = ({ gameType, isMultiplayer, setMultiplayerMode }) => {
 PlayMode.propTypes = {
   gameType: PropTypes.string.isRequired,
   isMultiplayer: PropTypes.oneOf([null, true, false]),
-  setMultiplayerMode: PropTypes.func.isRequired
+  setMultiplayerMode: PropTypes.func.isRequired,
+  isLocal: PropTypes.bool
 };
 
 export default PlayMode;
