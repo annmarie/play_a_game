@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, selectSpot } from './slice';

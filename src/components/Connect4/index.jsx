@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { BUTTON_TEXT, PLAYER, ARIA_LABELS } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain } from './slice';
