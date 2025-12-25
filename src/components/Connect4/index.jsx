@@ -1,4 +1,4 @@
-import { BUTTON_TEXT, PLAYER, ARIA_LABELS } from './globals';
+import { BUTTON_TEXT, PLAYER, ARIA_LABELS, GAME_TEXT } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeMove, undoMove, playAgain } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
@@ -27,7 +27,7 @@ const Connect4 = () => {
   return (
     <Layout showHeader={true}>
       <div className={styles.connect4Game}>
-        <h3 className={styles.connect4Title}>Connect Four</h3>
+        <h3 className={styles.connect4Title}>{GAME_TEXT.TITLE}</h3>
 
         {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms?.connect4?.opponent) && (
           <Multiplayer gameType="connect4" />

@@ -12,6 +12,10 @@ export const BUTTON_TEXT = {
   UNDO: 'UNDO',
 };
 
+export const GAME_TEXT = {
+  TITLE: 'Connect Four',
+};
+
 export const GAME_CONFIG = {
   MAX_HISTORY: 3,
   ROWS: 6,
