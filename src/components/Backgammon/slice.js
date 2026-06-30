@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeBoard, getPointIdToIndexMap } from './boardUtils';
 import { togglePlayer, checkWinner, rollDiceLogic, selectSpotLogic } from './gamePlay';
-import { findPotentialMoves, moveCheckers, validateBearOffMove } from './moveLogic';
+import { findPotentialMoves, moveCheckers, validateBearOffMove, canBearOff } from './moveLogic';
 import { PLAYER, BOARD_CONFIG } from './globals';
 import { sendMultiplayerMove } from '@/components/Multiplayer/multiplayerUtils';
 
@@ -265,7 +265,7 @@ export const slice = createSlice({
 });
 
 const reduceMakeMove = (state, { payload: { fromPointId, toPointId } }) => {
-  const { player, diceValue, points } = state;
+  const { player, diceValue, points, checkersOnBar } = state;
   if (!player || !diceValue?.length) return state;
 
   // Prevent moves if it's multiplayer and not the player's turn
@@ -278,6 +278,8 @@ const reduceMakeMove = (state, { payload: { fromPointId, toPointId } }) => {
 
   // Bear off move
   if (toPointId === -1) {
+    // Bearing off is only legal once every checker is in the home board (and none on the bar).
+    if (!canBearOff(points, player, checkersOnBar)) return state;
     const { isValid, usedDiceValue } = validateBearOffMove(player, fromPointId, diceValue, points);
     return isValid ? updateMoveCheckerState(state, fromIndex, -1, usedDiceValue) : state;
   }
@@ -292,6 +294,15 @@ const reduceMakeMove = (state, { payload: { fromPointId, toPointId } }) => {
   if (!diceValue.includes(moveDistance) || pointKey[toIndex] <= pointKey[fromIndex]) {
     return state;
   }
+
+  // The reducer is authoritative: only accept a destination that the move logic
+  // considers legal (rejects landing on a point held by 2+ opponents, and rejects
+  // ordinary moves while a checker is still on the bar).
+  const legalTargets = findPotentialMoves(points, player, diceValue, checkersOnBar)[fromPointId];
+  if (!legalTargets || !legalTargets.includes(toPointId)) {
+    return state;
+  }
+
   return updateMoveCheckerState(state, fromIndex, toIndex, moveDistance);
 };
 

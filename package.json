@@ -8,7 +8,8 @@
     "build": "NODE_ENV=production vite build",
     "lint": "eslint .",
     "preview": "NODE_ENV=production vite preview",
-    "test": "NODE_ENV=test jest -u",
+    "test": "NODE_ENV=test jest",
+    "test:update": "NODE_ENV=test jest -u",
     "server": "cd websocket && npm start",
     "websocket:dev": "cd websocket && npm run dev",
     "dev:full": "concurrently \"npm run websocket:dev\" \"npm run dev\""

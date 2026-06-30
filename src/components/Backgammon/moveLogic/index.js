@@ -12,7 +12,9 @@ function getFurthestOccupiedPoint(points, player) {
   const occupiedPoints = points
     .filter(p => p.player === player && p.id >= homeRange[0] && p.id <= homeRange[1])
     .map(p => p.id);
-  return player === PLAYER.LEFT ? Math.min(...occupiedPoints) : Math.min(...occupiedPoints);
+  // Both home boards run low-id (furthest from bearing off) to high-id, so the
+  // furthest-back checker is always the lowest occupied point id for either player.
+  return Math.min(...occupiedPoints);
 }
 
 /**
