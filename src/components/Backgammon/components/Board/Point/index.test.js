@@ -32,4 +32,20 @@ describe('Point Component', () => {
     await act(async () => fireEvent.click(point));
     expect(mockOnClick).toHaveBeenCalledWith(mockPoint);
   });
+
+  it('is keyboard-operable and focusable (Enter and Space select the point)', async () => {
+    await act(async () => render(<Point point={mockPoint} onClick={mockOnClick} />));
+    const point = screen.getByLabelText(/Point 1 with 3 right checkers/);
+
+    expect(point).toHaveAttribute('tabindex', '0');
+    expect(point).toHaveAttribute('role', 'gridcell');
+
+    await act(async () => fireEvent.keyDown(point, { key: 'Enter' }));
+    await act(async () => fireEvent.keyDown(point, { key: ' ' }));
+    expect(mockOnClick).toHaveBeenCalledTimes(2);
+    expect(mockOnClick).toHaveBeenCalledWith(mockPoint);
+
+    await act(async () => fireEvent.keyDown(point, { key: 'Tab' }));
+    expect(mockOnClick).toHaveBeenCalledTimes(2);
+  });
 });

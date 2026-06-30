@@ -32,6 +32,11 @@
   margin: 0 0 1em 0;
 }
 
+.exitButton {
+  display: block;
+  margin: var(--spacing-md) auto 0;
+}
+
 .backgammonStatus {
   display: flex;
   justify-content: space-between;

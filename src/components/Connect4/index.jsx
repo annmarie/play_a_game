@@ -1,13 +1,14 @@
 import { BUTTON_TEXT, PLAYER, ARIA_LABELS, GAME_TEXT } from './globals';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, undoMove, playAgain } from './slice';
+import { makeMove, undoMove, playAgain, setMultiplayerMode, resetGame } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import StatusBox from './components/StatusBox';
 import Board from './components/Board';
 import PlayerText from './components/PlayerText';
 import RoomStatus from './components/RoomStatus';
 import Multiplayer from '@/components/Multiplayer';
-import { shouldShowMultiplayerSetup } from '@/components/Multiplayer/multiplayerUtils';
+import GameModeSelect from '@/components/GameModeSelect';
+import { shouldShowGame } from '@/components/Multiplayer/multiplayerUtils';
 import styles from './Connect4.module.css';
 import Layout from '@/components/Layout';
 
@@ -17,6 +18,13 @@ const Connect4 = () => {
   const multiplayer = useSelector((state) => state.multiplayer || {});
 
   useWebSocketHandlers();
+
+  const room = multiplayer.rooms?.connect4;
+  const opponent = room?.opponent;
+  const isLocal = state.isMultiplayer === false;
+
+  const handlePlayLocal = () => dispatch(setMultiplayerMode({ isMultiplayer: false }));
+  const handlePlayOnline = () => dispatch(setMultiplayerMode({ isMultiplayer: true }));
 
   const handleCellClick = (col) => {
     if (state.isMultiplayer && !state.isMyTurn) return;
@@ -29,18 +37,24 @@ const Connect4 = () => {
       <div className={styles.connect4Game}>
         <h3 className={styles.connect4Title}>{GAME_TEXT.TITLE}</h3>
 
-        {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms?.connect4?.opponent) && (
+        {state.isMultiplayer === null && (
+          <GameModeSelect onLocal={handlePlayLocal} onOnline={handlePlayOnline} />
+        )}
+
+        {state.isMultiplayer === true && !opponent && (
           <Multiplayer gameType="connect4" />
         )}
 
-        {(state.isMultiplayer && multiplayer.rooms?.connect4?.opponent) && (
+        {shouldShowGame(state.isMultiplayer, room?.roomId, opponent) && (
           <>
-            <RoomStatus
-              roomId={multiplayer.rooms.connect4.roomId}
-              opponent={multiplayer.rooms.connect4.opponent}
-              myPlayer={state.myPlayer}
-              playerName={multiplayer.playerName}
-            />
+            {state.isMultiplayer && (
+              <RoomStatus
+                roomId={room.roomId}
+                opponent={room.opponent}
+                myPlayer={state.myPlayer}
+                playerName={multiplayer.playerName}
+              />
+            )}
 
             <div className={styles.gameScore}>
               <div>Games Won:</div>
@@ -62,6 +76,7 @@ const Connect4 = () => {
             <Board
               board={state.board}
               handleCellClick={handleCellClick}
+              disabled={Boolean(state.winner) || state.boardFull || (state.isMultiplayer && !state.isMyTurn)}
             />
 
             <div className={styles.connect4Actions}>
@@ -73,6 +88,14 @@ const Connect4 = () => {
                 {BUTTON_TEXT.UNDO}
               </button>
             </div>
+
+            {isLocal && (
+              <div className={styles.connect4Actions}>
+                <button type="button" onClick={() => dispatch(resetGame())}>
+                  Exit to Menu
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

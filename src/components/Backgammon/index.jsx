@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeMove, selectSpot } from './slice';
+import { makeMove, selectSpot, setMultiplayerMode, startGame, resetGame } from './slice';
 import { useWebSocketHandlers } from './hooks/useWebSocketHandlers';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import Multiplayer from '@/components/Multiplayer';
@@ -14,7 +14,8 @@ import Layout from '@/components/Layout';
 import styles from './Backgammon.module.css';
 import RoomStatus from './components/RoomStatus';
 import StartGame from './components/StartGame';
-import { shouldShowMultiplayerSetup } from '@/components/Multiplayer/multiplayerUtils';
+import GameModeSelect from '@/components/GameModeSelect';
+import { shouldShowGame } from '@/components/Multiplayer/multiplayerUtils';
 import { GAME_TEXT } from './globals';
 
 const Backgammon = () => {
@@ -24,6 +25,19 @@ const Backgammon = () => {
 
   useWebSocketHandlers();
   useKeyboardControls(state.diceValue, state.turnEnding);
+
+  const room = multiplayer.rooms?.backgammon;
+  const opponent = room?.opponent;
+  const isLocal = state.isMultiplayer === false;
+
+  const handlePlayLocal = () => {
+    dispatch(setMultiplayerMode({ isMultiplayer: false }));
+    dispatch(startGame());
+  };
+
+  const handlePlayOnline = () => {
+    dispatch(setMultiplayerMode({ isMultiplayer: true }));
+  };
 
   const handleSpotClick = useCallback(
     (point) => {
@@ -46,24 +60,32 @@ const Backgammon = () => {
       <div className={styles.backgammonGame}>
         <h3 className={styles.backgammonTitle}>{GAME_TEXT.TITLE}</h3>
 
-        {shouldShowMultiplayerSetup(state.isMultiplayer, multiplayer.rooms?.backgammon?.opponent) && (
+        {state.isMultiplayer === null && (
+          <GameModeSelect onLocal={handlePlayLocal} onOnline={handlePlayOnline} />
+        )}
+
+        {state.isMultiplayer === true && !opponent && (
           <Multiplayer gameType="backgammon" />
         )}
 
-        {(state.isMultiplayer && multiplayer.rooms?.backgammon?.opponent) && (
+        {shouldShowGame(state.isMultiplayer, room?.roomId, opponent) && (
           <>
-            <RoomStatus
-              roomId={multiplayer.rooms.backgammon.roomId}
-              opponent={multiplayer.rooms.backgammon.opponent}
-              myPlayer={state.myPlayer}
-              playerName={multiplayer.playerName}
-            />
+            {state.isMultiplayer && (
+              <>
+                <RoomStatus
+                  roomId={room.roomId}
+                  opponent={room.opponent}
+                  myPlayer={state.myPlayer}
+                  playerName={multiplayer.playerName}
+                />
 
-            <StartGame
-              isMultiplayer={state.isMultiplayer}
-              hasOpponent={!!multiplayer.rooms?.backgammon?.opponent}
-              gameStarted={state.gameStarted}
-            />
+                <StartGame
+                  isMultiplayer={state.isMultiplayer}
+                  hasOpponent={!!opponent}
+                  gameStarted={state.gameStarted}
+                />
+              </>
+            )}
 
             <GameScore
               gamesWon={state.gamesWon}
@@ -107,6 +129,16 @@ const Backgammon = () => {
                 roomId={multiplayer.rooms?.backgammon?.roomId}
               />
             </div>
+
+            {isLocal && (
+              <button
+                type="button"
+                className={styles.exitButton}
+                onClick={() => dispatch(resetGame())}
+              >
+                Exit to Menu
+              </button>
+            )}
           </>
         )}
       </div>

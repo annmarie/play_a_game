@@ -15,8 +15,8 @@
   --shadow-color: rgba(0, 0, 0, 0.1);
 
   /* Player colors */
-  --player-red: red;
-  --player-yellow: yellow;
+  --player-red: #d62828;
+  --player-yellow: #ffce3a;
 
   /* Spacing */
   --spacing-xs: 0.25rem;

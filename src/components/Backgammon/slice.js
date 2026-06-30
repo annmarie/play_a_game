@@ -106,14 +106,31 @@ export const slice = createSlice({
 
     resetGame: (state) => ({ ...initialState, points: initializeBoard(), gamesWon: state.gamesWon }),
 
-    playAgain: (state) => ({
-      ...initialState,
-      points: initializeBoard(),
-      gamesWon: state.gamesWon,
-      isMultiplayer: state.isMultiplayer,
-      myPlayer: state.myPlayer,
-      isMyTurn: !state.isMultiplayer || state.myPlayer === PLAYER.LEFT
-    }),
+    playAgain: (state) => {
+      const base = {
+        ...initialState,
+        points: initializeBoard(),
+        gamesWon: state.gamesWon,
+        isMultiplayer: state.isMultiplayer,
+        myPlayer: state.myPlayer,
+        isMyTurn: !state.isMultiplayer || state.myPlayer === PLAYER.LEFT
+      };
+
+      // Local games have no "Start Game" button, so begin the next game immediately.
+      if (state.isMultiplayer === false) {
+        const { diceValue, player } = rollDiceLogic(null);
+        return {
+          ...base,
+          gameStarted: true,
+          diceValue,
+          player,
+          potentialMoves: findPotentialMoves(base.points, player, diceValue, base.checkersOnBar),
+          isMyTurn: true,
+        };
+      }
+
+      return base;
+    },
 
     setCustomDice: (state, action) => ({
       ...state,

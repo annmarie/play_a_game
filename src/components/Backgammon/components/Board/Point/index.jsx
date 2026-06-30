@@ -34,14 +34,24 @@ const Point = ({ point, onClick, selected, potential }) => {
     )), [point.checkers, point.player]
   );
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick(point);
+    }
+  };
+
   return (
     <div
-      role="point"
+      role="gridcell"
+      tabIndex={0}
       data-key={point.id}
       className={pointClasses}
       onClick={() => onClick(point)}
+      onKeyDown={handleKeyDown}
       data-testid={testData}
       aria-label={ARIA_LABELS.POINT(point.id, point.checkers, point.player)}
+      aria-selected={selected || undefined}
     >
       {checkers}
     </div>

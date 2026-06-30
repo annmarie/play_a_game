@@ -30,3 +30,30 @@
 .bearOffArea:hover {
   background-color: #e0e0e0;
 }
+
+/* The board is sized entirely in em, so shrinking its font-size scales the
+   whole board (points, gaps, and the bear-off offset) proportionally. */
+@media (max-width: 48em) {
+  .backgammonBoard {
+    font-size: 0.7em;
+  }
+}
+
+@media (max-width: 32em) {
+  .backgammonBoard {
+    font-size: 0.5em;
+    width: 100%;
+    max-width: 37.5em;
+  }
+
+  /* Stop the bear-off zone overflowing the viewport; reflow it as a full-width
+     bar below the points instead of floating off the right edge. */
+  .bearOffArea {
+    position: static;
+    transform: none;
+    grid-column: 1 / -1;
+    width: auto;
+    height: 3em;
+    margin-top: 0.5em;
+  }
+}

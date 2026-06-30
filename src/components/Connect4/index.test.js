@@ -48,10 +48,10 @@ const renderGame = (store) => {
   );
 };
 
-const clickCell = async (cellIndex) => {
-  const cells = screen.getAllByRole('cell');
+const clickColumn = async (colIndex) => {
+  const columns = screen.getAllByRole('button', { name: /drop in column/i });
   await act(async () => {
-    fireEvent.click(cells[cellIndex]);
+    fireEvent.click(columns[colIndex]);
   });
 };
 
@@ -79,7 +79,8 @@ describe('Connect4 Component', () => {
       const store = createTestStore();
       
       await act(async () => renderGame(store));
-      expect(screen.getAllByRole('cell')).toHaveLength(42);
+      expect(screen.getAllByRole('button', { name: /drop in column/i })).toHaveLength(7);
+      expect(screen.getAllByTestId('connect4-cell')).toHaveLength(42);
       expect(screen.getByText('Connect Four')).toBeInTheDocument();
     });
 
@@ -97,7 +98,7 @@ describe('Connect4 Component', () => {
       const store = createTestStore({ isMyTurn: true });
       
       await act(async () => renderGame(store));
-      await clickCell(0); // Click first cell
+      await clickColumn(0); // Drop in first column
       
       // Check that the move was processed (board state changed)
       const state = store.getState().connect4;
@@ -108,7 +109,7 @@ describe('Connect4 Component', () => {
       const store = createTestStore({ isMyTurn: false });
       
       await act(async () => renderGame(store));
-      await clickCell(0);
+      await clickColumn(0);
       
       // Board should remain unchanged
       const state = store.getState().connect4;

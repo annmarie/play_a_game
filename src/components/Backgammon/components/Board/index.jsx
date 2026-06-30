@@ -10,8 +10,15 @@ const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
     }
   };
 
+  const handleBearOffKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleBearOffClick();
+    }
+  };
+
   return (
-    <div className={styles.backgammonBoard}>
+    <div className={styles.backgammonBoard} role="grid" aria-label="Backgammon board">
       {points.map((point) => {
         const isSelected = selectedSpot === point.id;
         const isPotential = potentialSpots.includes(point.id);
@@ -29,7 +36,11 @@ const Board = ({ points, selectedSpot, potentialSpots, handleSpotClick }) => {
       {potentialSpots.includes(-1) && (
         <div
           className={styles.bearOffArea}
+          role="button"
+          tabIndex={0}
+          aria-label="Bear off selected checker"
           onClick={handleBearOffClick}
+          onKeyDown={handleBearOffKeyDown}
         >
           Bear Off
         </div>

@@ -1,0 +1,63 @@
+.modeSelect {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin: var(--spacing-lg) auto;
+  max-width: 32em;
+}
+
+.prompt {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-brown);
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.modeButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex: 1 1 12em;
+  min-width: 11em;
+  padding: var(--spacing-lg);
+  background-color: var(--primary-blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.modeButton:hover {
+  background-color: var(--primary-blue-hover);
+}
+
+.modeButton:focus-visible {
+  outline: 0.1875rem solid var(--text-brown);
+  outline-offset: 0.125rem;
+}
+
+.modeButton:active {
+  transform: translateY(0.0625rem);
+}
+
+.modeName {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.modeDesc {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}

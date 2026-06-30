@@ -57,7 +57,7 @@ const renderGame = (store) => {
 };
 
 const clickPoint = async (pointIndex) => {
-  const points = screen.getAllByRole('point');
+  const points = screen.getAllByRole('gridcell');
   await act(async () => {
     fireEvent.click(points[pointIndex]);
   });
@@ -87,7 +87,7 @@ describe('Backgammon Component Tests', () => {
       const store = createTestStore();
 
       await act(async () => renderGame(store));
-      expect(screen.getAllByRole('point')).toHaveLength(24);
+      expect(screen.getAllByRole('gridcell')).toHaveLength(24);
       expect(screen.getByText('Backgammon')).toBeInTheDocument();
     });
 
@@ -97,7 +97,7 @@ describe('Backgammon Component Tests', () => {
       await act(async () => renderGame(store));
 
       // Check that initial board has checkers in starting positions
-      const points = screen.getAllByRole('point');
+      const points = screen.getAllByRole('gridcell');
       expect(points[0]).toHaveAttribute('aria-label', expect.stringContaining('5 left checkers'));
       expect(points[23]).toHaveAttribute('aria-label', expect.stringContaining('2 right checkers'));
     });
