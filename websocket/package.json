@@ -1,5 +1,5 @@
 {
-  "name": "@local/play-a-game-server",
+  "name": "@local/gameroom-server",
   "version": "1.0.0",
   "description": "WebSocket server for multiplayer games",
   "main": "index.js",
