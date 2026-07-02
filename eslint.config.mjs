@@ -37,7 +37,7 @@ export default [
     },
   },
   {
-    files: ['server/**/*.js'],
+    files: ['websocket/**/*.js'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: globals.node,
