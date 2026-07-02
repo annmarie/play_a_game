@@ -1,11 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
-import backgammonReducer, { initialState, selectSpot, rollDice, makeMove, resetGame, undoRoll, offerDouble, acceptDouble, declineDouble, endTurn } from './slice';
+import backgammonReducer, { initialState, selectSpot, rollDice, makeMove, resetGame, undoRoll, offerDouble, acceptDouble, declineDouble, endTurn, togglePlayerRoll, setMultiplayerMode, playAgain } from './slice';
 import { PLAYER } from './globals';
 import * as gamePlay from './gamePlay';
+import { sendMultiplayerMove } from '@/components/Multiplayer/multiplayerUtils';
 
 jest.mock('./gamePlay', () => ({
   ...jest.requireActual('./gamePlay'),
   rollDiceLogic: jest.fn(),
+}));
+
+jest.mock('@/components/Multiplayer/multiplayerUtils', () => ({
+  sendMultiplayerMove: jest.fn(),
 }));
 
 describe('Backgammon Slice', () => {
@@ -203,6 +208,68 @@ describe('Backgammon Slice', () => {
     expect(state.diceValue).toBe(null);
   });
 
+  it('togglePlayerRoll broadcasts the turn switch in multiplayer (no legal move)', () => {
+    // A no-legal-move turn end must reach the opponent, or the clients desync.
+    store.dispatch(setMultiplayerMode({ isMultiplayer: true, myPlayer: PLAYER.LEFT }));
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER.LEFT });
+    store.dispatch(rollDice());
+    sendMultiplayerMove.mockClear(); // discard the rollDice broadcast
+
+    store.dispatch(togglePlayerRoll());
+    state = store.getState();
+
+    expect(state.player).toBe(PLAYER.RIGHT);
+    expect(state.diceValue).toBeNull();
+    expect(state.isMyTurn).toBe(false);
+    expect(sendMultiplayerMove).toHaveBeenCalledWith(
+      'backgammon',
+      expect.objectContaining({ player: PLAYER.RIGHT, diceValue: null })
+    );
+  });
+
+  it('togglePlayerRoll does not broadcast in local play', () => {
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER.LEFT });
+    store.dispatch(rollDice());
+    store.dispatch(togglePlayerRoll());
+    state = store.getState();
+
+    expect(state.player).toBe(PLAYER.RIGHT);
+    expect(sendMultiplayerMove).not.toHaveBeenCalled();
+  });
+
+  it('playAgain broadcasts a full reset in multiplayer', () => {
+    // Without the broadcast, the opponent is stuck on the winner screen.
+    store.dispatch(setMultiplayerMode({ isMultiplayer: true, myPlayer: PLAYER.LEFT }));
+    sendMultiplayerMove.mockClear();
+
+    store.dispatch(playAgain());
+    state = store.getState();
+
+    expect(state.gameStarted).toBe(false);
+    expect(state.winner).toBeNull();
+    expect(state.player).toBeNull();
+    expect(sendMultiplayerMove).toHaveBeenCalledWith(
+      'backgammon',
+      expect.objectContaining({
+        winner: null,
+        player: null,
+        gameStarted: false,
+        doublingCube: { value: 1, owner: null, pendingOffer: null },
+      })
+    );
+  });
+
+  it('playAgain does not broadcast in local play', () => {
+    // Local playAgain rolls immediately to start the next game.
+    gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER.LEFT });
+    store.dispatch(setMultiplayerMode({ isMultiplayer: false }));
+    sendMultiplayerMove.mockClear();
+
+    store.dispatch(playAgain());
+
+    expect(sendMultiplayerMove).not.toHaveBeenCalled();
+  });
+
   describe('Doubling Cube', () => {
     it('should initialize with value 1 and no owner', () => {
       expect(state.doublingCube.value).toBe(1);
@@ -230,6 +297,71 @@ describe('Backgammon Slice', () => {
       expect(newState.doublingCube.value).toBe(2);
       expect(newState.doublingCube.owner).toBe(PLAYER.RIGHT);
       expect(newState.doublingCube.pendingOffer).toBeNull();
+    });
+
+    it('assigns cube ownership to the accepter even if accepted before the turn ends', () => {
+      // The top-level DoubleOffer accept isn't turn-gated, so accept can fire while the offerer is still current.
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER.LEFT });
+      store.dispatch(rollDice());
+      store.dispatch(offerDouble());
+      // Accept without switching turns first: state.player is still LEFT.
+      store.dispatch(acceptDouble());
+      const newState = store.getState();
+      expect(newState.player).toBe(PLAYER.RIGHT); // accepter plays next
+      expect(newState.doublingCube.owner).toBe(PLAYER.RIGHT); // accepter owns it
+      expect(newState.doublingCube.value).toBe(2);
+    });
+
+    it('lets the cube owner offer the next double', () => {
+      // L offers from centered, R takes -> R owns the cube.
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER.LEFT });
+      store.dispatch(rollDice());
+      store.dispatch(offerDouble());
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 5], player: PLAYER.RIGHT });
+      store.dispatch(rollDice());
+      store.dispatch(acceptDouble());
+      expect(store.getState().doublingCube.owner).toBe(PLAYER.RIGHT);
+
+      // R, the owner, may redouble on their turn.
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 2], player: PLAYER.RIGHT });
+      store.dispatch(rollDice());
+      store.dispatch(offerDouble());
+      expect(store.getState().doublingCube.pendingOffer).toBe(PLAYER.RIGHT);
+    });
+
+    it('prevents the non-owner from offering a double', () => {
+      // L offers from centered, R takes -> R owns the cube and is on roll.
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [2, 3], player: PLAYER.LEFT });
+      store.dispatch(rollDice());
+      store.dispatch(offerDouble());
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [4, 5], player: PLAYER.RIGHT });
+      store.dispatch(rollDice());
+      store.dispatch(acceptDouble());
+      expect(store.getState().doublingCube.owner).toBe(PLAYER.RIGHT);
+
+      // Move to LEFT, who does not own the cube: the offer must be rejected.
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [1, 2], player: PLAYER.LEFT });
+      store.dispatch(rollDice());
+      store.dispatch(offerDouble());
+      expect(store.getState().doublingCube.pendingOffer).toBeNull();
+    });
+
+    it('gives the turn to the accepter after a take, not back to the offerer', () => {
+      // acceptDouble used to return the turn to the offerer, skipping the accepter who just paid double.
+      gamePlay.rollDiceLogic.mockReturnValueOnce({ diceValue: [6, 3], player: PLAYER.LEFT });
+      store.dispatch(rollDice());
+      store.dispatch(makeMove({ fromPointId: 1, toPointId: 15 }));
+      store.dispatch(makeMove({ fromPointId: 1, toPointId: 18 }));
+      expect(store.getState().turnEnding).toBe(true);
+
+      store.dispatch(offerDouble());  // LEFT offers at end of its turn
+      store.dispatch(endTurn());      // pass control to RIGHT to respond
+      store.dispatch(acceptDouble()); // RIGHT takes the cube
+
+      const s = store.getState();
+      expect(s.player).toBe(PLAYER.RIGHT);   // accepter plays next
+      expect(s.turnEnding).toBe(false);      // clean turn, so RIGHT sees "Roll"
+      expect(s.diceValue).toBeNull();
     });
 
     it('should end game when double is declined', () => {

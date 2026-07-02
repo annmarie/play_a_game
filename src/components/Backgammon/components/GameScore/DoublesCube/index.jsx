@@ -10,7 +10,7 @@ const DoublesCube = ({ doublingCube, currentPlayer, winner, turnEnding }) => {
   const canOfferDouble = currentPlayer &&
     !winner &&
     !doublingCube.pendingOffer &&
-    doublingCube.owner !== currentPlayer &&
+    (doublingCube.owner === null || doublingCube.owner === currentPlayer) &&
     doublingCube.value < 64 &&
     turnEnding;
 

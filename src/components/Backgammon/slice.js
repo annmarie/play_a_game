@@ -102,7 +102,24 @@ export const slice = createSlice({
       };
     },
 
-    togglePlayerRoll: (state) => ({ ...state, player: togglePlayer(state.player), diceValue: null }),
+    togglePlayerRoll: (state) => {
+      const nextPlayer = togglePlayer(state.player);
+      const newState = {
+        ...state,
+        player: nextPlayer,
+        diceValue: null,
+        selectedSpot: null,
+        potentialSpots: [],
+        potentialMoves: {},
+        isMyTurn: !state.isMultiplayer || state.myPlayer === nextPlayer,
+      };
+
+      if (state.isMultiplayer) {
+        sendMultiplayerMove('backgammon', { player: nextPlayer, diceValue: null, potentialMoves: {} });
+      }
+
+      return newState;
+    },
 
     resetGame: (state) => ({ ...initialState, points: initializeBoard(), gamesWon: state.gamesWon }),
 
@@ -129,6 +146,23 @@ export const slice = createSlice({
         };
       }
 
+      // Broadcast the full reset so both boards clear together; startGame only carries dice/player.
+      if (state.isMultiplayer) {
+        sendMultiplayerMove('backgammon', {
+          points: base.points,
+          checkersOnBar: base.checkersOnBar,
+          checkersBorneOff: base.checkersBorneOff,
+          winner: base.winner,
+          gamesWon: base.gamesWon,
+          diceValue: base.diceValue,
+          player: base.player,
+          potentialMoves: base.potentialMoves,
+          doublingCube: base.doublingCube,
+          gameStarted: base.gameStarted,
+          turnEnding: base.turnEnding,
+        });
+      }
+
       return base;
     },
 
@@ -140,7 +174,9 @@ export const slice = createSlice({
     }),
 
     offerDouble: (state) => {
-      if (state.doublingCube.owner === state.player || state.doublingCube.pendingOffer) return state;
+      // Only the cube owner may double; either player may when it is centered (owner === null).
+      const { owner, pendingOffer } = state.doublingCube;
+      if (pendingOffer || (owner !== null && owner !== state.player)) return state;
       const newState = {
         ...state,
         doublingCube: {
@@ -159,23 +195,27 @@ export const slice = createSlice({
     acceptDouble: (state) => {
       if (!state.doublingCube.pendingOffer) return state;
       const offeringPlayer = state.doublingCube.pendingOffer;
+      // The opponent of the offerer accepts: they take the cube and play next.
+      // Derived from the offer, not state.player, which varies with click order.
+      const acceptingPlayer = togglePlayer(offeringPlayer);
       const newState = {
         ...state,
         doublingCube: {
           value: state.doublingCube.value * 2,
-          owner: state.player,
+          owner: acceptingPlayer,
           pendingOffer: null
         },
-        player: offeringPlayer,
+        player: acceptingPlayer,
         diceValue: null,
+        turnEnding: false, // clear the offerer's turnEnding so the accepter gets a clean roll
         selectedSpot: null,
         potentialSpots: [],
         potentialMoves: {},
-        isMyTurn: !state.isMultiplayer || state.myPlayer === offeringPlayer
+        isMyTurn: !state.isMultiplayer || state.myPlayer === acceptingPlayer
       };
 
       if (state.isMultiplayer) {
-        sendMultiplayerMove('backgammon', { doublingCube: newState.doublingCube, player: offeringPlayer, diceValue: null, potentialMoves: {} });
+        sendMultiplayerMove('backgammon', { doublingCube: newState.doublingCube, player: acceptingPlayer, diceValue: null, potentialMoves: {}, turnEnding: false });
       }
 
       return newState;
@@ -312,9 +352,6 @@ const reduceMakeMove = (state, { payload: { fromPointId, toPointId } }) => {
     return state;
   }
 
-  // The reducer is authoritative: only accept a destination that the move logic
-  // considers legal (rejects landing on a point held by 2+ opponents, and rejects
-  // ordinary moves while a checker is still on the bar).
   const legalTargets = findPotentialMoves(points, player, diceValue, checkersOnBar)[fromPointId];
   if (!legalTargets || !legalTargets.includes(toPointId)) {
     return state;
